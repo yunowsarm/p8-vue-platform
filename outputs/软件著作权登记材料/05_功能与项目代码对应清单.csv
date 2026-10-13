@@ -1,0 +1,16 @@
+﻿功能,代码依据,范围与说明
+登录和动态菜单,src/views/Login/index.vue; src/config/interceptors/router.js,登录、令牌及授权路由；非仅静态示例路由
+P8依赖和组件组织,package.json; src/main.js; docs/frontend-architecture.md,Vue2与P8组件、独立业务组件及公共记录逻辑
+园区房源,src/views/houseProduct/parkManage.vue; src/views/houseProduct/houseResourceManage.vue,页面及配置驱动资源管理；字段受部署配置影响
+招商线索,src/views/components/intentionInquiry/components/LeadManagementPage.vue,客户等级、阶段、跟进字段和附件
+租赁申请,src/features/service-hall/lease-application/definition.js; src/features/service-hall/lease-application/policies.js,续退扩租、条件字段、两种查阅状态及用户管理只读模式
+服务需求,src/features/service-hall/service-request/ServiceRequestPage.vue,待受理、处理中、已完成、已关闭及转换规则
+诉求反馈,src/features/service-hall/complaint-suggestion/ComplaintSuggestionPage.vue,待查阅、已查阅、已回复及回复字段
+会议室,src/features/supporting-services/meeting-room-booking/MeetingRoomBookingPage.vue,预定、确认、驳回、重提及记录归属检查
+公共信息,src/features/public-services/public-notice/definition.js,场景与对内对外可见范围
+政务政策,src/views/ToG/policyServices/components/PolicyServiceBoard.vue; src/service/api/modules/togPolicyServices.js,记录CRUD、办理进度与转项目申报；无AI算法证明
+消费预订,src/service/api/modules/tocOnlinePayment.js; src/views/ToC/onlinePayment/components/PaymentOrderBoard.vue,订单页面及接口；不证明支付网关实际接入
+物联专题,src/views/smartIOT; src/views/smartIOT/mock,本地演示数据；不证明实时接入
+消防维保,src/views/smartIOT/security/fireAlarm.vue; src/views/smartIOT/mock/fireMaintenanceMockData.js,消防设备维保台账和本地操作；非实时消防报警
+记录与异常处理,src/features/_shared/record-management/recordManager.js,CRUD、分页、状态、附件及本地回退
+部署,vue.config.js; src/config/settings.js,前端构建和运行配置；不能证明后端数据库及性能

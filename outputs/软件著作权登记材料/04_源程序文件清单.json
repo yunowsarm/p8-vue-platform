@@ -1,0 +1,866 @@
+{
+  "software": "基于P8的智慧园区管理系统",
+  "version": "V1.0",
+  "nonblank_lines": 14590,
+  "file_count": 55,
+  "order_rule": "租赁定义、策略、页面及公共记录逻辑在前，业务组件按路径排序，资源政务页面及接口随后，招商线索页面在末尾；仅省略空白行",
+  "files": [
+    {
+      "order": 1,
+      "file": "src/features/service-hall/lease-application/definition.js",
+      "sha256": "48958570f268393a674957a0f37bf60fa2ecddfeee74ebe583090a61f5031682",
+      "physical_lines": 145,
+      "nonblank_lines": 135,
+      "start": 1,
+      "end": 135
+    },
+    {
+      "order": 2,
+      "file": "src/features/service-hall/lease-application/policies.js",
+      "sha256": "b47afa4bd5368d586fc23ff7b88de7d9c494c25bb94e9f443886fec6eb6fdc6b",
+      "physical_lines": 23,
+      "nonblank_lines": 20,
+      "start": 136,
+      "end": 155
+    },
+    {
+      "order": 3,
+      "file": "src/features/service-hall/lease-application/LeaseApplicationPage.vue",
+      "sha256": "d8996dca838b80b955baf0389869f09d3e9eaf26d4980521edfd615627a77549",
+      "physical_lines": 215,
+      "nonblank_lines": 205,
+      "start": 156,
+      "end": 360
+    },
+    {
+      "order": 4,
+      "file": "src/features/_shared/record-management/recordManager.js",
+      "sha256": "a484a224dedb5e39ebc181da085e5cb4e6982e0027bf6a9fcdb56bf07af14473",
+      "physical_lines": 692,
+      "nonblank_lines": 689,
+      "start": 361,
+      "end": 1049
+    },
+    {
+      "order": 5,
+      "file": "src/features/_shared/record-management/RecordAuditDialog.vue",
+      "sha256": "4d9a0fab35774df4152d109b581b8511d255e1cb22234f952c0cf79d5b457bb6",
+      "physical_lines": 80,
+      "nonblank_lines": 78,
+      "start": 1050,
+      "end": 1127
+    },
+    {
+      "order": 6,
+      "file": "src/features/life-services/LifeServicesManagePage.vue",
+      "sha256": "32a08da82db711b8b5b7231feb09e0de5ca7639550d783a2df8e4349ad7c4431",
+      "physical_lines": 139,
+      "nonblank_lines": 120,
+      "start": 1128,
+      "end": 1247
+    },
+    {
+      "order": 7,
+      "file": "src/features/life-services/car-insurance-info/CarInsuranceInfoPage.vue",
+      "sha256": "f60cb5e89ec772c1ddacf02766ce1275eab4d8532f93bead5987aed16cf10cf8",
+      "physical_lines": 118,
+      "nonblank_lines": 118,
+      "start": 1248,
+      "end": 1365
+    },
+    {
+      "order": 8,
+      "file": "src/features/life-services/car-insurance/CarInsurancePage.vue",
+      "sha256": "a54d80facd6029436417656504d8f125d82a6960912e73c4a33c6e241d763ec1",
+      "physical_lines": 129,
+      "nonblank_lines": 129,
+      "start": 1366,
+      "end": 1494
+    },
+    {
+      "order": 9,
+      "file": "src/features/life-services/car-rental-info/CarRentalInfoPage.vue",
+      "sha256": "ceef965fcf1af4d57f99773718e724ea7c8c9e6d5dae60414ebde6e00e35b7eb",
+      "physical_lines": 116,
+      "nonblank_lines": 116,
+      "start": 1495,
+      "end": 1610
+    },
+    {
+      "order": 10,
+      "file": "src/features/life-services/car-rental/CarRentalPage.vue",
+      "sha256": "8591d99007f376b9899f59df5cbda728a2636b7f689f2d5f0e25518140be9e3e",
+      "physical_lines": 157,
+      "nonblank_lines": 152,
+      "start": 1611,
+      "end": 1762
+    },
+    {
+      "order": 11,
+      "file": "src/features/life-services/event-activity/EventActivityPage.vue",
+      "sha256": "825835ac12d08f6fd6405822777a355cfed77752eeb2b9f58dcd9f7478d836d8",
+      "physical_lines": 148,
+      "nonblank_lines": 148,
+      "start": 1763,
+      "end": 1910
+    },
+    {
+      "order": 12,
+      "file": "src/features/life-services/park-news/ParkNewsPage.vue",
+      "sha256": "dd844d2c27af09f913c4bc4422966f58f2ca0653591f3104b8520a9d81d550db",
+      "physical_lines": 141,
+      "nonblank_lines": 141,
+      "start": 1911,
+      "end": 2051
+    },
+    {
+      "order": 13,
+      "file": "src/features/life-services/shuttle-bus/ShuttleBusBoard.vue",
+      "sha256": "79f7f922b9b0a5f2dc1a051313d999bf345dae3d7208e76fb0e33b067043a812",
+      "physical_lines": 774,
+      "nonblank_lines": 769,
+      "start": 2052,
+      "end": 2820
+    },
+    {
+      "order": 14,
+      "file": "src/features/life-services/talent-service/TalentServicePage.vue",
+      "sha256": "555e2b71fdf479fa5fb63c2215e0a007b067404fba6c2d61150eee2d8d6e52d1",
+      "physical_lines": 137,
+      "nonblank_lines": 137,
+      "start": 2821,
+      "end": 2957
+    },
+    {
+      "order": 15,
+      "file": "src/features/life-services/travel-ticket/TravelTicketPage.vue",
+      "sha256": "34b26e76fbb14a1e75b5ea634d15fc215f00c4eb6c2e5b2c979d07d871cc20fd",
+      "physical_lines": 133,
+      "nonblank_lines": 133,
+      "start": 2958,
+      "end": 3090
+    },
+    {
+      "order": 16,
+      "file": "src/features/life-services/user-survey/UserSurveyPage.vue",
+      "sha256": "6d01c50bde5d82a0f50333abd477d5bb84d188e078e62cb2a03f4fdd524ba8c4",
+      "physical_lines": 162,
+      "nonblank_lines": 162,
+      "start": 3091,
+      "end": 3252
+    },
+    {
+      "order": 17,
+      "file": "src/features/public-services/document-download/DocumentDownloadPage.vue",
+      "sha256": "485519126cd743fe69dce5394cf9117fef8fc1ec00b2ea1e19916955869ea5bb",
+      "physical_lines": 169,
+      "nonblank_lines": 162,
+      "start": 3253,
+      "end": 3414
+    },
+    {
+      "order": 18,
+      "file": "src/features/public-services/document-download/definition.js",
+      "sha256": "c34a19db53731687ad43b2534e1e45648b40f04ad204bc6908cd8b7625cd4c40",
+      "physical_lines": 37,
+      "nonblank_lines": 35,
+      "start": 3415,
+      "end": 3449
+    },
+    {
+      "order": 19,
+      "file": "src/features/public-services/enterprise-news/EnterpriseNewsPage.vue",
+      "sha256": "3cfa1f740eb4e2be0eaa3c22757724df535b31d85300868fd9e30cd752435aa7",
+      "physical_lines": 154,
+      "nonblank_lines": 151,
+      "start": 3450,
+      "end": 3600
+    },
+    {
+      "order": 20,
+      "file": "src/features/public-services/online-consultation/OnlineConsultationPage.vue",
+      "sha256": "12eebf01508927c33ef55c9b8bcc8372282dbf612c4652f74f5d6f92cabc9106",
+      "physical_lines": 249,
+      "nonblank_lines": 236,
+      "start": 3601,
+      "end": 3836
+    },
+    {
+      "order": 21,
+      "file": "src/features/public-services/park-activity/ParkActivityPage.vue",
+      "sha256": "344ba198d0681bb97a5a5f4819e1f4aaf80a09c581750b3aaa71c9c3480fc366",
+      "physical_lines": 163,
+      "nonblank_lines": 160,
+      "start": 3837,
+      "end": 3996
+    },
+    {
+      "order": 22,
+      "file": "src/features/public-services/park-news/ParkNewsPage.vue",
+      "sha256": "7f0f9c9b68519d81386548f84cc38501e1bbb695fb5afb08310ffa91e5823ef7",
+      "physical_lines": 157,
+      "nonblank_lines": 154,
+      "start": 3997,
+      "end": 4150
+    },
+    {
+      "order": 23,
+      "file": "src/features/public-services/public-notice/PublicNoticePage.vue",
+      "sha256": "1a16cc24aface06b4a724f6a51cea50d2222dd1dd374db7f8d346abc788928a1",
+      "physical_lines": 251,
+      "nonblank_lines": 241,
+      "start": 4151,
+      "end": 4391
+    },
+    {
+      "order": 24,
+      "file": "src/features/public-services/public-notice/definition.js",
+      "sha256": "572bd2bf9f779e61e239c7d082cb4065e899af3e5c810e3198105410afc57132",
+      "physical_lines": 22,
+      "nonblank_lines": 18,
+      "start": 4392,
+      "end": 4409
+    },
+    {
+      "order": 25,
+      "file": "src/features/public-services/safety-column/SafetyColumnPage.vue",
+      "sha256": "e512bb1bad202bf5c4617dd07967c15596aafa482d46cd99cde6f5842cb484dd",
+      "physical_lines": 152,
+      "nonblank_lines": 149,
+      "start": 4410,
+      "end": 4558
+    },
+    {
+      "order": 26,
+      "file": "src/features/service-hall/ServiceHallManagePage.vue",
+      "sha256": "27acd294a2e883f4a2f813086ac8cb6e3fb0dfe68ab4f3b5b3b68a3128b41801",
+      "physical_lines": 133,
+      "nonblank_lines": 128,
+      "start": 4559,
+      "end": 4686
+    },
+    {
+      "order": 27,
+      "file": "src/features/service-hall/complaint-suggestion/ComplaintSuggestionPage.vue",
+      "sha256": "c398eff539b2c113b7285b164a0e09cdb32dd7153e3567598afb717786dbd9d9",
+      "physical_lines": 249,
+      "nonblank_lines": 241,
+      "start": 4687,
+      "end": 4927
+    },
+    {
+      "order": 28,
+      "file": "src/features/service-hall/data-report/DataReportPage.vue",
+      "sha256": "e934d3df3efadeaa2415bde7413c6acc99145bf16161bd655cebc2f6a91a2221",
+      "physical_lines": 215,
+      "nonblank_lines": 209,
+      "start": 4928,
+      "end": 5136
+    },
+    {
+      "order": 29,
+      "file": "src/features/service-hall/media-promotion/MediaPromotionPage.vue",
+      "sha256": "57b62780b714cc888c1481da365486796b278ad281679b6564d2ac124dba6751",
+      "physical_lines": 166,
+      "nonblank_lines": 160,
+      "start": 5137,
+      "end": 5296
+    },
+    {
+      "order": 30,
+      "file": "src/features/service-hall/qualification-recognition/QualificationRecognitionPage.vue",
+      "sha256": "b0aee5da732ea4bb941ed9e1d61bc1531b138391cbd8b230cb66560ddba308d6",
+      "physical_lines": 265,
+      "nonblank_lines": 254,
+      "start": 5297,
+      "end": 5550
+    },
+    {
+      "order": 31,
+      "file": "src/features/service-hall/resource-connection/ResourceConnectionPage.vue",
+      "sha256": "f71e6f81a621a4da4b3a4a2ebdc9d2eaa2ef9acde0aefb57601b037ede04d298",
+      "physical_lines": 190,
+      "nonblank_lines": 184,
+      "start": 5551,
+      "end": 5734
+    },
+    {
+      "order": 32,
+      "file": "src/features/service-hall/service-request/ServiceRequestPage.vue",
+      "sha256": "a754b47db8e155f50277862c352e85d1e0a4f5a282db92e0e18c1d25d3bbab06",
+      "physical_lines": 173,
+      "nonblank_lines": 165,
+      "start": 5735,
+      "end": 5899
+    },
+    {
+      "order": 33,
+      "file": "src/features/supporting-services/SupportingServicesManagePage.vue",
+      "sha256": "4959ef436b64b04c943dfc474a8ff08e03962885b0dfe2ccd63d58e999fbb126",
+      "physical_lines": 138,
+      "nonblank_lines": 120,
+      "start": 5900,
+      "end": 6019
+    },
+    {
+      "order": 34,
+      "file": "src/features/supporting-services/business-opportunity/BusinessOpportunityPage.vue",
+      "sha256": "20012e59a81c17e570ae645d3811020da0b716637e6792adf00227a707e25e43",
+      "physical_lines": 199,
+      "nonblank_lines": 195,
+      "start": 6020,
+      "end": 6214
+    },
+    {
+      "order": 35,
+      "file": "src/features/supporting-services/company-demand/CompanyDemandPage.vue",
+      "sha256": "16bf5bfec59bd246c91f3665c00fcdcc7c97d070b199ef6198a1a5073010d78d",
+      "physical_lines": 139,
+      "nonblank_lines": 139,
+      "start": 6215,
+      "end": 6353
+    },
+    {
+      "order": 36,
+      "file": "src/features/supporting-services/facility-rental/FacilityRentalPage.vue",
+      "sha256": "1a9c70274f4c89e876eb7a05328f59ca763787603938af890a8443773d2b0162",
+      "physical_lines": 175,
+      "nonblank_lines": 174,
+      "start": 6354,
+      "end": 6527
+    },
+    {
+      "order": 37,
+      "file": "src/features/supporting-services/industry-association/IndustryAssociationPage.vue",
+      "sha256": "6a2b1727b11e1eb0fef58f22ce9f48ffdbee95f1017fcc4cb84ccb24b99b9662",
+      "physical_lines": 131,
+      "nonblank_lines": 131,
+      "start": 6528,
+      "end": 6658
+    },
+    {
+      "order": 38,
+      "file": "src/features/supporting-services/meeting-room-booking/MeetingRoomBookingPage.vue",
+      "sha256": "46f39205c61cefd66db4ec22fbe8f7b45cecc10b336b1f888eea987214609e41",
+      "physical_lines": 182,
+      "nonblank_lines": 181,
+      "start": 6659,
+      "end": 6839
+    },
+    {
+      "order": 39,
+      "file": "src/features/supporting-services/service-organization/ServiceOrganizationPage.vue",
+      "sha256": "1d87b1d973d1e4c97fa26807c8a6f3db727266490841f6805da806dd6484b17e",
+      "physical_lines": 128,
+      "nonblank_lines": 128,
+      "start": 6840,
+      "end": 6967
+    },
+    {
+      "order": 40,
+      "file": "src/features/supporting-services/startup-mentor/StartupMentorPage.vue",
+      "sha256": "37a731e7796707ec63ab6971400fa983db0a413c71781815e3d350131431d57d",
+      "physical_lines": 127,
+      "nonblank_lines": 127,
+      "start": 6968,
+      "end": 7094
+    },
+    {
+      "order": 41,
+      "file": "src/views/houseProduct/parkManage.vue",
+      "sha256": "be72a3d7cfc608acceeecbd948f20643d04954607e3e11716c520ed15e0000b3",
+      "physical_lines": 1262,
+      "nonblank_lines": 1197,
+      "start": 7095,
+      "end": 8291
+    },
+    {
+      "order": 42,
+      "file": "src/views/houseProduct/houseResourceManage.vue",
+      "sha256": "7ecc9503d6d60363ed957738a15e78d076469c756118ee92a407027b6ad6c4a1",
+      "physical_lines": 977,
+      "nonblank_lines": 920,
+      "start": 8292,
+      "end": 9211
+    },
+    {
+      "order": 43,
+      "file": "src/views/ToG/policyServices/components/PolicyServiceBoard.vue",
+      "sha256": "74e9233ae54036e3ceeb588d03afeb7ae3fcc95097010dc219591da5cabcd7da",
+      "physical_lines": 1156,
+      "nonblank_lines": 1147,
+      "start": 9212,
+      "end": 10358
+    },
+    {
+      "order": 44,
+      "file": "src/views/ToG/governmentServices/components/GovernmentServiceBoard.vue",
+      "sha256": "f832328a6274012e23120a66ea85f784518281a71fcb1c932c9bc59e42ca99e6",
+      "physical_lines": 1055,
+      "nonblank_lines": 1049,
+      "start": 10359,
+      "end": 11407
+    },
+    {
+      "order": 45,
+      "file": "src/views/ToG/enterpriseCare/components/EnterpriseCareBoard.vue",
+      "sha256": "88e1ae96fc316f6d1b6cbf2ea3b810ea7c8f470be5fcd4b2e340cfe142793eaa",
+      "physical_lines": 1131,
+      "nonblank_lines": 1097,
+      "start": 11408,
+      "end": 12504
+    },
+    {
+      "order": 46,
+      "file": "src/service/api/modules/tobPublicServices.js",
+      "sha256": "5ffac8ed22d16a976e94cfd7480ac8c8941f3f543ce5f7f302dfa0c2887c4c5e",
+      "physical_lines": 36,
+      "nonblank_lines": 34,
+      "start": 12505,
+      "end": 12538
+    },
+    {
+      "order": 47,
+      "file": "src/service/api/modules/tobServiceHall.js",
+      "sha256": "df79ca8ef3d7f6adf90238c1b82a54330ceecdb6371e0d881466071fa525f208",
+      "physical_lines": 24,
+      "nonblank_lines": 22,
+      "start": 12539,
+      "end": 12560
+    },
+    {
+      "order": 48,
+      "file": "src/service/api/modules/tobSupportingServices.js",
+      "sha256": "c74e064d4fc6c7c6e80fc22782fa292a21c155f5a008f99a09035ccde3a7a110",
+      "physical_lines": 13,
+      "nonblank_lines": 12,
+      "start": 12561,
+      "end": 12572
+    },
+    {
+      "order": 49,
+      "file": "src/service/api/modules/tocLifeServices.js",
+      "sha256": "a7ec81d4b5cd87030e003acb7c1046511c368d4a829177cd39195b0cf5e86e68",
+      "physical_lines": 17,
+      "nonblank_lines": 16,
+      "start": 12573,
+      "end": 12588
+    },
+    {
+      "order": 50,
+      "file": "src/service/api/modules/tocOnlinePayment.js",
+      "sha256": "09ea76537f63ceff9ce1f22ebaa780eb9e2be4ff76925ecb7b01960b816e419c",
+      "physical_lines": 14,
+      "nonblank_lines": 13,
+      "start": 12589,
+      "end": 12601
+    },
+    {
+      "order": 51,
+      "file": "src/service/api/modules/tocParkCommunication.js",
+      "sha256": "87e0b6b63dc081188e3fd9218267d59a0122a7e49ca3ecd1307df45f175aeb5b",
+      "physical_lines": 30,
+      "nonblank_lines": 28,
+      "start": 12602,
+      "end": 12629
+    },
+    {
+      "order": 52,
+      "file": "src/service/api/modules/togEnterpriseCareServices.js",
+      "sha256": "4ef016d63f7bc1107c2de153bfb97753a713091b8df26ead58aef28be297abd9",
+      "physical_lines": 8,
+      "nonblank_lines": 7,
+      "start": 12630,
+      "end": 12636
+    },
+    {
+      "order": 53,
+      "file": "src/service/api/modules/togGovernmentServices.js",
+      "sha256": "0dce6f84c45474582ebf41e6bdcee290545a90043a17e51f07a837db401e5026",
+      "physical_lines": 8,
+      "nonblank_lines": 7,
+      "start": 12637,
+      "end": 12643
+    },
+    {
+      "order": 54,
+      "file": "src/service/api/modules/togPolicyServices.js",
+      "sha256": "fca1f76ee8014e4510de37752b270661767bc168faf77b76f61c742838a12567",
+      "physical_lines": 25,
+      "nonblank_lines": 24,
+      "start": 12644,
+      "end": 12667
+    },
+    {
+      "order": 55,
+      "file": "src/views/components/intentionInquiry/components/LeadManagementPage.vue",
+      "sha256": "038bf504809269b7c8f31e65fa5c764244d55cc446a7742f7cf769ca5fedca4a",
+      "physical_lines": 2043,
+      "nonblank_lines": 1923,
+      "start": 12668,
+      "end": 14590
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 52
+    },
+    {
+      "page": 2,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 3,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 59
+    },
+    {
+      "page": 4,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 59
+    },
+    {
+      "page": 5,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 59
+    },
+    {
+      "page": 6,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 7,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 52
+    },
+    {
+      "page": 8,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 51
+    },
+    {
+      "page": 9,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 57
+    },
+    {
+      "page": 10,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 54
+    },
+    {
+      "page": 11,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 56
+    },
+    {
+      "page": 12,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 58
+    },
+    {
+      "page": 13,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 54
+    },
+    {
+      "page": 14,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 54
+    },
+    {
+      "page": 15,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 59
+    },
+    {
+      "page": 16,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 52
+    },
+    {
+      "page": 17,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 54
+    },
+    {
+      "page": 18,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 19,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 55
+    },
+    {
+      "page": 20,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 54
+    },
+    {
+      "page": 21,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 22,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 57
+    },
+    {
+      "page": 23,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 52
+    },
+    {
+      "page": 24,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 25,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 26,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 62
+    },
+    {
+      "page": 27,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 28,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 59
+    },
+    {
+      "page": 29,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 56
+    },
+    {
+      "page": 30,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 51
+    },
+    {
+      "page": 31,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 32,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 51
+    },
+    {
+      "page": 33,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 34,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 35,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 57
+    },
+    {
+      "page": 36,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 52
+    },
+    {
+      "page": 37,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 58
+    },
+    {
+      "page": 38,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 58
+    },
+    {
+      "page": 39,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 40,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 41,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 42,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 43,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 54
+    },
+    {
+      "page": 44,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 51
+    },
+    {
+      "page": 45,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 55
+    },
+    {
+      "page": 46,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 54
+    },
+    {
+      "page": 47,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 55
+    },
+    {
+      "page": 48,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 53
+    },
+    {
+      "page": 49,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 56
+    },
+    {
+      "page": 50,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 51,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 52,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 53,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 54,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 55,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 56,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 57,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 58,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    },
+    {
+      "page": 59,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 52
+    },
+    {
+      "page": 60,
+      "source_lines": 50,
+      "font_size": 8.0,
+      "estimated_visual_lines": 50
+    }
+  ]
+}

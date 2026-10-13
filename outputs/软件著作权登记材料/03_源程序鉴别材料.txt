@@ -1,0 +1,3000 @@
+// 租赁申请业务定义：维护申请类型、条件字段、状态映射和接口数据转换。
+export const LEASE_APPLICATION_TYPES = Object.freeze([
+  { label: '续租申请', value: 'renew' },
+  { label: '退租申请', value: 'vacate' },
+  { label: '扩租申请', value: 'expand' }
+])
+const typeValueMap = Object.freeze({ 续租申请: 'renew', 退租申请: 'vacate', 扩租申请: 'expand' })
+const typeFieldKeys = Object.freeze({
+  renew: ['currentExpireDate', 'renewalPeriodMonths', 'renewalStartDate'],
+  vacate: ['plannedVacateDate', 'handoverPerson'],
+  expand: ['currentArea', 'expansionArea', 'expectedStartDate', 'intendedLocation']
+})
+const normalizeLeaseFiles = (value) => {
+  let files = value
+  if (typeof files === 'string') {
+    try {
+      files = JSON.parse(files)
+    } catch (error) {
+      files = [files]
+    }
+  }
+  if (!Array.isArray(files)) files = files ? [files] : []
+  return files.filter(Boolean).map((item, index) => {
+    const file = typeof item === 'string' ? { filePath: item } : Object.assign({}, item)
+    const filePath = file.filePath || file.fileUrl || file.url || ''
+    const name = file.name || file.fileName || file.originalFileName || file.originalName || file.attachmentName || file.attFileName || filePath.split(/[\\/]/).pop() || `附件${index + 1}`
+    return Object.assign({}, file, {
+      name,
+      fileName: file.fileName || name,
+      uid: file.uid || file.attachmentId || file.id || file.fileId || `lease-file-${index}`,
+      url: file.url || file.fileUrl || file.filePath || ''
+    })
+  })
+}
+const normalizeLeaseRecord = (record) => {
+  const normalized = Object.assign({}, record)
+  normalized.applyType = typeValueMap[normalized.applyType] || normalized.applyType
+  normalized.applyReason = normalized.applyReason || normalized.vacateReason || normalized.expansionPurposeReason || ''
+  normalized.uploadFiles = normalizeLeaseFiles(normalized.uploadFiles)
+  return normalized
+}
+const cleanLeaseUploadPath = (value) => (value ? value.replace(/^.*[\\/]/, '') : value)
+const cleanLeaseUploadFile = (file) => {
+  const normalized = Object.assign({}, file)
+  delete normalized.id
+  normalized.filePath = cleanLeaseUploadPath(normalized.filePath)
+  normalized.url = cleanLeaseUploadPath(normalized.url)
+  return normalized
+}
+const transformLeasePayload = (payload, { editing } = {}) => {
+  const transformed = Object.assign({}, payload)
+  if (editing && Array.isArray(transformed.uploadFiles)) transformed.uploadFiles = transformed.uploadFiles.map(cleanLeaseUploadFile)
+  if (transformed.applyType === 'vacate') transformed.vacateReason = transformed.applyReason
+  if (transformed.applyType === 'expand') transformed.expansionPurposeReason = transformed.applyReason
+  return transformed
+}
+const detailFieldsResolver = (record, fields) => {
+  const commonKeys = ['applyType', 'companyName', 'contractNo', 'currentLocation', 'contactPerson', 'contactPhone', 'applyDate']
+  const visibleKeys = commonKeys.concat(typeFieldKeys[record.applyType] || [])
+  return fields.filter((field) => visibleKeys.includes(field.key))
+}
+const leaseDefinition = Object.freeze({
+  title: '租赁申请',
+  itemName: '租赁申请',
+  icon: 'el-icon-office-building',
+  idPrefix: 'LA',
+  apiNamespace: 'tobLeaseApplication',
+  primaryKey: 'applyType',
+  primaryLabel: '申请类型',
+  primaryOptions: LEASE_APPLICATION_TYPES,
+  valueLabelMaps: { applyType: { renew: '续租申请', vacate: '退租申请', expand: '扩租申请' } },
+  timeKey: 'applyDate',
+  autoFormFields: { applyDate: 'now' },
+  contentKey: 'applyReason',
+  contentLabel: '申请原因',
+  uploadField: 'uploadFiles',
+  uploadResponseField: 'uploadFiles',
+  editUploadFilesTransform: (files) => files.map(cleanLeaseUploadFile),
+  uploadLabel: '附件',
+  uploadLimit: 9,
+  uploadTip: '单个附件不超过 10MB，最多上传 9 个。',
+  cardTitleKey: 'applyType',
+  detailTitleKey: 'applyType',
+  hideCompany: true,
+  showSummary: false,
+  loadDetailBeforeEdit: true,
+  defaultStatus: '待查阅',
+  statusMap: { null: '待查阅', 0: '待查阅', 1: '已查阅' },
+  statusValueMap: { 待查阅: 0, 已查阅: 1 },
+  listStatusValueMap: { 待查阅: 0, 已查阅: 1 },
+  pendingStatuses: ['待查阅'],
+  statusOptions: ['待查阅', '已查阅'],
+  statusTransitions: { 待查阅: ['已查阅'], 已查阅: [] },
+  markReviewingOnDetail: true,
+  reviewPendingStatus: '待查阅',
+  reviewingStatus: '已查阅',
+  processRemarkField: 'remark',
+  processRemarkLabel: '处理意见',
+  cardMetaFields: [
+    { key: 'companyName', icon: 'el-icon-office-building' },
+    { key: 'currentLocation', icon: 'el-icon-location-outline' },
+    { key: 'contactPerson', icon: 'el-icon-user' }
+  ],
+  detailFieldsResolver,
+  normalizeRecord: normalizeLeaseRecord,
+  formFromRecord: normalizeLeaseRecord,
+  payloadTransform: transformLeasePayload,
+  fields: [
+    { key: 'applyType', label: '申请类型', required: true, options: LEASE_APPLICATION_TYPES },
+    { key: 'companyName', label: '企业名称', required: true },
+    // { key: 'contractNo', label: '租赁合同编号', required: true },
+    { key: 'currentLocation', label: '现租赁位置', required: true },
+    { key: 'contactPerson', label: '联系人', required: true },
+    { key: 'contactPhone', label: '联系电话', required: true },
+    { key: 'applyDate', label: '申请日期', type: 'datetime', hideInForm: true },
+    { key: 'currentExpireDate', label: '当前到期日', type: 'datetime', required: true, showWhen: { applyType: 'renew' } },
+    { key: 'renewalPeriodMonths', label: '续租期限（月）', required: true, options: [12, 24, 36], showWhen: { applyType: 'renew' } },
+    { key: 'renewalStartDate', label: '续租起始日', type: 'datetime', required: true, showWhen: { applyType: 'renew' } },
+    { key: 'plannedVacateDate', label: '计划退租日', type: 'datetime', required: true, showWhen: { applyType: 'vacate' } },
+    { key: 'handoverPerson', label: '交接负责人', required: true, showWhen: { applyType: 'vacate' } },
+    { key: 'currentArea', label: '现租赁面积', type: 'number', min: 0, defaultValue: null, required: true, showWhen: { applyType: 'expand' } },
+    { key: 'expansionArea', label: '拟扩租面积', type: 'number', min: 0, defaultValue: null, required: true, showWhen: { applyType: 'expand' } },
+    { key: 'expectedStartDate', label: '期望启用日期', type: 'datetime', required: true, showWhen: { applyType: 'expand' } },
+    { key: 'intendedLocation', label: '意向位置', showWhen: { applyType: 'expand' } },
+    { key: 'applyReason', label: '申请原因', type: 'textarea', required: true },
+    { key: 'remark', label: '补充说明', type: 'textarea' }
+  ]
+})
+export function getLeaseApplicationConfig(mode = 'user') {
+  return Object.assign({}, leaseDefinition, {
+    listParams: { type: mode === 'admin' ? 1 : 0 },
+    fields: leaseDefinition.fields.map((field) => Object.assign({}, field)),
+    records: []
+  })
+}
+// 租赁申请操作策略：根据终端模式和记录状态控制新增、编辑、删除及处理操作。
+const statusText = (status) => {
+  const map = { 0: '待查阅', 1: '已查阅' }
+  return map[status] || map[String(status)] || status || '待查阅'
+}
+const editable = ({ record }) => ['待查阅', '已查阅'].includes(statusText(record && record.status))
+export const LEASE_APPLICATION_POLICIES = Object.freeze({
+  user: Object.freeze({
+    actions: Object.freeze({ create: true, edit: editable, delete: true, changeStatus: false })
+  }),
+  admin: Object.freeze({
+    actions: Object.freeze({ create: false, edit: editable, delete: true, changeStatus: true })
+  }),
+  readonly: Object.freeze({
+    actions: Object.freeze({ create: false, edit: false, delete: false, changeStatus: false })
+  })
+})
+export function getLeaseApplicationPolicy(mode = 'user') {
+  return LEASE_APPLICATION_POLICIES[mode] || LEASE_APPLICATION_POLICIES.readonly
+}
+<!-- 租赁申请业务组件：独立呈现续租、退租和扩租流程，并按终端模式控制处理操作。 -->
+<template>
+  <main class="record-feature-page">
+    <header class="record-feature-hero">
+      <div class="record-feature-hero__title">
+        <span class="record-feature-hero__icon"><i :class="resource.icon"></i></span>
+        <div>
+          <h2>租赁申请</h2>
+          <p>{{ mode === 'admin' ? '处理企业续租、退租和扩租申请。' : '发起续租、退租或扩租申请并查看进度。' }}</p>
+        </div>
+      </div>
+      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增租赁申请</el-button>
+    </header>
+    <section v-loading="loading" class="record-feature-surface">
+      <div class="record-feature-toolbar">
+        <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索申请编号、企业或合同" @input="resetPage" @clear="resetPage" />
+        <el-select v-model="typeFilter" clearable placeholder="全部申请类型" @change="resetPage" @clear="resetPage">
+          <el-option v-for="option in primaryOptions" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
+        </el-select>
+        <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
+          <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
+        </el-select>
+      </div>
+      <div v-if="pagedRecords.length" class="record-feature-grid">
+        <article
+          v-for="record in pagedRecords"
+          :key="record.id"
+          class="record-feature-card"
+          role="button"
+          tabindex="0"
+          :aria-label="`查看${recordTitle(record)}详情`"
+          @click="openDetail(record)"
+          @keydown.enter.self="openDetail(record)"
+          @keydown.space.self.prevent="openDetail(record)">
+          <div class="record-feature-card__head">
+            <span class="record-feature-card__id">
+              <span :class="['lease-type-icon', `lease-type-icon--${leaseTypeKey(record.applyType)}`]" aria-hidden="true">
+                {{ leaseTypeMark(record.applyType) }}
+              </span>
+              {{ record.id }}
+            </span>
+            <el-tag :type="statusType(statusText(record.status))" size="small">{{ statusText(record.status) }}</el-tag>
+          </div>
+          <h3>{{ recordTitle(record) }}</h3>
+          <p class="record-feature-card__description">{{ recordDescription(record) }}</p>
+          <dl>
+            <template v-for="field in cardFields">
+              <dt :key="field.key + '-label'">{{ field.label }}</dt>
+              <dd :key="field.key + '-value'">{{ formatValue(record[field.key], field.key) }}</dd>
+            </template>
+          </dl>
+          <div v-if="hasRecordActions(record)" class="record-feature-card__actions">
+            <div class="record-feature-card__actions-right">
+              <el-button v-if="canEditRecord(record)" type="text" size="mini" @click.stop="openEdit(record)">编辑</el-button>
+              <el-button v-if="canDeleteRecord(record)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(record)">删除</el-button>
+            </div>
+          </div>
+        </article>
+      </div>
+      <el-empty v-else class="record-feature-empty" description="暂无租赁申请" />
+      <div v-if="paginationTotal" class="record-feature-pagination">
+        <span>共 {{ paginationTotal }} 条</span>
+        <el-pagination background :current-page.sync="currentPage" :page-size="pageSize" :total="paginationTotal" layout="prev, pager, next" @current-change="loadRecords" />
+      </div>
+    </section>
+    <el-dialog :title="formDialogTitle" :visible.sync="formVisible" top="3vh" append-to-body :close-on-click-modal="false" custom-class="record-feature-form" @closed="resetForm">
+      <el-form ref="recordForm" :model="form" :rules="rules" :validate-on-rule-change="false" label-width="112px" @submit.native.prevent>
+        <div class="record-feature-form-grid">
+          <business-record-field
+            v-for="field in formFields"
+            :key="field.key"
+            v-model="form[field.key]"
+            :field="field"
+            :enterprise-options="enterpriseOptions"
+            :enterprise-loading="enterpriseLoading"
+            :class="{ 'record-feature-field--wide': field.wide || field.type === 'textarea' }" />
+          <business-attachment-field v-model="form.uploadFiles" class="record-feature-attachment" label="申请附件" :limit="resource.uploadLimit" :tip="resource.uploadTip" />
+        </div>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="formVisible = false">取消</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitForm">提交申请</el-button>
+      </span>
+    </el-dialog>
+    <el-drawer title="租赁申请详情" :visible.sync="detailVisible" size="560px" append-to-body>
+      <div v-if="selectedRecord" v-loading="detailLoading" class="record-feature-detail">
+        <div class="record-feature-detail__hero">
+          <span :class="['lease-type-icon', 'lease-type-icon--detail', `lease-type-icon--${leaseTypeKey(selectedRecord.applyType)}`]" aria-hidden="true">
+            {{ leaseTypeMark(selectedRecord.applyType) }}
+          </span>
+          <div>
+            <small>{{ selectedRecord.id }}</small>
+            <h3>{{ recordTitle(selectedRecord) }}</h3>
+          </div>
+          <el-tag :type="statusType(statusText(selectedRecord.status))">{{ statusText(selectedRecord.status) }}</el-tag>
+        </div>
+        <div class="record-feature-detail__grid">
+          <div v-for="field in detailFields" :key="field.key" class="record-feature-detail__item">
+            <small>{{ field.label }}</small>
+            <b>{{ formatValue(selectedRecord[field.key], field.key) }}</b>
+          </div>
+        </div>
+        <section class="record-feature-detail__section">
+          <h4>申请原因</h4>
+          <p>{{ selectedRecord.applyReason || '-' }}</p>
+        </section>
+        <section v-if="selectedRecord.remark" class="record-feature-detail__section">
+          <h4>补充说明</h4>
+          <p>{{ selectedRecord.remark }}</p>
+        </section>
+        <section v-if="detailFiles.length" class="record-feature-detail__section">
+          <h4>申请附件</h4>
+          <div class="record-feature-files">
+            <button
+              v-for="file in detailFiles"
+              :key="file.id || file.attachmentId || file.uid || file.url || file.name"
+              type="button"
+              class="record-feature-file-link"
+              :disabled="!attachmentId(file)"
+              :title="file.fileName || file.name || '附件'"
+              :aria-label="`下载附件：${file.fileName || file.name || '附件'}`"
+              @click="downloadAttachment(file)">
+              <img class="record-feature-file-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+              <span class="record-feature-file-name">{{ file.fileName || file.name || '附件' }}</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </el-drawer>
+  </main>
+</template>
+<script>
+import BusinessAttachmentField from '@/components/business/record-fields/BusinessAttachmentField'
+import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
+import recordManager from '@/features/_shared/record-management/recordManager'
+import { getFileTypeIcon } from '@/utils/fileTypeIcon'
+import { getLeaseApplicationConfig } from './definition'
+import { getLeaseApplicationPolicy } from './policies'
+export default {
+  name: 'LeaseApplicationPage',
+  components: { BusinessAttachmentField, BusinessRecordField },
+  mixins: [recordManager],
+  props: { mode: { type: String, default: 'user' } },
+  computed: {
+    resource() {
+      return getLeaseApplicationConfig(this.mode)
+    },
+    permissions() {
+      return getLeaseApplicationPolicy(this.mode)
+    }
+  },
+  methods: {
+    leaseTypeKey(type) {
+      return { renew: 'renew', vacate: 'vacate', expand: 'expand', 续租申请: 'renew', 退租申请: 'vacate', 扩租申请: 'expand' }[type] || 'default'
+    },
+    leaseTypeMark(type) {
+      return { renew: '续', vacate: '退', expand: '扩', 续租申请: '续', 退租申请: '退', 扩租申请: '扩' }[type] || '租'
+    },
+    statusType(status) {
+      return status === '已查阅' ? 'success' : 'info'
+    },
+    fileIcon(file) {
+      return getFileTypeIcon(file)
+    }
+  }
+}
+</script>
+<style lang="scss" src="../../_shared/record-management/record-feature-page.scss"></style>
+<style lang="scss" scoped>
+.lease-type-icon {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 26px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: #f4f7fb;
+  color: #60758f;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+.lease-type-icon--renew {
+  background: #eef6ff;
+  color: #2878d0;
+}
+.lease-type-icon--vacate {
+  background: #fff6eb;
+  color: #c66a10;
+}
+.lease-type-icon--expand {
+  background: #edf9f7;
+  color: #198577;
+}
+.lease-type-icon--detail {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+  border-width: 2px;
+  font-size: 18px;
+}
+</style>
+// 独立业务组件的共享状态逻辑：提供 CRUD、分页、详情、附件和状态流转，不负责渲染页面。
+const pad = (value) => String(value).padStart(2, '0')
+const now = () => {
+  const date = new Date()
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+}
+const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object || {}, key)
+export default {
+  data() {
+    return {
+      keyword: '',
+      typeFilter: '',
+      statusFilter: '',
+      currentPage: 1,
+      pageSize: 6,
+      total: 0,
+      records: [],
+      usingMock: false,
+      loading: false,
+      submitting: false,
+      detailLoading: false,
+      statusSubmitting: false,
+      statusLoading: false,
+      formVisible: false,
+      detailVisible: false,
+      statusVisible: false,
+      editingId: '',
+      form: {},
+      selectedRecord: null,
+      statusTarget: null,
+      statusForm: { status: '', remark: '' },
+      enterpriseOptions: [],
+      enterpriseLoading: false
+    }
+  },
+  computed: {
+    fields() {
+      return (this.resource && this.resource.fields) || []
+    },
+    formFields() {
+      return this.fields.filter((field) => this.isFormFieldVisible(field))
+    },
+    detailFields() {
+      if (this.resource && typeof this.resource.detailFieldsResolver === 'function' && this.selectedRecord) {
+        return this.resource.detailFieldsResolver(this.selectedRecord, this.fields)
+      }
+      const contentKey = this.resource && this.resource.contentKey
+      return this.fields.filter((field) => !field.hideInDetail && field.key !== contentKey)
+    },
+    cardFields() {
+      if (this.resource && Array.isArray(this.resource.cardFields)) return this.resource.cardFields
+      const primaryKey = this.resource && this.resource.primaryKey
+      const contentKey = this.resource && this.resource.contentKey
+      return this.fields.filter((field) => field.key !== primaryKey && field.key !== contentKey && field.type !== 'textarea').slice(0, 3)
+    },
+    primaryOptions() {
+      if (this.resource && this.resource.primaryOptions) return this.resource.primaryOptions
+      const primaryKey = this.resource && this.resource.primaryKey
+      const field = this.fields.find((item) => item.key === primaryKey)
+      return (field && field.options) || []
+    },
+    statusOptions() {
+      return (this.resource && this.resource.statusOptions) || ['待受理', '处理中', '已完成', '已关闭']
+    },
+    filteredRecords() {
+      const keyword = this.keyword.toLowerCase()
+      const filterKey = (this.resource && (this.resource.filterKey || this.resource.primaryKey)) || ''
+      return this.records.filter((record) => {
+        const matchesKeyword =
+          !keyword ||
+          Object.keys(record || {}).some((key) =>
+            String(record[key] || '')
+              .toLowerCase()
+              .includes(keyword)
+          )
+        const matchesType = !this.typeFilter || String(record[filterKey]) === String(this.typeFilter)
+        const matchesStatus = !this.statusFilter || this.statusText(record.status) === this.statusFilter
+        return matchesKeyword && matchesType && matchesStatus
+      })
+    },
+    pagedRecords() {
+      if (!this.usingMock) return this.filteredRecords
+      const start = (this.currentPage - 1) * this.pageSize
+      return this.filteredRecords.slice(start, start + this.pageSize)
+    },
+    paginationTotal() {
+      return this.usingMock ? this.filteredRecords.length : this.total
+    },
+    rules() {
+      const rules = {}
+      this.formFields
+        .filter((field) => field.required)
+        .forEach((field) => {
+          const select = field.options || field.key === 'companyId' || field.type === 'date' || field.type === 'datetime'
+          rules[field.key] = [{ required: true, message: `请${select ? '选择' : '填写'}${field.label}`, trigger: select ? 'change' : 'blur' }]
+        })
+      return rules
+    },
+    canCreate() {
+      return this.canPerform('create')
+    },
+    hasStatus() {
+      return !this.resource || this.resource.hasStatus !== false
+    },
+    detailFiles() {
+      if (!this.selectedRecord || !this.resource || !this.resource.uploadField) return []
+      const responseField = this.resource.uploadResponseField || this.resource.uploadField
+      return this.normalizeUploadFiles(this.selectedRecord[responseField])
+    },
+    auditFiles() {
+      if (!this.statusTarget || !this.resource || !this.resource.uploadField) return []
+      const responseField = this.resource.uploadResponseField || this.resource.uploadField
+      return this.normalizeUploadFiles(this.statusTarget[responseField])
+    },
+    formDialogTitle() {
+      if (!this.editingId) return `新增${this.resource.itemName || this.resource.title}`
+      return `${this.resource.editActionLabel || '编辑'}${this.resource.itemName || this.resource.title}`
+    },
+    availableStatusOptions() {
+      return this.nextStatusOptions(this.statusTarget)
+    },
+    isResubmitting() {
+      return Boolean(this.editingId && this.isResubmitRecord(this.selectedRecord))
+    }
+  },
+  created() {
+    this.pageSize = Number((this.resource && this.resource.pageSize) || 6)
+    this.form = this.emptyForm()
+    this.loadRecords()
+    this.loadEnterprises()
+  },
+  methods: {
+    actionRules() {
+      return (this.permissions && this.permissions.actions) || this.permissions || {}
+    },
+    canPerform(action, record) {
+      const rules = this.actionRules()
+      const fallback = action === 'changeStatus' ? Boolean(this.resource && this.resource.allowStatusChange) : !(this.resource && this.resource.readOnly)
+      if (!hasOwn(rules, action)) return fallback
+      const rule = rules[action]
+      if (typeof rule === 'function') return Boolean(rule({ record, mode: this.mode, user: this.currentUser(), resource: this.resource }))
+      return rule === true
+    },
+    canEditRecord(record) {
+      if (!this.canPerform('edit', record)) return false
+      if (Array.isArray(this.resource.editableStatuses)) return this.resource.editableStatuses.includes(this.statusText(record && record.status))
+      if (this.resource.replyMode) return this.statusText(record && record.status) !== (this.resource.replyStatus || '已回复')
+      return true
+    },
+    canDeleteRecord(record) {
+      return this.canPerform('delete', record)
+    },
+    canChangeRecordStatus(record) {
+      return this.hasStatus && this.canPerform('changeStatus', record) && this.nextStatusOptions(record).length > 0
+    },
+    hasRecordActions(record) {
+      return this.canChangeRecordStatus(record) || this.canEditRecord(record) || this.canDeleteRecord(record)
+    },
+    matchesCondition(condition, values) {
+      if (!condition) return true
+      if (typeof condition === 'function') return Boolean(condition(values || {}))
+      return Object.keys(condition).every((key) => {
+        const expected = condition[key]
+        const actual = values && values[key]
+        return Array.isArray(expected) ? expected.includes(actual) : actual === expected
+      })
+    },
+    isFormFieldVisible(field) {
+      if (field.hideInForm || !this.matchesCondition(field.showWhen, this.form)) return false
+      if (this.resource.replyMode) return !field.hideInReplyForm
+      if (this.editingId) return !field.hideInEditForm
+      return !field.hideInCreateForm
+    },
+    currentUser() {
+      const storeUser = this.$store && this.$store.getters && this.$store.getters.userInfo
+      if (storeUser) return storeUser
+      try {
+        return JSON.parse(window.sessionStorage.getItem('userInfo') || '{}')
+      } catch (error) {
+        return {}
+      }
+    },
+    currentUserId() {
+      const user = this.currentUser()
+      return user.id || user.userId || user.userCode || ''
+    },
+    currentUserName() {
+      const user = this.currentUser()
+      return user.createByName || user.realName || user.userName || user.username || user.name || user.nickName || this.currentUserId() || ''
+    },
+    apiKey(action) {
+      return `${this.resource.apiNamespace}.${action}`
+    },
+    api(action) {
+      return this.$api && this.$api[this.apiKey(action)]
+    },
+    unwrap(response) {
+      if (response && response.data && response.data.head && response.data.data !== undefined) return response.data.data
+      if (response && response.result !== undefined) return response.result
+      if (response && response.data && response.data.result !== undefined) return response.data.result
+      return response && response.data !== undefined ? response.data : response
+    },
+    recordsFrom(result) {
+      if (Array.isArray(result)) return result
+      if (Array.isArray(result && result.records)) return result.records
+      if (Array.isArray(result && result.list)) return result.list
+      if (Array.isArray(result && result.rows)) return result.rows
+      return []
+    },
+    normalizeRecord(record) {
+      const normalized = Object.assign({}, record || {})
+      return typeof this.resource.normalizeRecord === 'function' ? this.resource.normalizeRecord(normalized) : normalized
+    },
+    useMockRecords() {
+      this.records = ((this.resource && this.resource.records) || []).map((record) => this.normalizeRecord(record))
+      this.total = this.records.length
+      this.usingMock = true
+    },
+    async loadRecords() {
+      const listApi = this.api('list')
+      if (!listApi) {
+        this.useMockRecords()
+        return
+      }
+      this.loading = true
+      try {
+        const params = Object.assign({}, this.resource.listParams || {}, { pageNo: this.currentPage, pageSize: this.pageSize })
+        if (this.keyword) params.keyword = this.keyword
+        if (this.typeFilter) params[this.resource.filterKey || this.resource.primaryKey] = this.typeFilter
+        if (this.hasStatus && this.statusFilter) params[this.statusField()] = this.statusValue(this.statusFilter, true)
+        const result = this.unwrap(await listApi(params)) || {}
+        this.records = this.recordsFrom(result).map((record) => this.normalizeRecord(record))
+        this.total = Number(result.total || result.count || result.totalCount || this.records.length)
+        this.usingMock = false
+      } catch (error) {
+        this.useMockRecords()
+      } finally {
+        this.loading = false
+      }
+    },
+    resetPage() {
+      this.currentPage = 1
+      this.loadRecords()
+    },
+    async loadEnterprises() {
+      if (!this.fields.some((field) => field.key === 'companyId')) return
+      const enterpriseApi = this.$api && this.$api['enterprise.getEnterprise']
+      if (!enterpriseApi) return
+      this.enterpriseLoading = true
+      try {
+        const result = this.unwrap(await enterpriseApi())
+        const list = Array.isArray(result) ? result : Array.isArray(result && result.data) ? result.data : []
+        this.enterpriseOptions = list.map((item) => ({ id: item.id, label: item.enterpriseName || item.enterpriseFullname || item.enterpriseNo || item.id }))
+      } catch (error) {
+        this.enterpriseOptions = []
+      } finally {
+        this.enterpriseLoading = false
+      }
+    },
+    applyAutomaticValues(form, automaticFields) {
+      const result = Object.assign({}, form)
+      Object.keys(automaticFields || {}).forEach((key) => {
+        if (automaticFields[key] === 'currentUserName') result[key] = this.currentUserName()
+        if (automaticFields[key] === 'now') result[key] = now()
+      })
+      return result
+    },
+    emptyForm() {
+      const form = {}
+      this.fields.forEach((field) => {
+        form[field.key] = field.defaultValue !== undefined ? field.defaultValue : field.key === this.resource.timeKey ? now() : ''
+      })
+      if (this.resource.uploadField) form[this.resource.uploadField] = []
+      return this.applyAutomaticValues(Object.assign(form, this.resource.defaultForm || {}), this.resource.autoFormFields)
+    },
+    openCreate() {
+      if (!this.canCreate) return
+      this.editingId = ''
+      this.form = this.emptyForm()
+      this.formVisible = true
+      this.$nextTick(() => this.$refs.recordForm && this.$refs.recordForm.clearValidate())
+    },
+    resetForm() {
+      this.editingId = ''
+      this.form = this.emptyForm()
+      this.submitting = false
+    },
+    submitForm() {
+      this.$refs.recordForm.validate((valid) => {
+        if (valid) this.saveRecord()
+      })
+    },
+    normalizeUploadFiles(files) {
+      let list = files
+      if (typeof list === 'string') {
+        try {
+          list = JSON.parse(list)
+        } catch (error) {
+          list = [list]
+        }
+      }
+      if (!Array.isArray(list)) list = list ? [list] : []
+      return list.filter(Boolean).map((item, index) => {
+        const file = typeof item === 'string' ? { filePath: item } : Object.assign({}, item)
+        const filePath = file.filePath || file.fileUrl || file.url || ''
+        const name = file.name || file.fileName || file.originalFileName || file.originalName || file.attachmentName || file.attFileName || filePath.split(/[\\/]/).pop() || `附件${index + 1}`
+        return Object.assign({}, file, {
+          name,
+          fileName: file.fileName || name,
+          uid: file.uid || file.attachmentId || file.id || file.fileId || `record-file-${index}`,
+          status: file.status || 'success',
+          url: file.url || file.fileUrl || file.filePath || ''
+        })
+      })
+    },
+    cleanUploadFile(file) {
+      const attachmentId = this.attachmentId(file)
+      const fileName = file.fileName || file.name
+      const filePath = file.filePath || file.fileUrl || file.url
+      const result = {
+        name: file.name || fileName,
+        fileName,
+        filePath,
+        fileType: file.fileType,
+        url: file.url || file.fileUrl || file.filePath
+      }
+      if (attachmentId) result.id = attachmentId
+      return result
+    },
+    async saveRecord() {
+      const editing = Boolean(this.editingId)
+      const action = editing ? 'edit' : 'create'
+      if (!this.canPerform(action, Object.assign({}, this.selectedRecord || {}, this.form))) return
+      this.submitting = true
+      const resubmitting = this.isResubmitting
+      let payload = Object.assign({}, this.form)
+      this.fields.filter((field) => field.showWhen && !this.matchesCondition(field.showWhen, this.form)).forEach((field) => delete payload[field.key])
+      if (this.resource.uploadField) payload[this.resource.uploadField] = this.normalizeUploadFiles(payload[this.resource.uploadField]).map(this.cleanUploadFile)
+      if (this.resource.replyMode) payload.status = this.resource.replyStatus || '已回复'
+      const statusField = this.statusField()
+      if (this.hasStatus && (payload[statusField] === undefined || payload[statusField] === null || payload[statusField] === '')) {
+        let nextStatus = this.resource.defaultStatus || '待受理'
+        if (this.editingId && this.selectedRecord) {
+          const currentStatus = this.statusText(this.recordStatus(this.selectedRecord))
+          const resubmitStatuses = this.resource.resubmitStatuses || []
+          nextStatus = resubmitStatuses.includes(currentStatus) ? this.resource.resubmitStatus || this.resource.defaultStatus || '待审核' : this.recordStatus(this.selectedRecord) || nextStatus
+        }
+        payload[statusField] = this.statusValue(nextStatus)
+      }
+      if (statusField !== 'status') delete payload.status
+      if (editing) payload.id = this.editingId
+      Object.assign(payload, editing ? { updateBy: this.currentUserId(), itemUpdateTime: now() } : { createBy: this.currentUserId(), itemCreateTime: now() })
+      if (typeof this.resource.payloadTransform === 'function') payload = this.resource.payloadTransform(payload, { editing, form: this.form })
+      if (!editing) {
+        if (!payload.createBy) payload.createBy = this.currentUserId()
+        if (!payload.itemCreateTime) payload.itemCreateTime = now()
+      }
+      if (editing && this.resource.uploadField && hasOwn(payload, this.resource.uploadField)) {
+        payload[this.resource.uploadField] = this.normalizeUploadFiles(payload[this.resource.uploadField]).map((file) => this.cleanStatusUploadFile(file))
+      }
+      if (resubmitting) {
+        payload[statusField] = this.statusValue(this.resource.resubmitStatus || this.resource.defaultStatus || '待审核')
+        if (statusField !== 'status') delete payload.status
+      }
+      const saveApi = this.api(editing ? 'edit' : 'add')
+      try {
+        if (this.usingMock || !saveApi) this.saveMockRecord(payload)
+        else await saveApi(payload)
+        const successMessage = resubmitting
+          ? '重新提交成功'
+          : this.editingId
+          ? this.resource.replyMode
+            ? '回复成功'
+            : '修改成功'
+          : this.resource.createSuccessMessage || `${this.resource.itemName || this.resource.title}已提交`
+        this.$message.success(successMessage)
+        this.formVisible = false
+        this.currentPage = 1
+        if (!this.usingMock) await this.loadRecords()
+      } catch (error) {
+        this.$message.error('提交失败，请稍后重试')
+      } finally {
+        this.submitting = false
+      }
+    },
+    saveMockRecord(payload) {
+      if (this.editingId) {
+        const index = this.records.findIndex((record) => String(record.id) === String(this.editingId))
+        if (index > -1) this.$set(this.records, index, Object.assign({}, this.records[index], payload))
+      } else {
+        this.records.unshift(Object.assign({}, payload, { id: `${this.resource.idPrefix || 'RE'}${Date.now().toString().slice(-8)}` }))
+      }
+      this.total = this.records.length
+    },
+    async openDetail(record) {
+      this.selectedRecord = this.normalizeRecord(record)
+      this.detailVisible = true
+      const detailApi = this.api('queryById')
+      if (!detailApi) return
+      this.detailLoading = true
+      try {
+        const result = this.unwrap(await detailApi({ id: record.id }))
+        if (result) {
+          const mergedRecord = Object.assign({}, record, result)
+          ;(this.resource.preserveListFields || []).forEach((key) => {
+            if (hasOwn(record, key)) mergedRecord[key] = record[key]
+          })
+          this.selectedRecord = this.normalizeRecord(mergedRecord)
+        }
+      } catch (error) {
+        // 保留列表中的基础数据，详情抽屉仍然可以打开。
+      } finally {
+        this.detailLoading = false
+      }
+      try {
+        await this.markReviewingOnDetail()
+      } catch (error) {
+        this.$message.warning('详情已打开，但状态更新为审核中失败，请稍后重试')
+      }
+    },
+    async openEdit(record) {
+      if (!this.canEditRecord(record)) return
+      let target = record || this.selectedRecord
+      if (!target) return
+      const detailApi = this.api('queryById')
+      const needsDetail = this.resource.loadDetailBeforeEdit || Boolean(this.resource.uploadField)
+      if (needsDetail && !detailApi && !this.usingMock) {
+        this.$message.error('未找到详情接口，无法安全加载编辑数据')
+        return
+      }
+      if (needsDetail && detailApi) {
+        try {
+          const result = this.unwrap(await detailApi({ id: target.id }))
+          if (!result && this.resource.uploadField) throw new Error('missing detail data')
+          if (result) target = Object.assign({}, target, result)
+        } catch (error) {
+          if (this.resource.uploadField) {
+            this.$message.error('详情加载失败，无法安全加载附件，请重试')
+            return
+          }
+          this.$message.warning('详情加载失败，已展示基础信息')
+        }
+      }
+      target = this.normalizeRecord(target)
+      if (!this.canEditRecord(target)) {
+        this.$message.warning('当前状态不允许编辑')
+        return
+      }
+      this.selectedRecord = target
+      this.editingId = target.id
+      const formRecord = typeof this.resource.formFromRecord === 'function' ? this.resource.formFromRecord(target) : target
+      this.form = this.applyAutomaticValues(Object.assign(this.emptyForm(), formRecord), this.resource.replyAutoFormFields)
+      if (this.resource.uploadField) {
+        const responseField = this.resource.uploadResponseField || this.resource.uploadField
+        let uploadFiles = this.normalizeUploadFiles(target[responseField])
+        if (typeof this.resource.editUploadFilesTransform === 'function') uploadFiles = this.resource.editUploadFilesTransform(uploadFiles)
+        this.$set(this.form, this.resource.uploadField, uploadFiles)
+      }
+      this.detailVisible = false
+      this.formVisible = true
+      this.$nextTick(() => this.$refs.recordForm && this.$refs.recordForm.clearValidate())
+    },
+    async removeRecord(record) {
+      const target = record || this.selectedRecord
+      if (!target || !this.canDeleteRecord(target)) return
+      try {
+        await this.$confirm('删除后不可恢复，是否继续？', '确认删除', { type: 'warning' })
+        const deleteApi = this.api('delete')
+        if (this.usingMock || !deleteApi) {
+          this.records = this.records.filter((item) => String(item.id) !== String(target.id))
+          this.total = this.records.length
+        } else {
+          await deleteApi({ id: target.id })
+          await this.loadRecords()
+        }
+        this.detailVisible = false
+        this.$message.success('删除成功')
+      } catch (error) {
+        if (error !== 'cancel' && error !== 'close') this.$message.error('删除失败，请稍后重试')
+      }
+    },
+    nextStatusOptions(record) {
+      if (!record) return []
+      const currentStatus = this.statusText(this.recordStatus(record))
+      const transitions = this.resource.statusTransitions || {}
+      if (Object.keys(transitions).length) return Array.isArray(transitions[currentStatus]) ? transitions[currentStatus] : []
+      return this.statusOptions.filter((status) => status !== currentStatus)
+    },
+    async openStatusDialog(record) {
+      if (!this.canChangeRecordStatus(record)) return
+      this.statusVisible = true
+      this.statusLoading = true
+      let target = this.normalizeRecord(record)
+      try {
+        if (this.resource.loadDetailBeforeStatus) {
+          const detailApi = this.api('queryById')
+          if (detailApi) {
+            const result = this.unwrap(await detailApi({ id: record.id }))
+            if (result) target = this.normalizeRecord(Object.assign({}, record, result))
+          }
+        }
+      } catch (error) {
+        this.$message.warning('详情加载失败，已展示列表中的基础信息')
+      }
+      try {
+        if (this.resource.markReviewingOnStatusOpen) target = await this.markRecordReviewing(target)
+      } catch (error) {
+        this.statusVisible = false
+        this.$message.error('状态更新为审核中失败，请稍后重试')
+        return
+      } finally {
+        this.statusLoading = false
+      }
+      this.statusTarget = target
+      const options = this.nextStatusOptions(target)
+      this.statusForm = { status: options[0] || '', remark: target.remark || '' }
+    },
+    async saveStatus() {
+      if (!this.statusTarget || !this.statusForm.status) return
+      this.statusSubmitting = true
+      const payload = this.prepareStatusPayload(this.statusTarget, this.statusForm.status, {
+        remark: this.statusForm.remark,
+        updateBy: this.currentUserId(),
+        itemUpdateTime: now()
+      })
+      try {
+        const editApi = this.api('edit')
+        if (this.usingMock || !editApi) {
+          const index = this.records.findIndex((record) => String(record.id) === String(this.statusTarget.id))
+          if (index > -1) this.$set(this.records, index, Object.assign({}, this.records[index], payload))
+        } else {
+          await editApi(payload)
+          await this.loadRecords()
+        }
+        this.statusVisible = false
+        this.$message.success('状态已更新')
+      } catch (error) {
+        this.$message.error('状态更新失败，请稍后重试')
+      } finally {
+        this.statusSubmitting = false
+      }
+    },
+    statusText(status) {
+      const map = this.resource.statusMap || {}
+      if (hasOwn(map, status)) return map[status]
+      if (status === undefined || status === null || status === '' || status === 0 || status === '0') return this.resource.defaultStatus || '待处理'
+      return status
+    },
+    statusValue(status, forList = false) {
+      const map = forList ? this.resource.listStatusValueMap || this.resource.statusValueMap || {} : this.resource.statusValueMap || {}
+      return hasOwn(map, status) ? map[status] : status
+    },
+    statusField() {
+      return this.resource.statusField || 'status'
+    },
+    recordStatus(record) {
+      return record && record[this.statusField()]
+    },
+    isResubmitRecord(record) {
+      if (!record) return false
+      return (this.resource.resubmitStatuses || []).includes(this.statusText(this.recordStatus(record)))
+    },
+    cleanStatusUploadFile(file) {
+      const cleaned = this.cleanUploadFile(file)
+      delete cleaned.id
+      const stripPrefix = (value) => (value ? String(value).replace(/^.*[\\/]/, '') : value)
+      cleaned.filePath = stripPrefix(cleaned.filePath)
+      cleaned.url = stripPrefix(cleaned.url)
+      return cleaned
+    },
+    prepareStatusPayload(record, status, extra = {}) {
+      const statusField = this.statusField()
+      const payload = Object.assign({}, record, extra)
+      payload[statusField] = this.statusValue(status)
+      if (statusField !== 'status') delete payload.status
+      if (this.resource.uploadField) {
+        const responseField = this.resource.uploadResponseField || this.resource.uploadField
+        if (hasOwn(payload, responseField)) payload[this.resource.uploadField] = this.normalizeUploadFiles(payload[responseField]).map((file) => this.cleanStatusUploadFile(file))
+      }
+      return payload
+    },
+    async markRecordReviewing(record) {
+      if (!record || !this.canPerform('changeStatus', record)) return record
+      const pendingStatus = this.resource.reviewPendingStatus || '待审核'
+      const reviewingStatus = this.resource.reviewingStatus || '审核中'
+      if (this.statusText(this.recordStatus(record)) !== pendingStatus) return record
+      const editApi = this.api('edit')
+      const statusField = this.statusField()
+      const payload = this.prepareStatusPayload(record, reviewingStatus, { updateBy: this.currentUserId(), itemUpdateTime: now() })
+      if (!this.usingMock && editApi) await editApi(payload)
+      const updated = this.normalizeRecord(Object.assign({}, record, { [statusField]: payload[statusField], status: payload[statusField] }))
+      const index = this.records.findIndex((item) => String(item.id) === String(updated.id))
+      if (index > -1) this.$set(this.records, index, Object.assign({}, this.records[index], { [statusField]: payload[statusField], status: payload[statusField] }))
+      return updated
+    },
+    async markReviewingOnDetail() {
+      if (!this.selectedRecord || !this.resource.markReviewingOnDetail || !this.canPerform('changeStatus', this.selectedRecord)) return
+      this.selectedRecord = await this.markRecordReviewing(this.selectedRecord)
+    },
+    statusType(status) {
+      return (
+        {
+          待受理: 'warning',
+          待审核: 'warning',
+          审核中: 'primary',
+          待确认: 'warning',
+          确认中: 'primary',
+          待回复: 'warning',
+          待处理: 'warning',
+          处理中: '',
+          已完成: 'success',
+          已通过: 'success',
+          已预定: 'success',
+          已回复: 'success',
+          已发布: 'success',
+          正常: 'success',
+          招聘中: 'success',
+          在售: 'success',
+          已拒绝: 'danger',
+          已驳回: 'danger',
+          已关闭: 'info',
+          已下线: 'info',
+          已暂停: 'info',
+          已过期: 'info',
+          已截止: 'info',
+          售罄: 'info'
+        }[status] || 'info'
+      )
+    },
+    formatValue(value, key) {
+      const valueMap = (this.resource.valueLabelMaps || {})[key] || {}
+      if (hasOwn(valueMap, value)) return valueMap[value]
+      if (key === 'companyId') {
+        const enterprise = this.enterpriseOptions.find((item) => String(item.id) === String(value))
+        if (enterprise) return enterprise.label
+      }
+      return value === undefined || value === null || value === '' ? '-' : value
+    },
+    optionLabel(option) {
+      return option && typeof option === 'object' ? option.label : option
+    },
+    optionValue(option) {
+      return option && typeof option === 'object' ? option.value : option
+    },
+    recordTitle(record) {
+      if (this.resource.cardTitleText) return this.resource.cardTitleText
+      const key = this.resource.cardTitleKey || this.resource.primaryKey
+      return this.formatValue(record && record[key], key)
+    },
+    recordDescription(record) {
+      return this.formatValue(record && record[this.resource.contentKey], this.resource.contentKey)
+    },
+    attachmentId(file) {
+      return file && (file.attachmentId || file.id || file.fileId)
+    },
+    async downloadAttachment(file) {
+      const attachmentId = this.attachmentId(file)
+      if (!attachmentId) {
+        this.$message.warning('该附件缺少 attachmentId，无法下载')
+        return
+      }
+      const downloadApi = this.$api && this.$api['attachment.download']
+      if (!downloadApi) {
+        this.$message.error('未找到附件下载接口')
+        return
+      }
+      try {
+        const response = await downloadApi({ attachmentId }, { responseType: 'blob' })
+        const responseData = response && response.data !== undefined ? response.data : response
+        const blob = responseData instanceof Blob ? responseData : new Blob([responseData], { type: file.fileType || 'application/octet-stream' })
+        const objectUrl = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = objectUrl
+        link.download = file.fileName || file.name || '附件'
+        link.style.display = 'none'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(objectUrl)
+      } catch (error) {
+        this.$message.error('附件下载失败，请稍后重试')
+      }
+    },
+    statusActionText(record) {
+      const status = this.statusText(this.recordStatus(record))
+      return typeof this.resource.statusActionLabelResolver === 'function' ? this.resource.statusActionLabelResolver(record, status) : this.resource.statusActionLabel || '更新进度'
+    }
+  }
+}
+<!-- 通用审核弹窗：只读展示业务数据，仅允许管理员修改审核状态。 -->
+<template>
+  <el-dialog :title="title" :visible="visible" width="680px" append-to-body :close-on-click-modal="false" custom-class="record-audit-dialog" @update:visible="$emit('input', $event)">
+    <div v-loading="loading">
+      <div v-if="record" class="record-audit-summary">
+        <div v-for="field in visibleFields" :key="field.key" class="record-audit-summary__item" :class="{ 'record-audit-summary__item--wide': field.wide || field.type === 'textarea' }">
+          <span>{{ field.label }}</span>
+          <strong>{{ formatter(record[field.key], field.key) }}</strong>
+        </div>
+      </div>
+      <div v-if="record && contentKey" class="record-audit-content">
+        <span>{{ contentLabel }}</span>
+        <strong>{{ formatter(record[contentKey], contentKey) }}</strong>
+      </div>
+      <div v-if="files.length" class="record-audit-files">
+        <span class="record-audit-files__label">申请附件</span>
+        <button
+          v-for="file in files"
+          :key="file.id || file.attachmentId || file.uid || file.url || file.fileName"
+          type="button"
+          class="record-feature-file-link"
+          :title="file.fileName || file.name || '附件'"
+          @click="$emit('download', file)">
+          <img class="record-feature-file-icon" :src="fileIcon(file)" alt="" aria-hidden="true" />
+          <span class="record-feature-file-name">{{ file.fileName || file.name || '附件' }}</span>
+        </button>
+      </div>
+      <el-form label-width="92px" class="record-audit-form">
+        <el-form-item label="审核状态" required>
+          <el-select :value="status" class="record-feature-full" placeholder="请选择审核状态" @input="$emit('update:status', $event)">
+            <el-option v-for="option in statusOptions" :key="option" :label="statusLabels[option] || option" :value="option" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+    </div>
+    <span slot="footer">
+      <el-button @click="$emit('input', false)">取消</el-button>
+      <el-button type="primary" :loading="submitting" :disabled="loading || !status" @click="$emit('confirm')">确认审核</el-button>
+    </span>
+  </el-dialog>
+</template>
+<script>
+import { getFileTypeIcon } from '@/utils/fileTypeIcon'
+export default {
+  name: 'RecordAuditDialog',
+  props: {
+    value: { type: Boolean, default: false },
+    title: { type: String, default: '审核申请' },
+    loading: { type: Boolean, default: false },
+    submitting: { type: Boolean, default: false },
+    record: { type: Object, default: null },
+    fields: { type: Array, default: () => [] },
+    files: { type: Array, default: () => [] },
+    contentKey: { type: String, default: '' },
+    statusOptions: { type: Array, default: () => [] },
+    statusLabels: { type: Object, default: () => ({}) },
+    status: { type: [String, Number], default: '' },
+    formatter: { type: Function, default: (value) => (value === undefined || value === null || value === '' ? '-' : value) }
+  },
+  computed: {
+    visible() {
+      return this.value
+    },
+    visibleFields() {
+      return this.fields.filter((field) => field.key !== this.contentKey)
+    },
+    contentLabel() {
+      const field = this.fields.find((item) => item.key === this.contentKey)
+      return (field && field.label) || '申请内容'
+    }
+  },
+  methods: {
+    fileIcon(file) {
+      return getFileTypeIcon(file)
+    }
+  }
+}
+</script>
+<!-- 园区服务管理聚合页：统一维护租车、问卷、班车和旅行门票信息。 -->
+<template>
+  <main class="life-services-manage">
+    <section class="manage-surface">
+      <el-tabs v-model="activeTab" class="service-tabs" stretch>
+        <el-tab-pane v-for="item in tabs" :key="item.name" :name="item.name">
+          <span slot="label" class="service-tab-label">
+            <i :class="item.icon" aria-hidden="true"></i>
+            <span>{{ item.label }}</span>
+          </span>
+        </el-tab-pane>
+      </el-tabs>
+      <component :is="activeItem.component" :key="activeItem.name" v-bind="activeItem.props" />
+    </section>
+  </main>
+</template>
+<script>
+import CarRentalPage from './car-rental/CarRentalPage'
+import ShuttleBusBoard from './shuttle-bus/ShuttleBusBoard'
+import TravelTicketPage from './travel-ticket/TravelTicketPage'
+import UserSurveyPage from './user-survey/UserSurveyPage'
+const LIFE_SERVICE_TABS = [
+  { name: 'car-rental', label: '租车服务', icon: 'el-icon-truck', component: CarRentalPage, props: { mode: 'admin' } },
+  { name: 'user-survey', label: '问卷调查', icon: 'el-icon-document-checked', component: UserSurveyPage, props: { mode: 'admin' } },
+  { name: 'shuttle-bus', label: '园区班车', icon: 'el-icon-guide', component: ShuttleBusBoard, props: { readOnly: false } },
+  { name: 'travel-ticket', label: '旅行门票', icon: 'el-icon-picture-outline-round', component: TravelTicketPage, props: { mode: 'admin' } }
+]
+export default {
+  name: 'LifeServicesManagePage',
+  data() {
+    return { activeTab: LIFE_SERVICE_TABS[0].name, tabs: LIFE_SERVICE_TABS }
+  },
+  computed: {
+    activeItem() {
+      return this.tabs.find((item) => item.name === this.activeTab) || this.tabs[0]
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.life-services-manage {
+  min-height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #f6f8fb;
+}
+.manage-surface {
+  min-height: 660px;
+  overflow: hidden;
+  border: 1px solid #e5ebf2;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 28px rgba(45, 67, 95, 0.06);
+}
+.service-tabs {
+  margin: 18px 20px 0;
+  ::v-deep .el-tabs__header {
+    margin: 0 0 18px;
+    padding: 6px;
+    border: 1px solid #e7edf5;
+    border-radius: 12px;
+    background: #f5f8fc;
+  }
+  ::v-deep .el-tabs__nav-wrap::after,
+  ::v-deep .el-tabs__active-bar {
+    display: none;
+  }
+  ::v-deep .el-tabs__item {
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 8px;
+    color: #607087;
+    font-weight: 500;
+    line-height: 44px;
+    transition: color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  ::v-deep .el-tabs__item:hover {
+    color: #2f7cdf;
+    background: rgba(47, 124, 223, 0.06);
+  }
+  ::v-deep .el-tabs__item.is-active {
+    color: #236dc9;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(47, 124, 223, 0.14);
+  }
+  ::v-deep .el-tabs__item:focus-visible {
+    outline: 3px solid rgba(47, 124, 223, 0.28);
+    outline-offset: 1px;
+  }
+}
+.service-tab-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  i {
+    font-size: 16px;
+  }
+}
+@media (max-width: 760px) {
+  .life-services-manage {
+    padding: 8px;
+  }
+  .service-tabs {
+    margin: 10px 8px 0;
+    ::v-deep .el-tabs__item {
+      padding: 0 7px;
+      font-size: 13px;
+    }
+  }
+  .service-tab-label {
+    gap: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-tabs ::v-deep .el-tabs__item {
+    transition: none;
+  }
+}
+</style>
+<!-- 保险投保记录业务组件：独立维护保险编号、车辆、购买数量、总价和生效状态。 -->
+<template>
+  <main class="record-feature-page">
+    <header class="record-feature-hero">
+      <div class="record-feature-hero__title">
+        <span class="record-feature-hero__icon"><i class="el-icon-document-checked"></i></span>
+        <div>
+          <h2>保险投保记录</h2>
+          <p>提交并查看车辆保险购买与生效记录。</p>
+        </div>
+      </div>
+      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增投保记录</el-button>
+    </header>
+    <section v-loading="loading" class="record-feature-surface">
+      <div class="record-feature-toolbar">
+        <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索保险编号、用户或车牌号" @input="resetPage" @clear="resetPage" />
+        <el-select v-model="statusFilter" clearable placeholder="全部投保状态" @change="resetPage" @clear="resetPage">
+          <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
+        </el-select>
+      </div>
+      <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
+        <el-table-column prop="insuranceId" label="保险编号" min-width="140" />
+        <el-table-column prop="userId" label="用户编号" min-width="130" />
+        <el-table-column prop="carNo" label="车牌号" min-width="130" />
+        <el-table-column prop="buyTime" label="购买时间" width="170" />
+        <el-table-column prop="amount" label="数量" width="80" />
+        <el-table-column prop="totalPrice" label="总价（元）" width="120" />
+        <el-table-column label="状态" width="100">
+          <template slot-scope="scope">
+            <el-tag :type="statusType(statusText(scope.row.status))" size="small">{{ statusText(scope.row.status) }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="170" fixed="right">
+          <template slot-scope="scope">
+            <div class="record-feature-table__actions">
+              <el-button type="text" size="mini" @click.stop="openDetail(scope.row)">详情</el-button>
+              <el-button v-if="canEditRecord(scope.row)" type="text" size="mini" @click.stop="openEdit(scope.row)">编辑</el-button>
+              <el-button v-if="canDeleteRecord(scope.row)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(scope.row)">取消</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-empty v-else class="record-feature-empty" description="暂无保险投保记录" />
+      <div v-if="paginationTotal" class="record-feature-pagination">
+        <span>共 {{ paginationTotal }} 条</span>
+        <el-pagination background :current-page.sync="currentPage" :page-size="pageSize" :total="paginationTotal" layout="prev, pager, next" @current-change="loadRecords" />
+      </div>
+    </section>
+    <el-dialog :title="formDialogTitle" :visible.sync="formVisible" append-to-body :close-on-click-modal="false" custom-class="record-feature-form" @closed="resetForm">
+      <el-form ref="recordForm" :model="form" :rules="rules" label-width="110px">
+        <div class="record-feature-form-grid"><business-record-field v-for="field in formFields" :key="field.key" v-model="form[field.key]" :field="field" /></div>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="formVisible = false">取消</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitForm">保存记录</el-button>
+      </span>
+    </el-dialog>
+    <el-drawer title="投保记录详情" :visible.sync="detailVisible" size="500px" append-to-body>
+      <div v-if="selectedRecord" class="record-feature-detail">
+        <div class="record-feature-detail__hero">
+          <i class="el-icon-document-checked"></i>
+          <div>
+            <small>{{ selectedRecord.id }}</small>
+            <h3>保险 {{ selectedRecord.insuranceId }}</h3>
+          </div>
+          <el-tag :type="statusType(statusText(selectedRecord.status))">{{ statusText(selectedRecord.status) }}</el-tag>
+        </div>
+        <div class="record-feature-detail__grid">
+          <div v-for="field in detailFields" :key="field.key" class="record-feature-detail__item">
+            <small>{{ field.label }}</small>
+            <b>{{ formatValue(selectedRecord[field.key], field.key) }}</b>
+          </div>
+        </div>
+        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
+          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑记录</el-button>
+        </div>
+      </div>
+    </el-drawer>
+  </main>
+</template>
+<script>
+import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
+import recordManager from '@/features/_shared/record-management/recordManager'
+export default {
+  name: 'CarInsuranceInfoPage',
+  components: { BusinessRecordField },
+  mixins: [recordManager],
+  computed: {
+    resource() {
+      return {
+        title: '保险投保记录',
+        itemName: '投保记录',
+        icon: 'el-icon-document-checked',
+        idPrefix: 'CII',
+        apiNamespace: 'tocCarInsuranceInfo',
+        primaryKey: 'insuranceId',
+        cardTitleKey: 'insuranceId',
+        timeKey: 'buyTime',
+        contentKey: 'carNo',
+        defaultStatus: '待支付',
+        statusOptions: ['待支付', '已支付', '已生效', '已取消'],
+        fields: [
+          { key: 'insuranceId', label: '保险编号', required: true },
+          { key: 'userId', label: '用户编号', required: true },
+          { key: 'carNo', label: '车牌号', required: true },
+          { key: 'buyTime', label: '购买时间', type: 'datetime', required: true },
+          { key: 'amount', label: '购买数量', type: 'number', required: true },
+          { key: 'totalPrice', label: '总价（元）', type: 'amount', required: true }
+        ]
+      }
+    },
+    permissions() {
+      return { create: true, edit: true, delete: true, changeStatus: false }
+    }
+  }
+}
+</script>
+<style lang="scss" src="../../_shared/record-management/record-feature-page.scss"></style>
+<!-- 汽车保险业务组件：独立维护保险产品、险种、价格、说明和销售状态。 -->
+<template>
+  <main class="record-feature-page">
+    <header class="record-feature-hero">
+      <div class="record-feature-hero__title">
+        <span class="record-feature-hero__icon"><i class="el-icon-umbrella"></i></span>
+        <div>
+          <h2>汽车保险</h2>
+          <p>查看和维护交强险、商业险及车辆保障产品。</p>
+        </div>
+      </div>
+      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增保险产品</el-button>
+    </header>
+    <section v-loading="loading" class="record-feature-surface">
+      <div class="record-feature-toolbar">
+        <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索保险名称或说明" @input="resetPage" @clear="resetPage" />
+        <el-select v-model="typeFilter" clearable placeholder="全部保险类型" @change="resetPage" @clear="resetPage">
+          <el-option v-for="option in primaryOptions" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
+        </el-select>
+        <el-select v-model="statusFilter" clearable placeholder="全部销售状态" @change="resetPage" @clear="resetPage">
+          <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
+        </el-select>
+      </div>
+      <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
+        <el-table-column prop="insuranceName" label="保险名称" min-width="230" show-overflow-tooltip />
+        <el-table-column prop="insuranceType" label="保险类型" width="140" />
+        <el-table-column prop="price" label="价格（元）" width="130" />
+        <el-table-column label="销售状态" width="110">
+          <template slot-scope="scope">
+            <el-tag :type="statusType(statusText(scope.row.status))" size="small">{{ statusText(scope.row.status) }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="170" fixed="right">
+          <template slot-scope="scope">
+            <div class="record-feature-table__actions">
+              <el-button type="text" size="mini" @click.stop="openDetail(scope.row)">详情</el-button>
+              <el-button v-if="canEditRecord(scope.row)" type="text" size="mini" @click.stop="openEdit(scope.row)">编辑</el-button>
+              <el-button v-if="canDeleteRecord(scope.row)" type="text" size="mini" class="danger-action" @click.stop="removeRecord(scope.row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-empty v-else class="record-feature-empty" description="暂无汽车保险产品" />
+      <div v-if="paginationTotal" class="record-feature-pagination">
+        <span>共 {{ paginationTotal }} 项</span>
+        <el-pagination background :current-page.sync="currentPage" :page-size="pageSize" :total="paginationTotal" layout="prev, pager, next" @current-change="loadRecords" />
+      </div>
+    </section>
+    <el-dialog :title="formDialogTitle" :visible.sync="formVisible" append-to-body :close-on-click-modal="false" custom-class="record-feature-form" @closed="resetForm">
+      <el-form ref="recordForm" :model="form" :rules="rules" label-width="100px">
+        <div class="record-feature-form-grid">
+          <business-record-field
+            v-for="field in formFields"
+            :key="field.key"
+            v-model="form[field.key]"
+            :field="field"
+            :class="{ 'record-feature-field--wide': field.wide || field.type === 'textarea' }" />
+        </div>
+      </el-form>
+      <span slot="footer">
+        <el-button @click="formVisible = false">取消</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitForm">保存产品</el-button>
+      </span>
+    </el-dialog>
+    <el-drawer title="保险产品详情" :visible.sync="detailVisible" size="500px" append-to-body>
+      <div v-if="selectedRecord" class="record-feature-detail">
+        <div class="record-feature-detail__hero">
+          <i class="el-icon-umbrella"></i>
+          <div>
+            <small>{{ selectedRecord.insuranceType || '汽车保险' }}</small>
+            <h3>{{ selectedRecord.insuranceName }}</h3>
+          </div>
+          <el-tag :type="statusType(statusText(selectedRecord.status))">{{ statusText(selectedRecord.status) }}</el-tag>
+        </div>
+        <div class="record-feature-detail__grid">
+          <div class="record-feature-detail__item">
+            <small>保险价格</small>
+            <b>¥ {{ selectedRecord.price || '-' }}</b>
+          </div>
+        </div>
+        <section class="record-feature-detail__section">
+          <h4>保险说明</h4>
+          <p>{{ selectedRecord.description || '-' }}</p>
+        </section>
+        <div v-if="canEditRecord(selectedRecord)" class="record-feature-card__actions">
+          <el-button v-if="canEditRecord(selectedRecord)" type="primary" @click="openEdit(selectedRecord)">编辑产品</el-button>
+        </div>
+      </div>
+    </el-drawer>
+  </main>
+</template>
+<script>
+import BusinessRecordField from '@/components/business/record-fields/BusinessRecordField'
+import recordManager from '@/features/_shared/record-management/recordManager'
+const INSURANCE_TYPES = ['交强险', '商业险', '车损险', '第三者责任险']
+export default {
+  name: 'CarInsurancePage',
+  components: { BusinessRecordField },
+  mixins: [recordManager],
+  computed: {
+    resource() {
+      return {
+        title: '汽车保险',
+        itemName: '保险产品',
+        icon: 'el-icon-umbrella',
+        idPrefix: 'CI',
+        apiNamespace: 'tocCarInsurance',
+        primaryKey: 'insuranceName',
+        filterKey: 'insuranceType',
+        primaryOptions: INSURANCE_TYPES,
+        cardTitleKey: 'insuranceName',
+        contentKey: 'description',
+        defaultStatus: '在售',
+        statusOptions: ['在售', '暂停销售', '已下架'],
+        fields: [
+          { key: 'insuranceName', label: '保险名称', required: true, wide: true },
+          { key: 'insuranceType', label: '保险类型', options: INSURANCE_TYPES, required: true },
+          { key: 'price', label: '价格（元）', type: 'amount', required: true },
+          { key: 'description', label: '保险说明', type: 'textarea', required: true, wide: true }
+        ]
+      }
+    },
+    permissions() {
+      return { create: true, edit: true, delete: true, changeStatus: false }
+    }
+  }
+}
+</script>
+<style lang="scss" src="../../_shared/record-management/record-feature-page.scss"></style>
+<!-- 租车申请业务组件：独立维护用户选车、租赁日期、总租金和申请状态。 -->
+<template>
+  <main class="record-feature-page">
+    <header class="record-feature-hero">
+      <div class="record-feature-hero__title">
+        <span class="record-feature-hero__icon"><i class="el-icon-tickets"></i></span>
+      allocationHistoryPageSize: 10,
+      followUpVisible: false,
+      followUpSubmitting: false,
+      followUpRecord: null,
+      followUpForm: this.emptyFollowUpForm(),
+      followUpDetailVisible: false,
+      followUpDetailLoading: false,
+      followUpDetail: null,
+      leadTableScrollbarVisible: false,
+      leadTableScrollWidth: 0,
+      leadTableViewportWidth: 0,
+      leadTableScrollbarTrackWidth: 0,
+      leadTableScrollLeft: 0,
+      leadTableHeight: 0,
+      leadTableRowHeight: 40
+    }
+  },
+  watch: {
+    records() {
+      this.scheduleLeadTableScrollbar()
+    },
+    currentPage() {
+      this.scheduleLeadTableScrollbar()
+    }
+  },
+  mounted() {
+    this.$nextTick(this.scheduleLeadTableScrollbar)
+    window.addEventListener('resize', this.scheduleLeadTableScrollbar)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.scheduleLeadTableScrollbar)
+    if (this._leadTableBodyWrapper && this._leadTableScrollHandler) this._leadTableBodyWrapper.removeEventListener('scroll', this._leadTableScrollHandler)
+    if (this._leadTableScrollFrame != null) window.cancelAnimationFrame(this._leadTableScrollFrame)
+    this.stopLeadTableScrollbarDrag()
+  },
+  computed: {
+    isAdmin() {
+      return this.mode === 'admin'
+    },
+    isUser() {
+      return this.mode === 'user'
+    },
+    leadTableScrollbarThumbWidth() {
+      if (!this.leadTableViewportWidth || !this.leadTableScrollWidth) return 0
+      const trackWidth = this.leadTableScrollbarTrackWidth || this.leadTableViewportWidth
+      return Math.min(trackWidth, Math.max(48, Math.round((trackWidth * this.leadTableViewportWidth) / this.leadTableScrollWidth)))
+    },
+    leadTableScrollbarThumbStyle() {
+      const maxScroll = Math.max(0, this.leadTableScrollWidth - this.leadTableViewportWidth)
+      const trackWidth = this.leadTableScrollbarTrackWidth || this.leadTableViewportWidth
+      const maxTravel = Math.max(0, trackWidth - this.leadTableScrollbarThumbWidth)
+      const left = maxScroll && maxTravel ? (this.leadTableScrollLeft / maxScroll) * maxTravel : 0
+      return {
+        width: `${this.leadTableScrollbarThumbWidth}px`,
+        transform: `translateX(${left}px)`
+      }
+    },
+    allocationRules() {
+      return {
+        userId: [{ required: true, message: '请选择分配人员', trigger: 'change' }],
+        reason: [{ required: true, message: '请填写重新分配理由', trigger: 'blur' }]
+      }
+    },
+    pagedAllocationHistory() {
+      const start = (this.allocationHistoryPage - 1) * this.allocationHistoryPageSize
+      return this.allocationHistory.slice(start, start + this.allocationHistoryPageSize)
+    },
+    compactDetailFields() {
+      return [
+        { key: 'contactName', label: '联系人' },
+        { key: 'contactPhone', label: '联系电话' },
+        { key: 'industry', label: '所属行业' },
+        { key: 'teamSize', label: '团队规模' },
+        { key: 'intendedSpace', label: '意向空间' },
+        { key: 'requiredArea', label: '需求面积' },
+        { key: 'checkinTime', label: '计划入住时间' },
+        { key: 'channelSource', label: '渠道来源' },
+        { key: 'createTime', label: '提交时间' },
+        { key: 'other', label: '其他需求' }
+      ]
+    },
+    followUpMethodOptions() {
+      return [
+        { value: 'PHONE', label: '电话' },
+        { value: 'WECHAT', label: '微信' },
+        { value: 'EMAIL', label: '邮件' },
+        { value: 'OFFSITE_VISIT', label: '外出拜访' },
+        { value: 'ONSITE_RECEPTION', label: '现场接待' },
+        { value: 'VIDEO_CALL', label: '视频沟通' },
+        { value: 'TRADE_SHOW', label: '展会' }
+      ]
+    },
+    channelSourceOptions() {
+      return [
+        { value: 'ONLINE_INQUIRY', label: '线上咨询' },
+        { value: 'MARKETING_EVENT', label: '市场活动/展会' },
+        { value: 'OUTBOUND_VISIT', label: '招商拜访' },
+        { value: 'PARTNER_REFERRAL', label: '合作伙伴推荐' },
+        { value: 'PARK_OPERATION', label: '园区运营转交' },
+        { value: 'CUSTOMER_REFERRAL', label: '客户转介绍', hidden: true },
+        { value: 'OTHER', label: '其他渠道' }
+      ]
+    },
+    selectableChannelSourceOptions() {
+      return this.channelSourceOptions.filter((item) => !item.hidden)
+    },
+    intentLevelOptions() {
+      return [
+        { value: 'A', label: 'A（1 个工作日）— 最高优先级，需高频推进并触发分级督办' },
+        { value: 'B', label: 'B（2 个工作日）— 重点客户，保持较高跟进频率' },
+        { value: 'C', label: 'C（7 个工作日）— 持续培育并关注需求变化' },
+        { value: 'D', label: 'D（30 个工作日）— 中长期培育客户' },
+        { value: 'E', label: 'E（180 个工作日）— 初始或低成熟度客户，新线索默认等级' },
+        { value: 'F', label: 'F（不按普通周期提醒）— 已放弃客户，重新分配后恢复' }
+      ]
+    },
+    leadStatusOptions() {
+      return [
+        { value: 'INITIAL_CONTACT', label: '初步接触' },
+        { value: 'INTENT_CONFIRMED', label: '意向确认' },
+        { value: 'VISIT_OR_PROPOSAL', label: '考察/洽谈中' },
+        { value: 'NEGOTIATION', label: '谈判阶段' },
+        { value: 'CONTRACT_SIGNED', label: '签约落地' },
+        { value: 'ON_HOLD', label: '暂缓跟进' }
+      ]
+    },
+    followUpRules() {
+      return {
+        followUpMethod: [{ required: true, message: '请选择跟进方式', trigger: 'change' }],
+        followUpTime: [{ required: true, message: '请选择此次跟进时间', trigger: 'change' }],
+        contactPerson: [{ required: true, message: '请输入沟通对象姓名', trigger: 'blur' }],
+        communicationSummary: [{ required: true, message: '请输入沟通纪要', trigger: 'blur' }],
+        intentLevel: [{ required: true, message: '请选择意向度', trigger: 'change' }],
+        leadStatus: [{ required: true, message: '请选择线索状态', trigger: 'change' }]
+      }
+    },
+    followUpDetailBasicFields() {
+      return [
+        { key: 'followUpMethod', label: '跟进方式' },
+        { key: 'contactPerson', label: '沟通对象' },
+        { key: 'contactTitle', label: '沟通对象职务' },
+        { key: 'nextFollowUpTime', label: '下次跟进时间' },
+        { key: 'nextFollowUpTask', label: '下次跟进事项' }
+      ]
+    },
+    followUpDetailRequirementFields() {
+      return [
+        { key: 'expectedArea', label: '意向面积（㎡）' },
+        { key: 'preferredLocation', label: '意向区域/楼栋' },
+        { key: 'budget', label: '预算/租金' },
+        { key: 'expectedMoveInDate', label: '拟入驻时间' },
+        { key: 'industry', label: '行业类型' }
+      ]
+    },
+    followUpDetailOtherFields() {
+      return [
+        { key: 'openIssues', label: '遗留问题' },
+        { key: 'supportNeeded', label: '需支持事项' }
+      ]
+    },
+    resource() {
+      const leadFields = [
+        { key: 'enterprise', label: '企业名称', required: true, maxlength: 200 },
+        { key: 'contactName', label: '联系人', required: true, maxlength: 50 },
+        { key: 'contactPhone', label: '联系电话', required: true, maxlength: 20 },
+        {
+          key: 'industry',
+          label: '所属行业',
+          required: true,
+          options: [
+            { value: 1, label: '智能制造' },
+            { value: 2, label: '医疗科技' },
+            { value: 3, label: '数字经济' },
+            { value: 4, label: '互联网' },
+            { value: 5, label: '新材料' },
+            { value: 6, label: '其他' }
+          ]
+        },
+        {
+          key: 'teamSize',
+          label: '团队规模',
+          required: true,
+          options: [
+            { value: 1, label: '20 人以内' },
+            { value: 2, label: '20–50 人' },
+            { value: 3, label: '51–100 人' },
+            { value: 4, label: '100 人以上' }
+          ]
+        },
+        {
+          key: 'intendedSpace',
+          label: '意向空间',
+          required: true,
+          options: [
+            { value: 1, label: '独立办公室' },
+            { value: 2, label: '研发办公' },
+            { value: 3, label: '企业总部' },
+            { value: 4, label: '轻型生产' },
+            { value: 5, label: '配套商业' }
+          ]
+        },
+        {
+          key: 'requiredArea',
+          label: '需求面积',
+          required: true,
+          options: [
+            { value: 1, label: '100㎡以内' },
+            { value: 2, label: '100–200㎡' },
+            { value: 3, label: '201–500㎡以内' },
+            { value: 4, label: '500–1,000㎡' },
+            { value: 5, label: '1,000㎡以上' }
+          ]
+        },
+        { key: 'checkinTime', label: '计划入住时间', type: 'date', required: true },
+        {
+          key: 'sourceType',
+          label: '渠道来源',
+          required: true,
+          options: this.editingId ? this.channelSourceOptions : this.selectableChannelSourceOptions,
+          disabled: Boolean(this.editingId && this.form.sourceType === 'CUSTOMER_REFERRAL')
+        },
+        { key: 'channelSource', label: '具体来源', required: true, showWhen: { sourceType: 'OTHER' }, maxlength: 100 },
+        { key: 'other', label: '其他需求', type: 'textarea', rows: 3, wide: true }
+      ]
+      return {
+        title: '线索管理',
+        itemName: '线索',
+        pageSize: 10,
+        createSuccessMessage: '线索创建成功',
+        icon: 'el-icon-service',
+        idPrefix: 'LEAD',
+        apiNamespace: 'reception',
+        listParams: this.listParams,
+        preserveListFields: ['referrerName', 'sourceType', 'channelSource'],
+        primaryKey: 'id',
+        defaultStatus: 0,
+        statusMap: { 0: '待分配', 1: '已分配' },
+        valueLabelMaps: {
+          industry: { 1: '智能制造', 2: '医疗科技', 3: '数字经济', 4: '互联网', 5: '新材料', 6: '其他' },
+          teamSize: { 1: '20 人以内', 2: '20–50 人', 3: '51–100 人', 4: '100 人以上' },
+          intendedSpace: { 1: '独立办公室', 2: '研发办公', 3: '企业总部', 4: '轻型生产', 5: '配套商业' },
+          requiredArea: { 1: '100㎡以内', 2: '100–200㎡', 3: '201–500㎡以内', 4: '500–1,000㎡', 5: '1,000㎡以上' }
+        },
+        defaultForm: { sourceType: 'ONLINE_INQUIRY' },
+        formFromRecord: (record) => {
+          const form = Object.assign({}, record)
+          leadFields.forEach((field) => {
+            if (!field.options || form[field.key] === undefined || form[field.key] === null || form[field.key] === '') return
+            const option = field.options.find((item) => String(item.value) === String(form[field.key]) || String(item.label) === String(form[field.key]))
+            if (option) form[field.key] = option.value
+          })
+          if (!form.sourceType) {
+            const legacySource = this.selectableChannelSourceOptions.find((item) => String(item.value) === String(form.channelSource))
+            if (legacySource) {
+              form.sourceType = legacySource.value
+              form.channelSource = ''
+            }
+          }
+          if (form.checkinTime) form.checkinTime = this.formatDate(form.checkinTime)
+          return form
+        },
+        payloadTransform: (payload) => {
+          const mainTableFields = [
+            'id',
+            'enterprise',
+            'contactName',
+            'contactPhone',
+            'industry',
+            'teamSize',
+            'intendedSpace',
+            'requiredArea',
+            'checkinTime',
+            'other',
+            'sourceType',
+            'channelSource',
+            'status'
+          ]
+          return mainTableFields.reduce((result, key) => {
+            if (payload[key] !== undefined && payload[key] !== '') {
+              result[key] = key === 'checkinTime' ? `${this.formatDate(payload[key])} 00:00:00` : payload[key]
+            }
+            return result
+          }, {})
+        },
+        statusOptions: ['待分配', '已分配'],
+        fields: leadFields
+      }
+    },
+    permissions() {
+      return { create: true, edit: true, delete: false, changeStatus: false }
+    }
+  },
+  methods: {
+    scheduleLeadTableScrollbar() {
+      this.$nextTick(() => {
+        this.updateLeadTableLayout()
+        this.$nextTick(() => this.bindLeadTableScrollbar())
+      })
+    },
+    updateLeadTableLayout() {
+      const surface = this.$refs.leadSurface
+      const toolbar = this.$refs.leadToolbar
+      const footer = this.$refs.leadTableFooter
+      if (!surface || !toolbar || !footer) return
+      const surfaceStyle = window.getComputedStyle(surface)
+      const verticalPadding = Number.parseFloat(surfaceStyle.paddingTop) + Number.parseFloat(surfaceStyle.paddingBottom)
+      const toolbarMargin = Number.parseFloat(window.getComputedStyle(toolbar).marginBottom)
+      const availableHeight = surface.clientHeight - verticalPadding - toolbar.offsetHeight - toolbarMargin - footer.offsetHeight
+      const headerHeight = 48
+      this.leadTableHeight = Math.max(headerHeight + this.pageSize * 40, Math.floor(availableHeight))
+      this.leadTableRowHeight = Math.max(40, Math.floor((this.leadTableHeight - headerHeight) / this.pageSize))
+    },
+    bindLeadTableScrollbar() {
+      const table = this.$refs.leadTable
+      const bodyWrapper = table && table.$el && table.$el.querySelector('.el-table__body-wrapper')
+      if (!bodyWrapper) {
+        this.leadTableScrollbarVisible = false
+        this.leadTableScrollbarTrackWidth = 0
+        return
+      }
+      if (this._leadTableBodyWrapper !== bodyWrapper) {
+        if (this._leadTableBodyWrapper && this._leadTableScrollHandler) this._leadTableBodyWrapper.removeEventListener('scroll', this._leadTableScrollHandler)
+        this._leadTableBodyWrapper = bodyWrapper
+        this._leadTableScrollHandler = this.syncLeadTableScrollFromTable
+        bodyWrapper.addEventListener('scroll', this._leadTableScrollHandler)
+      }
+      const bodyTable = bodyWrapper.querySelector('.el-table__body')
+      this.leadTableScrollWidth = Math.max(bodyWrapper.scrollWidth, bodyTable ? bodyTable.scrollWidth : 0)
+      this.leadTableViewportWidth = bodyWrapper.clientWidth
+      this.leadTableScrollLeft = bodyWrapper.scrollLeft
+      this.leadTableScrollbarVisible = this.leadTableScrollWidth > this.leadTableViewportWidth
+      this.$nextTick(() => {
+        const track = this.$refs.leadTableScrollbar
+        this.leadTableScrollbarTrackWidth = track ? track.clientWidth : 0
+      })
+    },
+    syncLeadTableScrollFromTable() {
+      if (this._leadTableBodyWrapper) this.leadTableScrollLeft = this._leadTableBodyWrapper.scrollLeft
+    },
+    setLeadTableScrollLeft(value) {
+      const maxScroll = Math.max(0, this.leadTableScrollWidth - this.leadTableViewportWidth)
+      const scrollLeft = Math.max(0, Math.min(maxScroll, value))
+      if (this._leadTableBodyWrapper) this._leadTableBodyWrapper.scrollLeft = scrollLeft
+      this.leadTableScrollLeft = scrollLeft
+    },
+    queueLeadTableScrollLeft(value) {
+      this._leadTablePendingScrollLeft = value
+      if (this._leadTableScrollFrame != null) return
+      this._leadTableScrollFrame = window.requestAnimationFrame(() => {
+        this._leadTableScrollFrame = null
+        this.setLeadTableScrollLeft(this._leadTablePendingScrollLeft)
+      })
+    },
+    toggleLeadFollowUpExpansion(row, column, event) {
+      if (event && event.target && event.target.closest('.el-table__expand-icon')) return
+      const table = this.$refs.leadTable
+      if (table) table.toggleRowExpansion(row)
+    },
+    moveLeadTableScrollFromTrack(event) {
+      const track = this.$refs.leadTableScrollbar
+      if (!track) return
+      const maxScroll = Math.max(0, this.leadTableScrollWidth - this.leadTableViewportWidth)
+      const maxTravel = Math.max(0, track.clientWidth - this.leadTableScrollbarThumbWidth)
+      if (!maxScroll || !maxTravel) return
+      const rect = track.getBoundingClientRect()
+      const thumbLeft = Math.max(0, Math.min(maxTravel, event.clientX - rect.left - this.leadTableScrollbarThumbWidth / 2))
+      this.queueLeadTableScrollLeft((thumbLeft / maxTravel) * maxScroll)
+    },
+    startLeadTableScrollbarDrag(event) {
+      this._leadTableScrollbarDrag = { startX: event.clientX, startScrollLeft: this.leadTableScrollLeft }
+      this._leadTableScrollbarDragMoveHandler = this._leadTableScrollbarDragMoveHandler || this.moveLeadTableScrollbarDrag
+      this._leadTableScrollbarDragEndHandler = this._leadTableScrollbarDragEndHandler || this.stopLeadTableScrollbarDrag
+      document.addEventListener('mousemove', this._leadTableScrollbarDragMoveHandler)
+      document.addEventListener('mouseup', this._leadTableScrollbarDragEndHandler)
+    },
+    moveLeadTableScrollbarDrag(event) {
+      if (!this._leadTableScrollbarDrag) return
+      const maxScroll = Math.max(0, this.leadTableScrollWidth - this.leadTableViewportWidth)
+      const track = this.$refs.leadTableScrollbar
+      const maxTravel = Math.max(0, (track ? track.clientWidth : 0) - this.leadTableScrollbarThumbWidth)
+      if (!maxScroll || !maxTravel) return
+      const delta = event.clientX - this._leadTableScrollbarDrag.startX
+      this.queueLeadTableScrollLeft(this._leadTableScrollbarDrag.startScrollLeft + (delta / maxTravel) * maxScroll)
+    },
+    stopLeadTableScrollbarDrag() {
+      this._leadTableScrollbarDrag = null
+      if (this._leadTableScrollbarDragMoveHandler) document.removeEventListener('mousemove', this._leadTableScrollbarDragMoveHandler)
+      if (this._leadTableScrollbarDragEndHandler) document.removeEventListener('mouseup', this._leadTableScrollbarDragEndHandler)
+    },
+    formatDateTime(value) {
+      if (!value) return '-'
+      const raw = String(value)
+      const parts = raw.split('T')
+      let formatted = parts.length > 1 ? parts[0] + ' ' + parts.slice(1).join('T') : raw
+      if (/^\d{4}-\d{2}-\d{2}$/.test(formatted)) formatted += ' 00:00:00'
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(formatted)) formatted += ':00'
+      return formatted.slice(0, 19)
+    },
+    formatDate(value) {
+      const formatted = this.formatDateTime(value)
+      return formatted === '-' ? '-' : formatted.slice(0, 10)
+    },
+    formatCompactDetailValue(value, key) {
+      if (key === 'checkinTime') return this.formatDate(value)
+      if (key === 'createTime') return this.formatDateTime(value)
+      return this.formatValue(value, key)
+    },
+    emptyFollowUpForm() {
+      return {
+        followUpMethod: '',
+        followUpTime: '',
+        contactPerson: '',
+        contactTitle: '',
+        communicationSummary: '',
+        intentLevel: 'E',
+        leadStatus: '',
+        nextFollowUpTime: '',
+        nextFollowUpTask: '',
+        expectedArea: '',
+        preferredLocation: '',
+        budget: '',
+        expectedMoveInDate: '',
+        industry: '',
+        attachmentFiles: [],
+        openIssues: '',
+        supportNeeded: ''
+      }
+    },
+    followUpRecords(record) {
+      return Array.isArray(record && record.records) ? record.records : []
+    },
+    latestFollowUpRecord(record) {
+      return this.followUpRecords(record).reduce((latest, current) => {
+        if (!latest) return current
+        const latestTime = this.followUpRecordTimestamp(latest)
+        const currentTime = this.followUpRecordTimestamp(current)
+        return currentTime >= latestTime ? current : latest
+      }, null)
+    },
+    followUpFormFromRecord(record) {
+      const form = this.emptyFollowUpForm()
+      const latestRecord = this.latestFollowUpRecord(record)
+      if (latestRecord) return Object.assign(form, this.followUpBasicValues(latestRecord))
+      return Object.assign(form, {
+        contactPerson: (record && record.contactName) || '',
+        intentLevel: 'E',
+        leadStatus: 'INITIAL_CONTACT',
+        expectedMoveInDate: this.followUpDateValue(record && record.checkinTime),
+        industry: record && record.industry ? this.formatValue(record.industry, 'industry') : ''
+      })
+    },
+    followUpBasicValues(record) {
+      const fieldNames = ['followUpMethod', 'contactPerson', 'contactTitle', 'intentLevel', 'leadStatus', 'expectedArea', 'preferredLocation', 'budget', 'industry', 'openIssues']
+      const values = fieldNames.reduce((result, key) => {
+        if (record && record[key] !== undefined && record[key] !== null && record[key] !== '') result[key] = record[key]
+        return result
+      }, {})
+      values.expectedMoveInDate = this.followUpDateValue(record && record.expectedMoveInDate)
+      return values
+    },
+    followUpDateValue(value) {
+      if (!value) return ''
+      const formatted = this.formatDateTime(value)
+      return formatted && formatted !== '-' ? formatted.slice(0, 10) : ''
+    },
+    followUpRecordTimestamp(record) {
+      // “最新状态”按子表记录的创建先后判定；跟进时间可补录历史日期，不能作为排序依据。
+      const value = record && (record.createdAt || record.followUpTime)
+      const timestamp = value ? Date.parse(String(value).replace(' ', 'T')) : NaN
+      return Number.isNaN(timestamp) ? 0 : timestamp
+    },
+    customerLevelLabel(record) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      const value = latestRecord && latestRecord.intentLevel
+      const level = String(value || '')
+        .charAt(0)
+        .toUpperCase()
+      return ['A', 'B', 'C', 'D', 'E', 'F'].includes(level) ? `${level}级` : '-'
+    },
+    trackingProgressLabel(record) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      return latestRecord ? this.leadStatusLabel(latestRecord.leadStatus) : '-'
+    },
+    trackingProgressTagClass(record) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      return this.leadStatusTagClass(latestRecord && latestRecord.leadStatus)
+    },
+    customerLevelTagClass(record) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      const level = String((latestRecord && latestRecord.intentLevel) || '')
+        .charAt(0)
+        .toUpperCase()
+      return `lead-summary-tag--level-${['A', 'B', 'C', 'D', 'E', 'F'].includes(level) ? level.toLowerCase() : 'empty'}`
+    },
+    isCustomerLevel(record, level) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      return (
+        String((latestRecord && latestRecord.intentLevel) || '')
+          .charAt(0)
+          .toUpperCase() === level
+      )
+    },
+    hasLatestLeadStatus(record, status) {
+      const latestRecord = this.latestFollowUpRecord(record)
+      return Boolean(latestRecord && latestRecord.leadStatus === status)
+    },
+    channelSourceLabel(record) {
+      // if (record && record.referrer) return `客户转介绍：${record.referrerName || '-'}`
+      const sourceType = record && record.sourceType
+      const channelSource = record && record.channelSource
+      if (sourceType) {
+        const option = this.channelSourceOptions.find((item) => item.value === sourceType)
+        const sourceLabel = (option && option.label) || sourceType
+        if (sourceType === 'CUSTOMER_REFERRAL') return `${this.channelSourceOptions.find((item) => item.value === 'CUSTOMER_REFERRAL').label}：${record.referrerName || '-'}`
+        return channelSource ? `${sourceLabel}：${channelSource}` : sourceLabel
+      }
+      const legacySource = record && (channelSource || record.source || record.channel)
+      const legacyOption = this.channelSourceOptions.find((item) => item.value === legacySource)
+      return (legacyOption && legacyOption.label) || legacySource || '-'
+    },
+    channelSourceTagClass(record) {
+      const source = record && (record.sourceType || record.channelSource || record.source || record.channel)
+      const classMap = {
+        ONLINE_INQUIRY: 'lead-summary-tag--online',
+        MARKETING_EVENT: 'lead-summary-tag--event',
+        OUTBOUND_VISIT: 'lead-summary-tag--visit',
+        PARTNER_REFERRAL: 'lead-summary-tag--partner',
+        PARK_OPERATION: 'lead-summary-tag--operation',
+        CUSTOMER_REFERRAL: 'lead-summary-tag--referral',
+        OTHER: 'lead-summary-tag--other'
+      }
+      return classMap[source] || 'lead-summary-tag--other'
+    },
+    leadStatusTagClass(value) {
+      const classMap = {
+        INITIAL_CONTACT: 'lead-status-tag--initial',
+        INTENT_CONFIRMED: 'lead-status-tag--confirmed',
+        VISIT_OR_PROPOSAL: 'lead-status-tag--visit',
+        NEGOTIATION: 'lead-status-tag--negotiation',
+        CONTRACT_SIGNED: 'lead-status-tag--signed',
+        ON_HOLD: 'lead-status-tag--hold'
+      }
+      return classMap[value] || 'lead-status-tag--empty'
+    },
+    leadStatusCount(record, status) {
+      return this.followUpRecords(record).filter((item) => item && item.leadStatus === status).length
+    },
+    leadStatusOccurrence(record, status, index) {
+      return this.followUpRecords(record)
+        .slice(0, index + 1)
+        .filter((item) => item && item.leadStatus === status).length
+    },
+    followUpMethodLabel(value) {
+      const option = this.followUpMethodOptions.find((item) => item.value === value)
+      return (option && option.label) || value || '-'
+    },
+    intentLevelLabel(value) {
+      const option = this.intentLevelOptions.find((item) => item.value === value)
+      return (option && option.label) || value || '-'
+    },
+    leadStatusLabel(value) {
+      const option = this.leadStatusOptions.find((item) => item.value === value)
+      return (option && option.label) || value || '-'
+    },
+    openFollowUp(record) {
+      this.followUpRecord = record
+      this.followUpForm = this.followUpFormFromRecord(record)
+      this.followUpVisible = true
+      this.$nextTick(() => this.$refs.followUpForm && this.$refs.followUpForm.clearValidate())
+    },
+    resetFollowUp() {
+      this.followUpRecord = null
+      this.followUpForm = this.emptyFollowUpForm()
+      this.followUpSubmitting = false
+    },
+    optionalNumber(value) {
+      if (value === '' || value === null || value === undefined) return undefined
+      const number = Number(value)
+      return Number.isNaN(number) ? undefined : number
+    },
+    followUpUploadFiles() {
+      return (this.followUpForm.attachmentFiles || [])
+        .map((file) => {
+          const fileName = file.fileName || file.name || ''
+          const filePath = file.filePath || file.url || file.fileUrl || ''
+          const id = file.id || file.attachmentId || file.fileId
+          if (!id && !filePath) return null
+          return {
+            name: file.name || fileName,
+            fileName,
+            filePath,
+            fileType: file.fileType || (file.raw && file.raw.type) || '',
+            url: file.url || file.fileUrl || filePath,
+            id
+          }
+        })
+        .filter(Boolean)
+    },
+    followUpPayload() {
+      const form = this.followUpForm
+      const payload = {
+        parentId: this.followUpRecord.id,
+        followUpMethod: form.followUpMethod,
+        followUpTime: form.followUpTime ? this.formatDateTime(form.followUpTime) : undefined,
+        createdBy: this.currentUserId(),
+        contactPerson: form.contactPerson,
+        contactTitle: form.contactTitle || undefined,
+        communicationSummary: form.communicationSummary,
+        intentLevel: form.intentLevel,
+        leadStatus: form.leadStatus,
+        nextFollowUpTime: form.nextFollowUpTime ? this.formatDateTime(form.nextFollowUpTime) : undefined,
+        nextFollowUpTask: form.nextFollowUpTask || undefined,
+        expectedArea: this.optionalNumber(form.expectedArea),
+        preferredLocation: form.preferredLocation || undefined,
+        budget: this.optionalNumber(form.budget),
+        expectedMoveInDate: form.expectedMoveInDate ? this.formatDateTime(form.expectedMoveInDate) : undefined,
+        industry: form.industry || undefined,
+        uploadFiles: this.followUpUploadFiles(),
+        openIssues: form.openIssues || undefined,
+        supportNeeded: form.supportNeeded || undefined
+      }
+      return Object.keys(payload).reduce((result, key) => {
+        if (payload[key] !== undefined) result[key] = payload[key]
+        return result
+      }, {})
+    },
+    submitFollowUp() {
+      this.$refs.followUpForm.validate(async (valid) => {
+        if (!valid || this.followUpSubmitting) return
+        if (this.followUpForm.leadStatus === 'ON_HOLD' && !this.followUpForm.nextFollowUpTime) {
+          this.$message.warning('暂缓跟进时必须填写下次跟进时间')
+          return
+        }
+        try {
+          await this.$confirm('提交后不可修改、不可删除，请仔细核对后提交。', '二次确认', { type: 'warning' })
+          const addRecordApi = this.api('addRecord')
+          if (!addRecordApi || !this.followUpRecord) throw new Error('missing add record api')
+          this.followUpSubmitting = true
+          await addRecordApi(this.followUpPayload())
+          this.$message.success('跟进记录提交成功')
+          this.followUpVisible = false
+          await this.loadRecords()
+        } catch (error) {
+          if (error !== 'cancel' && error !== 'close') this.$message.error('跟进记录提交失败，请稍后重试')
+        } finally {
+          this.followUpSubmitting = false
+        }
+      })
+    },
+    async openFollowUpDetail(record) {
+      if (!record || !record.id) return
+      this.followUpDetail = record
+      this.followUpDetailVisible = true
+      const detailApi = this.api('queryRecordById')
+      if (!detailApi) return
+      this.followUpDetailLoading = true
+      try {
+        const detail = this.unwrap(await detailApi({ id: record.id }))
+        if (detail) this.followUpDetail = Object.assign({}, record, detail)
+      } catch (error) {
+        this.$message.error('跟进记录详情加载失败')
+      } finally {
+        this.followUpDetailLoading = false
+      }
+    },
+    followUpDetailValue(key) {
+      if (!this.followUpDetail) return '-'
+      if (key === 'followUpMethod') return this.followUpMethodLabel(this.followUpDetail[key])
+      if (key === 'followUpTime') return this.formatDateTime(this.followUpDetail[key])
+      if (key === 'intentLevel') return this.intentLevelLabel(this.followUpDetail[key])
+      if (key === 'leadStatus') return this.leadStatusLabel(this.followUpDetail[key])
+      if (key === 'nextFollowUpTime') return this.formatDateTime(this.followUpDetail[key])
+      if (key === 'expectedMoveInDate') return this.formatDate(this.followUpDetail[key])
+      const value = this.followUpDetail[key]
+      return value === undefined || value === null || value === '' ? '-' : value
+    },
+    hasFollowUpDetailValue(key) {
+      if (!this.followUpDetail) return false
+      const value = this.followUpDetail[key]
+      return value !== undefined && value !== null && value !== ''
+    },
+    hasFollowUpDetailValues(fields) {
+      return fields.some((field) => this.hasFollowUpDetailValue(field.key))
+    },
+    followUpDetailUploadFiles() {
+      if (!this.followUpDetail) return []
+      let files = this.followUpDetail.uploadFiles || this.followUpDetail.attachmentFiles || []
+      if (typeof files === 'string') {
+        try {
+          files = JSON.parse(files)
+        } catch (error) {
+          files = []
+        }
+      }
+      if (!Array.isArray(files)) files = files ? [files] : []
+      return files.filter(Boolean).map((file, index) => {
+        if (typeof file === 'string') return { name: `附件${index + 1}`, filePath: file, url: file }
+        const filePath = file.filePath || file.fileUrl || file.url || ''
+        return Object.assign({}, file, {
+          id: file.id || file.attachmentId || file.fileId,
+          name: file.name || file.fileName || file.originalName || filePath.split(/[\\/]/).pop() || `附件${index + 1}`,
+          filePath,
+          url: file.url || file.fileUrl || filePath
+        })
+      })
+    },
+    async downloadFollowUpAttachment(file) {
+      const attachmentId = file && (file.id || file.attachmentId || file.fileId)
+      if (!attachmentId) {
+        this.$message.warning('该附件缺少附件 ID，暂时无法下载')
+        return
+      }
+      const downloadApi = this.$api && this.$api['attachment.download']
+      if (!downloadApi) {
+        this.$message.error('未找到附件下载接口')
+        return
+      }
+      try {
+        const response = await downloadApi({ attachmentId }, { responseType: 'blob' })
+        const responseData = response && response.data !== undefined ? response.data : response
+        const blob = responseData instanceof Blob ? responseData : new Blob([responseData], { type: file.fileType || 'application/octet-stream' })
+        const objectUrl = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = objectUrl
+        link.download = file.fileName || file.name || '附件'
+        link.style.display = 'none'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(objectUrl)
+      } catch (error) {
+        this.$message.error('附件下载失败，请稍后重试')
+      }
+    },
+    isAllocated(record) {
+      if (!record) return false
+      return Boolean(record.responsiblePerson || record.responsiblePersonId || record.responsibleUserId) || Number(record.status) === 1
+    },
+    isInvalidLeadApplicationDisabled(record) {
+      const approveStatus = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
+      return ['1', '2'].includes(String(approveStatus))
+    },
+    isInvalidLead(record) {
+      const approveStatus = record && (record.approveStatus !== undefined ? record.approveStatus : record.approve_status)
+      return String(approveStatus) === '2'
+    },
+    isFollowUpDisabled(record) {
+      return !this.isAllocated(record) || this.isInvalidLead(record)
+    },
+    followUpDisabledMessage(record) {
+      if (this.isInvalidLead(record)) return '无效线索不可继续跟进'
+      if (!this.isAllocated(record)) return '请先分配负责人'
+      return ''
+    },
+    invalidLeadApplicationDisabledMessage(record) {
+      const approveStatus = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
+      if (String(approveStatus) === '1') return '无效线索申请正在审批中'
+      if (String(approveStatus) === '2') return '无效线索申请已通过，不可重复提交'
+      return ''
+    },
+    async openAllocation(record) {
+      this.allocationRecord = record
+      this.allocationForm = {
+        userId: record.responsiblePerson || '',
+        reason: ''
+      }
+      this.allocationUsers = []
+      this.allocationVisible = true
+      this.$nextTick(() => this.$refs.allocationForm && this.$refs.allocationForm.clearValidate())
+      const userListApi = this.api('getUserList')
+      if (!userListApi) return
+      this.allocationUsersLoading = true
+      try {
+        const result = this.unwrap(await userListApi())
+        this.allocationUsers = this.allocationUsersFrom(result)
+      } catch (error) {
+        this.$message.error('人员列表加载失败，请稍后重试')
+      } finally {
+        this.allocationUsersLoading = false
+      }
+    },
+    resetAllocation() {
+      this.allocationRecord = null
+      this.allocationForm = {
+        userId: '',
+        reason: ''
+      }
+      this.allocationUsers = []
+      this.allocatingId = ''
+    },
+    allocationUsersFrom(result) {
+      if (Array.isArray(result)) return result
+      return result && (result.records || result.list || result.rows || result.userList || result.data) ? result.records || result.list || result.rows || result.userList || result.data : []
+    },
+    allocationUserIdOf(user) {
+      return user && (user.id || user.userId)
+    },
+    allocationUserLabel(user) {
+      return (user && (user.realName || user.userName || user.nickName || user.name)) || this.allocationUserIdOf(user)
+    },
+    handleAllocationUserChange(userId) {
+      if (!this.allocationRecord || !this.isAllocated(this.allocationRecord)) return
+      if (String(userId) !== String(this.allocationRecord.responsiblePerson || '')) return
+      this.$message.warning('新负责人不能与当前负责人相同，请重新选择')
+      this.allocationForm.userId = ''
+      this.$nextTick(() => this.$refs.allocationForm && this.$refs.allocationForm.validateField('userId'))
+    },
+    async openAllocationHistory(record) {
+      this.allocationHistoryRecord = record
+      this.allocationHistory = []
+      this.allocationHistoryPage = 1
+      this.allocationHistoryVisible = true
+      const historyApi = this.api('queryHistoryByParentId')
+      if (!historyApi) {
+        this.$message.error('分配历史接口未配置')
+        return
+      }
+      this.allocationHistoryLoading = true
+      try {
+        const result = this.unwrap(await historyApi({ id: record.id }))
+        this.allocationHistory = this.allocationHistoryFrom(result)
+      } catch (error) {
+        this.$message.error('分配历史加载失败，请稍后重试')
+      } finally {
+        this.allocationHistoryLoading = false
+      }
+    },
+    resetAllocationHistory() {
+      this.allocationHistoryRecord = null
+      this.allocationHistory = []
+      this.allocationHistoryPage = 1
+      this.allocationHistoryLoading = false
+    },
+    allocationHistoryFrom(result) {
+      if (Array.isArray(result)) return result
+      if (!result) return []
+      return result.records || result.list || result.rows || result.historyList || []
+    },
+    allocationHistoryPreviousAssignee(record) {
+      return record.oldResponsiblePersonName || record.previousResponsiblePersonName || record.beforeUserName || record.oldUserName || '-'
+    },
+    allocationHistoryAssignee(record) {
+      return record.responsiblePersonName || record.newResponsiblePersonName || record.afterUserName || record.userName || record.realName || record.userId || '-'
+    },
+    allocationHistoryReason(record) {
+      return record.reason || record.allocationReason || record.reassignReason || record.remark || '-'
+    },
+    allocationHistoryOperator(record) {
+      return record.createdByName || record.createByName || record.operatorName || record.creatorName || record.createdBy || record.createBy || '-'
+    },
+    allocationHistoryTime(record) {
+      return this.formatDateTime(record.allocationTime || record.createTime || record.createdTime || record.updateTime)
+    },
+    allocationHistoryRowIndex(index) {
+      return this.allocationHistoryGlobalIndex(index) + 1
+    },
+    allocationHistoryGlobalIndex(index) {
+      return (this.allocationHistoryPage - 1) * this.allocationHistoryPageSize + index
+    },
+    handleAllocationHistoryPageChange(page) {
+      this.allocationHistoryPage = page
+    },
+    isFirstAllocation(index) {
+      if (!this.allocationHistory.length) return false
+      let firstIndex = 0
+      let earliestTime = Infinity
+      let hasValidTime = false
+      this.allocationHistory.forEach((record, recordIndex) => {
+        const rawTime = record.allocationTime || record.createTime || record.createdTime || record.updateTime
+        const timestamp = rawTime ? Date.parse(String(rawTime).replace(' ', 'T')) : NaN
+        if (!Number.isNaN(timestamp) && timestamp < earliestTime) {
+          earliestTime = timestamp
+          firstIndex = recordIndex
+          hasValidTime = true
+        }
+      })
+      return index === (hasValidTime ? firstIndex : 0)
+    },
+    isLatestAllocation(index) {
+      if (!this.allocationHistory.length) return false
+      let latestIndex = this.allocationHistory.length - 1
+      let latestTime = -Infinity
+      let hasValidTime = false
+      this.allocationHistory.forEach((record, recordIndex) => {
+        const rawTime = record.allocationTime || record.createTime || record.createdTime || record.updateTime
+        const timestamp = rawTime ? Date.parse(String(rawTime).replace(' ', 'T')) : NaN
+        if (!Number.isNaN(timestamp) && timestamp > latestTime) {
+          latestTime = timestamp
+          latestIndex = recordIndex
+          hasValidTime = true
+        }
+      })
+      return index === (hasValidTime ? latestIndex : this.allocationHistory.length - 1)
+    },
+    submitAllocation() {
+      const record = this.allocationRecord
+      if (!record || this.allocatingId) return
+      this.$refs.allocationForm.validate(async (valid) => {
+        if (!valid) return
+        const userId = this.allocationForm.userId
+        const reassigning = this.isAllocated(record)
+        if (reassigning && String(userId) === String(record.responsiblePerson || '')) {
+          this.$message.warning('新负责人不能与当前负责人相同，请重新选择')
+          return
+        }
+        const allocationApi = this.api('allocation')
+        const editApi = this.api('edit')
+        if (!allocationApi || !editApi) return
+        const payload = {
+          id: record.id,
+          userId,
+          reason: reassigning ? this.allocationForm.reason.trim() : ''
+        }
+        this.allocatingId = record.id
+        try {
+          await allocationApi(payload)
+          await editApi({ id: record.id, status: 1 })
+          this.$message.success(reassigning ? '重新分配成功' : '分配成功')
+          this.allocationVisible = false
+          await this.loadRecords()
+        } catch (error) {
+          this.$message.error(reassigning ? '重新分配失败，请稍后重试' : '分配失败，请稍后重试')
+        } finally {
+          this.allocatingId = ''
+        }
+      })
+    }
+  }
+}
+</script>
+<style lang="scss" src="../../../../features/_shared/record-management/record-feature-page.scss"></style>
+<style lang="scss" scoped>
+.record-feature-detail__item--wide {
+  grid-column: 1 / -1;
+}
+.record-feature-table--compact {
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row.hover-row > td.el-table__cell,
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row:hover > td.el-table__cell {
+    background-color: #fff !important;
+  }
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row--striped.hover-row > td.el-table__cell,
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > .el-table__row--striped:hover > td.el-table__cell {
+    background-color: #fafafa !important;
+  }
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > tr > td.el-table__expanded-cell,
+  ::v-deep > .el-table__body-wrapper > .el-table__body > tbody > tr:hover > td.el-table__expanded-cell {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    background-color: #f7f9fc !important;
+  }
+}
+.lead-follow-up-history {
+  padding: 14px 18px 10px;
+  background: #f7f9fc;
+}
+.lead-follow-up-history__summary,
+.lead-follow-up-history__title {
+  display: flex;
+  align-items: center;
+}
+.lead-follow-up-history__summary {
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #8a98aa;
+  font-size: 12px;
+}
+.lead-follow-up-history__title {
+  gap: 7px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  i {
+    color: #409eff;
+    font-size: 16px;
+  }
+  b {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #e8f3ff;
+    color: #409eff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+  }
+}
+.lead-follow-up-history__table {
+  border: 1px solid #e4ebf3;
+  border-radius: 4px;
+  ::v-deep .el-table__body tr {
+    cursor: pointer;
+  }
+  ::v-deep .el-table__body td.el-table__cell,
+  ::v-deep .el-table__body tr.hover-row > td.el-table__cell,
+  ::v-deep .el-table__body tr:hover > td.el-table__cell {
+    background-color: #fff !important;
+    transition: none;
+  }
+}
+.lead-follow-up-history__intent {
+  display: block;
+  color: #526176;
+  font-size: 12px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.lead-summary-tag {
+  max-width: 100%;
+  border: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+  &.lead-summary-tag--referral {
+    color: #7e22ce;
+    border-color: #e9d5ff;
+    background: #faf5ff;
+  }
+  &.lead-summary-tag--online {
+    color: #2563eb;
+    border-color: #bfdbfe;
+    background: #eff6ff;
+  }
+  &.lead-summary-tag--event {
+    color: #c2410c;
+    border-color: #fed7aa;
+    background: #fff7ed;
+  }
+  &.lead-summary-tag--visit {
+    color: #0f766e;
+    border-color: #99f6e4;
+    background: #f0fdfa;
+  }
+  &.lead-summary-tag--partner {
+    color: #0369a1;
+    border-color: #bae6fd;
+    background: #f0f9ff;
+  }
+  &.lead-summary-tag--operation,
+  &.lead-summary-tag--other,
+  &.lead-summary-tag--level-empty {
+    color: #64748b;
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+  }
+  &.lead-summary-tag--level-a {
+    color: #b91c1c;
+    border-color: #fecaca;
+    background: #fef2f2;
+  }
+  &.lead-summary-tag--level-b {
+    color: #c2410c;
+    border-color: #fed7aa;
+    background: #fff7ed;
+  }
+  &.lead-summary-tag--level-c {
+    color: #a16207;
+    border-color: #fde68a;
+    background: #fefce8;
+  }
+  &.lead-summary-tag--level-d {
+    color: #0f766e;
+    border-color: #99f6e4;
+    background: #f0fdfa;
+  }
+  &.lead-summary-tag--level-e {
+    color: #2563eb;
+    border-color: #bfdbfe;
+    background: #eff6ff;
+  }
+  &.lead-summary-tag--level-f {
+    color: #64748b;
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+}
+.lead-status-tag {
+  border: 0;
+  font-weight: 500;
+  &.lead-status-tag--empty {
+    color: #64748b;
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+  }
+  &.lead-status-tag--initial {
+    color: #2563eb;
+    border-color: #bfdbfe;
+    background: #eff6ff;
+  }
+  &.lead-status-tag--confirmed {
+    color: #0f766e;
+    border-color: #99f6e4;
+    background: #f0fdfa;
+  }
+  &.lead-status-tag--visit {
+    color: #c2410c;
+    border-color: #fed7aa;
+    background: #fff7ed;
+  }
+  &.lead-status-tag--negotiation {
+    color: #7e22ce;
+    border-color: #e9d5ff;
+    background: #faf5ff;
+  }
+  &.lead-status-tag--signed {
+    color: #15803d;
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+  }
+  &.lead-status-tag--hold {
+    color: #64748b;
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+}
+.lead-empty-tag {
+  color: #64748b !important;
+  border: 0 !important;
+  background: #f1f5f9 !important;
+}
+.lead-allocation-history__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid #e8edf3;
+  border-radius: 6px;
+  background: #f8fafc;
+  div,
+  small,
+  b {
+    display: block;
+  }
+  div {
+    min-width: 0;
+  }
+  small {
+    margin-bottom: 4px;
+    color: #8a98aa;
+    font-size: 12px;
+  }
+  b {
+    overflow: hidden;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+.lead-allocation-history__table {
+  width: 100%;
+}
+.lead-allocation-history__pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+.lead-allocation-history__first-tag,
+.lead-allocation-history__latest-tag {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.lead-follow-up-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+}
+.lead-follow-up-form__wide {
+  grid-column: 1 / -1;
+}
+.lead-follow-up-detail {
+  display: flex;
+  min-height: 100%;
+  padding: 20px;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  background: #f6f8fb;
+}
+.lead-follow-up-detail__hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e6edf4;
+  border-radius: 8px;
+  background: #fff;
+  small {
+    display: block;
+    margin-bottom: 6px;
+    color: #7d8998;
+    font-size: 12px;
+  }
+  h3 {
+    margin: 0;
+    color: #26364b;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+}
+.lead-follow-up-detail__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.lead-intent-tag {
+  border: 0;
+  background: #eff6ff;
+  color: #2563eb;
+}
+.lead-follow-up-detail__section {
+  padding: 16px;
+  border: 1px solid #e6edf4;
+  border-radius: 8px;
+  background: #fff;
+  h4 {
+    display: flex;
+    align-items: center;
+    margin: 0 0 12px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    &::before {
+      width: 3px;
+      height: 14px;
+      margin-right: 8px;
+      border-radius: 2px;
+      background: #409eff;
+      content: '';
+    }
+  }
+}
+.lead-follow-up-detail__summary p {
+  margin: 0;
+  padding: 12px;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.lead-follow-up-detail__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.lead-follow-up-detail__item {
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #edf1f6;
+  border-radius: 6px;
+  background: #f8fafc;
+  small,
+  b {
+    display: block;
+  }
+  small {
+    margin-bottom: 5px;
+    color: #7d8998;
+    font-size: 12px;
+  }
+  b {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+}
+.lead-follow-up-detail__item--wide {
+  grid-column: 1 / -1;
+}
+.lead-follow-up-detail__item--empty {
+  opacity: 0.58;
+}
+.lead-follow-up-detail__attachments {
+  padding-bottom: 12px;
+}
+.lead-follow-up-detail__file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  .el-button {
+    max-width: 100%;
+    margin: 0;
+    padding: 7px 10px;
+    border-radius: 4px;
+    background: #f0f7ff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+.lead-allocation-action {
+  width: 48px;
+  padding-right: 0;
+  padding-left: 0;
+  white-space: nowrap;
+}
+.lead-follow-up-action {
+  display: inline-block;
+  margin-left: 8px;
+}
+.lead-enterprise-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.lead-enterprise-cell__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.lead-enterprise-badge {
+  border: 0;
+  font-weight: 500;
+  &.lead-enterprise-badge--priority {
+    color: #b91c1c;
+    background: #fef2f2;
+  }
+  &.lead-enterprise-badge--key {
+    color: #c2410c;
+    background: #fff7ed;
+  }
+  &.lead-enterprise-badge--signed {
+    color: #15803d;
+    background: #f0fdf4;
+  }
+}
+.lead-invalid-application-action {
+  display: inline-block;
+  margin-left: 12px;
+}
+@media (max-width: 760px) {
+  .lead-follow-up-form,
+  .lead-follow-up-detail__grid {
+    grid-template-columns: 1fr;
+  }
+  .lead-follow-up-detail {
+    padding: 14px;
+  }
+  .lead-follow-up-detail__hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .lead-follow-up-detail__tags {
+    justify-content: flex-start;
+  }
+  .lead-follow-up-history {
+    padding: 10px 12px 8px;
+  }
+  .lead-follow-up-history__summary > span {
+    display: none;
+  }
+}
+</style>
+<style lang="scss">
+.lead-follow-up-detail-drawer {
+  .el-drawer__header {
+    margin-bottom: 0;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e6edf4;
+    color: #27384d;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .el-drawer__body {
+    overflow-y: auto;
+    background: #f6f8fb;
+  }
+}
+.intention-inquiry-page.record-feature-page {
+  padding: 12px;
+  background: #f3f5f7;
+}
+.intention-inquiry-page .record-feature-surface {
+  height: calc(100vh - 106px);
+  min-height: 600px;
+  padding: 8px 10px 0;
+  overflow: auto;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: none;
+}
+.intention-inquiry-page.record-feature-page--read-only .record-feature-surface {
+  height: calc(100vh - 100px);
+  border-radius: 4px;
+}
+.intention-inquiry-page .record-feature-toolbar {
+  display: flex;
+  justify-content: space-between;
+  min-height: 32px;
+  margin-bottom: 6px;
+}
+.lead-table-toolbar__actions {
+  flex: 0 0 auto;
+}
+.intention-inquiry-page .record-feature-toolbar > .el-input {
+  flex: 0 1 360px;
+  width: 360px;
+  max-width: 100%;
+  margin-left: auto;
+}
+.intention-inquiry-page .record-feature-table--compact {
+  flex: 0 0 auto;
+  border: 0;
+  border-top: 1px solid #e8edef;
+}
+.intention-inquiry-page .record-feature-table--compact::before {
+  display: none;
+}
+.intention-inquiry-page .record-feature-table--compact th {
+  height: 48px;
+  color: #27313d;
+  font-weight: 600;
+  background: #f4f8f9;
+}
+.intention-inquiry-page .record-feature-table--compact .el-table__body > tbody > .el-table__row > td {
+  height: var(--lead-table-row-height, 40px);
+}
+.intention-inquiry-page .record-feature-table--compact .el-table__row {
+  cursor: pointer;
+}
+.intention-inquiry-page .record-feature-table--compact .el-table__body-wrapper {
+  overflow-x: hidden !important;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.intention-inquiry-page .record-feature-table--compact .el-table__body-wrapper::-webkit-scrollbar {
+  height: 0;
+}
+.lead-table-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  flex: 0 0 62px;
+  flex-direction: column;
+  box-sizing: border-box;
+  align-items: stretch;
+  gap: 6px;
+  margin-top: auto;
+  padding: 6px 10px;
+  overflow: hidden;
+  background: #fff;
+}
+.lead-table-horizontal-scrollbar {
+  flex: 0 0 8px;
+  min-width: 0;
+  height: 8px;
+  border-radius: 8px;
+  background: #f4f6f8;
+  box-shadow: 0 -2px 8px rgba(36, 52, 71, 0.08);
+  cursor: pointer;
+}
+.lead-table-footer .record-feature-pagination {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding-top: 0;
+}
+.lead-table-horizontal-scrollbar__thumb {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #aeb6c2;
+  cursor: pointer;
+  transition: background-color 0.16s ease;
+  &:hover {
+    background: #8f9aa9;
+  }
+  &:active {
+    cursor: grabbing;
+    background: #778496;
+  }
+}
+.intention-inquiry-page .record-feature-pagination {
+  justify-content: flex-end;
+  min-height: 32px;
+  padding-top: 10px;
+}
+@media (max-width: 720px) {
+  .intention-inquiry-page .record-feature-surface {
+    height: auto;
+    min-height: 440px;
+  }
+}
+</style>
