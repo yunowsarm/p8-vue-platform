@@ -94,7 +94,17 @@
 
     <!-- 表格区域 -->
     <div class="table-panel">
-      <el-table ref="detailTable" v-loading="loading" :data="tableData" border stripe height="100%" :row-style="{ height: `${tableRowHeight}px` }" style="width: 100%" :header-cell-style="{ background: '#f5f7fa' }">
+      <el-table
+        ref="detailTable"
+        v-loading="loading"
+        :data="tableData"
+        border
+        stripe
+        height="100%"
+        :row-style="{ height: `${tableRowHeight}px` }"
+        style="width: 100%"
+        :header-cell-style="{ background: '#f5f7fa' }">
+        <el-table-column prop="reimbursementNo" label="报销单编号" min-width="100" align="center" />
         <!-- <el-table-column type="index" label="序号" width="60" align="center" fixed="left" /> -->
         <el-table-column prop="submitDate" label="提交日期" min-width="120" align="center">
           <template slot-scope="scope">{{ scope.row.submitDate ? scope.row.submitDate.split(' ')[0] : '-' }}</template>
