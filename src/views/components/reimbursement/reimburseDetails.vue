@@ -18,26 +18,9 @@
           <i class="el-icon-close" @click="searchExpanded = false" />
         </div>
         <div class="search-card-body">
-          <el-form
-            :model="searchForm"
-            ref="searchForm"
-            size="small"
-            label-position="right"
-            label-width="80px"
-            inline
-            class="reimburse-details-search underline-form"
-          >
+          <el-form :model="searchForm" ref="searchForm" size="small" label-position="right" label-width="80px" inline class="reimburse-details-search underline-form">
             <el-form-item label="项目" prop="projectId">
-              <el-select
-                v-model="searchForm.projectId"
-                placeholder="请选择项目"
-                multiple
-                collapse-tags
-                clearable
-                filterable
-                style="width: 240px"
-                @visible-change="onProjectSelectVisible"
-              >
+              <el-select v-model="searchForm.projectId" placeholder="请选择项目" multiple collapse-tags clearable filterable style="width: 240px" @visible-change="onProjectSelectVisible">
                 <el-option v-for="item in projectOptions" :key="item.id" :label="item.cmeaning" :value="item.id" />
               </el-select>
             </el-form-item>
@@ -53,15 +36,8 @@
                 style="width: 240px"
                 popper-class="tree-select-popper"
                 @remove-tag="handleCategoryRemoveTag"
-                @visible-change="handleCategorySelectVisible"
-              >
-                <el-option
-                  v-for="item in selectedCategoryNodes"
-                  :key="item.id"
-                  :value="item.id"
-                  :label="item.cmeaning"
-                  style="display: none"
-                />
+                @visible-change="handleCategorySelectVisible">
+                <el-option v-for="item in selectedCategoryNodes" :key="item.id" :value="item.id" :label="item.cmeaning" style="display: none" />
                 <el-option value="" label="" style="height: auto; padding: 0; overflow: auto">
                   <el-tree
                     ref="categoryTree"
@@ -71,8 +47,7 @@
                     show-checkbox
                     default-expand-all
                     :expand-on-click-node="false"
-                    @check="handleCategoryTreeCheck"
-                  />
+                    @check="handleCategoryTreeCheck" />
                 </el-option>
               </el-select>
             </el-form-item>
@@ -88,26 +63,10 @@
                 style="width: 240px"
                 popper-class="tree-select-popper"
                 @remove-tag="handleDeptRemoveTag"
-                @visible-change="handleDeptSelectVisible"
-              >
-                <el-option
-                  v-for="item in selectedDeptNodes"
-                  :key="item.ID"
-                  :value="item.ID"
-                  :label="item.NAME"
-                  style="display: none"
-                />
+                @visible-change="handleDeptSelectVisible">
+                <el-option v-for="item in selectedDeptNodes" :key="item.ID" :value="item.ID" :label="item.NAME" style="display: none" />
                 <el-option value="" label="" style="height: auto; padding: 0; overflow: auto">
-                  <el-tree
-                    ref="deptTree"
-                    :data="deptOptions"
-                    :props="deptTreeProps"
-                    node-key="ID"
-                    show-checkbox
-                    default-expand-all
-                    :expand-on-click-node="false"
-                    @check="handleDeptTreeCheck"
-                  />
+                  <el-tree ref="deptTree" :data="deptOptions" :props="deptTreeProps" node-key="ID" show-checkbox default-expand-all :expand-on-click-node="false" @check="handleDeptTreeCheck" />
                 </el-option>
               </el-select>
             </el-form-item>
@@ -122,8 +81,7 @@
                 value-format="yyyy-MM-dd"
                 clearable
                 :picker-options="datePickerOptions"
-                style="width: 240px"
-              />
+                style="width: 240px" />
             </el-form-item>
           </el-form>
         </div>
@@ -136,17 +94,7 @@
 
     <!-- 表格区域 -->
     <div class="table-panel">
-      <el-table
-        ref="detailTable"
-        v-loading="loading"
-        :data="tableData"
-        border
-        stripe
-        height="100%"
-        :row-style="{ height: '50px' }"
-        style="width: 100%"
-        :header-cell-style="{ background: '#f5f7fa' }"
-      >
+      <el-table ref="detailTable" v-loading="loading" :data="tableData" border stripe height="100%" :row-style="{ height: `${tableRowHeight}px` }" style="width: 100%" :header-cell-style="{ background: '#f5f7fa' }">
         <!-- <el-table-column type="index" label="序号" width="60" align="center" fixed="left" /> -->
         <el-table-column prop="submitDate" label="提交日期" min-width="120" align="center">
           <template slot-scope="scope">{{ scope.row.submitDate ? scope.row.submitDate.split(' ')[0] : '-' }}</template>
@@ -181,26 +129,27 @@
           :page-sizes="[10, 20, 50, 100]"
           :total="pagination.total"
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+          @current-change="handleCurrentChange" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
+
 export default {
   name: 'ReimburseDetails',
-  data () {
+  data() {
     return {
       loading: false,
       searchExpanded: false,
       projectLoaded: false,
       searchForm: {
-        projectId: [],       // 项目id，多选
-        classification: [],  // 费用分类id，多选
-        dept: [],            // 部门id，多选
-        dateRange: []        // 费用发生时间范围 [beginDate, endDate]
+        projectId: [], // 项目id，多选
+        classification: [], // 费用分类id，多选
+        dept: [], // 部门id，多选
+        dateRange: [] // 费用发生时间范围 [beginDate, endDate]
       },
       projectOptions: [],
       categoryOptions: [],
@@ -216,6 +165,7 @@ export default {
       },
       selectedDeptNodes: [],
       tableData: [],
+      tableRowHeight: 50,
       pagination: {
         current: 1,
         size: 10,
@@ -224,39 +174,39 @@ export default {
     }
   },
   computed: {
-    searchSummary () {
+    searchSummary() {
       const parts = []
       if (this.searchForm.projectId && this.searchForm.projectId.length) {
-        const labels = this.searchForm.projectId.map(v => this.getLabelByValue(v, this.projectOptions))
+        const labels = this.searchForm.projectId.map((v) => this.getLabelByValue(v, this.projectOptions))
         parts.push(`项目：${labels.join('、')}`)
       }
       // 直接用已选节点的名称，避免树递归查找漏掉后面的分类
       if (this.selectedCategoryNodes.length) {
-        parts.push(`分类：${this.selectedCategoryNodes.map(n => n.cmeaning).join('、')}`)
+        parts.push(`分类：${this.selectedCategoryNodes.map((n) => n.cmeaning).join('、')}`)
       }
       if (this.selectedDeptNodes.length) {
-        parts.push(`部门：${this.selectedDeptNodes.map(n => n.NAME).join('、')}`)
+        parts.push(`部门：${this.selectedDeptNodes.map((n) => n.NAME).join('、')}`)
       }
       if (this.searchForm.dateRange && this.searchForm.dateRange.length === 2) {
         parts.push(`${this.searchForm.dateRange[0]} ~ ${this.searchForm.dateRange[1]}`)
       }
       return parts.join(' / ')
     },
-    datePickerOptions () {
+    datePickerOptions() {
       const today = new Date()
       const end = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59)
       return {
         shortcuts: [
           {
             text: '今天',
-            onClick (picker) {
+            onClick(picker) {
               const start = new Date(today.getFullYear(), today.getMonth(), today.getDate())
               picker.$emit('pick', [start, end])
             }
           },
           {
             text: '最近一周',
-            onClick (picker) {
+            onClick(picker) {
               const start = new Date(today.getTime() - 7 * 24 * 3600 * 1000)
               start.setHours(0, 0, 0, 0)
               picker.$emit('pick', [start, end])
@@ -264,7 +214,7 @@ export default {
           },
           {
             text: '最近一月',
-            onClick (picker) {
+            onClick(picker) {
               const start = new Date(today.getTime() - 30 * 24 * 3600 * 1000)
               start.setHours(0, 0, 0, 0)
               picker.$emit('pick', [start, end])
@@ -272,7 +222,7 @@ export default {
           },
           {
             text: '最近三月',
-            onClick (picker) {
+            onClick(picker) {
               const start = new Date(today.getTime() - 90 * 24 * 3600 * 1000)
               start.setHours(0, 0, 0, 0)
               picker.$emit('pick', [start, end])
@@ -282,67 +232,90 @@ export default {
       }
     }
   },
-  mounted () {
+  watch: {
+    'pagination.size'() {
+      this.$nextTick(this.updateTableRowHeight)
+    }
+  },
+  mounted() {
     this.loadDictionary()
     this.handleSearch()
+    this.$nextTick(() => {
+      const table = this.$refs.detailTable
+      addResizeListener(table.bodyWrapper, this.updateTableRowHeight)
+      this.updateTableRowHeight()
+    })
+  },
+  beforeDestroy() {
+    const table = this.$refs.detailTable
+    if (table) {
+      removeResizeListener(table.bodyWrapper, this.updateTableRowHeight)
+    }
   },
   methods: {
-    loadDictionary () {
+    updateTableRowHeight() {
+      const table = this.$refs.detailTable
+      if (!table || !table.bodyWrapper) return
+      // 扣除横向滚动条后的可用高度，按每页条数分配；不足一页时保持相同行高。
+      const availableHeight = table.bodyWrapper.clientHeight - 1
+      this.tableRowHeight = Math.max(50, Math.floor(availableHeight / this.pagination.size))
+    },
+    loadDictionary() {
       // 加载费用分类
       const fyparams = {
-        id: "900915dd9a1596ad4a91d8504c6db3d2"
+        id: '900915dd9a1596ad4a91d8504c6db3d2'
       }
-      this.$api['carRequest.platSelectApi'](fyparams).then(res => {
+      this.$api['carRequest.platSelectApi'](fyparams).then((res) => {
         this.categoryOptions = this.buildTree(res.data)
       })
       // 加载部门
       const deptParams = {
         id: 'a97e9d7d81c8a29fa3d1296d97794b4f'
       }
-      this.$api['carRequest.platSelectApi'](deptParams).then(res => {
+      this.$api['carRequest.platSelectApi'](deptParams).then((res) => {
         this.deptOptions = this.buildDeptTree(res.data)
         console.log('部门树形数据', this.deptOptions)
       })
     },
     buildTree(data) {
-        // 1. 创建一个映射，方便通过 id 快速查找节点
-        const nodeMap = {};
-        data.forEach(item => {
-            nodeMap[item.id] = {
-                ...item,
-                children: [] // 初始化 children 数组
-            };
-        });
-        const tree = [];
-        data.forEach(item => {
-            const node = nodeMap[item.id];
-            if (item.cparentid && nodeMap[item.cparentid]) {
-                // 如果有父节点，将当前节点添加到父节点的 children 中
-                nodeMap[item.cparentid].children.push(node);
-            } else {
-                // 否则为根节点
-                tree.push(node);
-            }
-        });
+      // 1. 创建一个映射，方便通过 id 快速查找节点
+      const nodeMap = {}
+      data.forEach((item) => {
+        nodeMap[item.id] = {
+          ...item,
+          children: [] // 初始化 children 数组
+        }
+      })
+      const tree = []
+      data.forEach((item) => {
+        const node = nodeMap[item.id]
+        if (item.cparentid && nodeMap[item.cparentid]) {
+          // 如果有父节点，将当前节点添加到父节点的 children 中
+          nodeMap[item.cparentid].children.push(node)
+        } else {
+          // 否则为根节点
+          tree.push(node)
+        }
+      })
 
-        return tree;
+      return tree
     },
     buildDeptTree(data) {
       // 先找出所有根节点（PATER_DEPARTMENT_ID 为 null 的节点）
-      const roots = data.filter(item => item.PATER_DEPARTMENT_ID === null)
+      const roots = data.filter((item) => item.PATER_DEPARTMENT_ID === null)
 
       // 找出所有子节点（PATER_DEPARTMENT_ID 不为 null 的节点）
-      const children = data.filter(item => item.PATER_DEPARTMENT_ID !== null)
+      const children = data.filter((item) => item.PATER_DEPARTMENT_ID !== null)
 
       // 构建映射表，方便查找
       const map = {}
-      data.forEach(item => {
+      data.forEach((item) => {
         map[item.ID] = { ...item, children: [] }
       })
 
       // 构建树
       const tree = []
-      roots.forEach(root => {
+      roots.forEach((root) => {
         const node = map[root.ID]
         if (node) {
           // 递归查找子节点
@@ -354,7 +327,7 @@ export default {
     },
     getDeptChildren(parentId, children, map) {
       const result = []
-      children.forEach(child => {
+      children.forEach((child) => {
         if (child.PATER_DEPARTMENT_ID === parentId) {
           const node = map[child.ID]
           if (node) {
@@ -368,43 +341,41 @@ export default {
       result.sort((a, b) => a.INDEX_NO - b.INDEX_NO)
       return result
     },
-    onProjectSelectVisible (visible) {
+    onProjectSelectVisible(visible) {
       if (visible && !this.projectLoaded) {
         this.loadProjectOptions()
       }
     },
-    loadProjectOptions () {
+    loadProjectOptions() {
       const params = {
         id: 'ddafa31f1948ef419e014cd0e134a89c'
       }
-      this.$api['carRequest.platSelectApi'](params).then(res => {
-        this.projectOptions = res.data || []
-        this.projectLoaded = true
-      }).catch(() => {
-        this.$message.error('加载项目列表失败')
-      })
+      this.$api['carRequest.platSelectApi'](params)
+        .then((res) => {
+          this.projectOptions = res.data || []
+          this.projectLoaded = true
+        })
+        .catch(() => {
+          this.$message.error('加载项目列表失败')
+        })
     },
     // ===== 费用分类树形选择 =====
-    handleCategoryTreeCheck (checkedNode, checkedState) {
+    handleCategoryTreeCheck(checkedNode, checkedState) {
       // 只取叶子节点（没有 children 的节点）
-      const leafNodes = (checkedState.checkedNodes || []).filter(
-        node => !node.children || !node.children.length
-      )
+      const leafNodes = (checkedState.checkedNodes || []).filter((node) => !node.children || !node.children.length)
       this.selectedCategoryNodes = leafNodes
-      this.searchForm.classification = leafNodes.map(node => node.id)
+      this.searchForm.classification = leafNodes.map((node) => node.id)
     },
-    handleCategoryRemoveTag (removedId) {
-      this.selectedCategoryNodes = this.selectedCategoryNodes.filter(
-        item => item.id !== removedId
-      )
-      this.searchForm.classification = this.selectedCategoryNodes.map(item => item.id)
+    handleCategoryRemoveTag(removedId) {
+      this.selectedCategoryNodes = this.selectedCategoryNodes.filter((item) => item.id !== removedId)
+      this.searchForm.classification = this.selectedCategoryNodes.map((item) => item.id)
       // 同步 tree 的选中状态
       const tree = this.$refs.categoryTree
       if (tree) {
         tree.setCheckedKeys(this.searchForm.classification)
       }
     },
-    handleCategorySelectVisible (visible) {
+    handleCategorySelectVisible(visible) {
       if (!visible) return
       this.$nextTick(() => {
         const tree = this.$refs.categoryTree
@@ -415,26 +386,22 @@ export default {
     },
     // ===== 部门树形选择 =====
     // 下拉框/树用 ID 绑定；查询参数在 buildSearchParams 里转成 NAME
-    handleDeptTreeCheck (checkedNode, checkedState) {
+    handleDeptTreeCheck(checkedNode, checkedState) {
       // 只取叶子节点（没有 children 的节点）
-      const leafNodes = (checkedState.checkedNodes || []).filter(
-        node => !node.children || !node.children.length
-      )
+      const leafNodes = (checkedState.checkedNodes || []).filter((node) => !node.children || !node.children.length)
       this.selectedDeptNodes = leafNodes
-      this.searchForm.dept = leafNodes.map(node => node.ID)
+      this.searchForm.dept = leafNodes.map((node) => node.ID)
     },
-    handleDeptRemoveTag (removedId) {
-      this.selectedDeptNodes = this.selectedDeptNodes.filter(
-        item => item.ID !== removedId
-      )
-      this.searchForm.dept = this.selectedDeptNodes.map(item => item.ID)
+    handleDeptRemoveTag(removedId) {
+      this.selectedDeptNodes = this.selectedDeptNodes.filter((item) => item.ID !== removedId)
+      this.searchForm.dept = this.selectedDeptNodes.map((item) => item.ID)
       // 同步 tree 的选中状态（node-key 是 ID）
       const tree = this.$refs.deptTree
       if (tree) {
         tree.setCheckedKeys(this.searchForm.dept)
       }
     },
-    handleDeptSelectVisible (visible) {
+    handleDeptSelectVisible(visible) {
       if (!visible) return
       this.$nextTick(() => {
         const tree = this.$refs.deptTree
@@ -443,17 +410,15 @@ export default {
         }
       })
     },
-    toggleSearchPanel () {
+    toggleSearchPanel() {
       this.searchExpanded = !this.searchExpanded
     },
-    buildSearchParams () {
+    buildSearchParams() {
       const { projectId, classification, dept, dateRange } = this.searchForm
       const params = {}
 
       // 部门：页面用 ID 绑定，查询只传 NAME
-      params.dept = (dept && dept.length)
-        ? this.selectedDeptNodes.map(item => item.NAME)
-        : []
+      params.dept = dept && dept.length ? this.selectedDeptNodes.map((item) => item.NAME) : []
       // 费用分类id，多选，传数组（没有选择时传空数组）
       params.classification = classification && classification.length ? classification : []
       // 项目id，多选，传数组（没有选择时传空数组）
@@ -469,7 +434,7 @@ export default {
 
       return params
     },
-    handleSearch () {
+    handleSearch() {
       this.searchExpanded = false
       this.loading = true
 
@@ -479,36 +444,40 @@ export default {
         size: this.pagination.size
       }
 
-      this.$api['baseData.getReimburseList'](params).then(res => {
-        this.tableData = res.records
-        this.pagination.total = res.total
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-        this.$message.error('查询报销明细失败')
-      })
+      this.$api['baseData.getReimburseList'](params)
+        .then((res) => {
+          this.tableData = res.records
+          this.pagination.total = res.total
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+          this.$message.error('查询报销明细失败')
+        })
     },
-    handleExport () {
+    handleExport() {
       const params = this.buildSearchParams()
-      this.$api['baseData.exportReimburseExcel'](params, { responseType: 'blob' }).then(res => {
-        const blob = new Blob([res.data], { type: 'application/vnd.ms-excel' })
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.style.display = 'none'
-        link.href = url
-        const date = new Date()
-        const fileName = '报销明细_' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-        link.download = fileName + '.xlsx'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        window.URL.revokeObjectURL(url)
-        this.$message.success('导出成功')
-      }).catch(() => {
-        this.$message.error('导出失败')
-      })
+      this.$api['baseData.exportReimburseExcel'](params, { responseType: 'blob' })
+        .then((res) => {
+          const blob = new Blob([res.data], { type: 'application/vnd.ms-excel' })
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.style.display = 'none'
+          link.href = url
+          const date = new Date()
+          const fileName = '报销明细_' + date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+          link.download = fileName + '.xlsx'
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          window.URL.revokeObjectURL(url)
+          this.$message.success('导出成功')
+        })
+        .catch(() => {
+          this.$message.error('导出失败')
+        })
     },
-    handleReset () {
+    handleReset() {
       this.$refs.searchForm.resetFields()
       this.searchForm.projectId = []
       this.searchForm.classification = []
@@ -518,21 +487,21 @@ export default {
       this.selectedDeptNodes = []
       this.handleSearch()
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pagination.size = val
       this.pagination.current = 1
       this.handleSearch()
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.pagination.current = val
       console.log('当前页码', val)
       this.handleSearch()
     },
-    getLabelByValue (value, options) {
-      const item = options.find(opt => opt.id === value || opt.value === value)
-      return item ? (item.cmeaning || item.label || value) : value
+    getLabelByValue(value, options) {
+      const item = options.find((opt) => opt.id === value || opt.value === value)
+      return item ? item.cmeaning || item.label || value : value
     },
-    getCategoryNodeLabel (id, nodes) {
+    getCategoryNodeLabel(id, nodes) {
       for (const node of nodes) {
         if (node.id === id) return node.cmeaning
         if (node.children && node.children.length) {
@@ -543,7 +512,7 @@ export default {
       }
       return null
     },
-    getDeptNodeLabel (id, nodes) {
+    getDeptNodeLabel(id, nodes) {
       for (const node of nodes) {
         if (node.ID === id) return node.NAME
         if (node.children && node.children.length) {
@@ -553,20 +522,28 @@ export default {
       }
       return null
     },
-    getStatusType (status) {
+    getStatusType(status) {
       switch (status) {
-        case '1': return 'success'
-        case '2': return 'warning'
-        case '3': return 'danger'
-        default: return 'info'
+        case '1':
+          return 'success'
+        case '2':
+          return 'warning'
+        case '3':
+          return 'danger'
+        default:
+          return 'info'
       }
     },
-    getStatusText (status) {
+    getStatusText(status) {
       switch (status) {
-        case '1': return '已通过'
-        case '2': return '审批中'
-        case '3': return '已驳回'
-        default: return '草稿'
+        case '1':
+          return '已通过'
+        case '2':
+          return '审批中'
+        case '3':
+          return '已驳回'
+        default:
+          return '草稿'
       }
     }
   }
@@ -774,6 +751,7 @@ export default {
 // ===== 表格区域 =====
 .table-panel {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -781,13 +759,15 @@ export default {
   overflow: hidden;
   .el-table {
     flex: 1;
+    min-height: 0;
   }
 }
 
 .pagination-panel {
   display: flex;
   justify-content: flex-end;
-  padding: 12px 0 0 0;
+  flex-shrink: 0;
+  padding: 12px 0 20px;
 }
 </style>
 
