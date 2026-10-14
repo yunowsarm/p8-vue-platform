@@ -395,7 +395,7 @@ export default {
       })
     },
     // ===== 部门树形选择 =====
-    // 下拉框/树用 ID 绑定；查询参数在 buildSearchParams 里转成 NAME
+    // 下拉框/树用 ID 绑定，查询和导出直接传部门 ID
     handleDeptTreeCheck(checkedNode, checkedState) {
       // 只取叶子节点（没有 children 的节点）
       const leafNodes = (checkedState.checkedNodes || []).filter((node) => !node.children || !node.children.length)
@@ -427,8 +427,8 @@ export default {
       const { projectId, classification, dept, dateRange } = this.searchForm
       const params = {}
 
-      // 部门：页面用 ID 绑定，查询只传 NAME
-      params.dept = dept && dept.length ? this.selectedDeptNodes.map((item) => item.NAME) : []
+      // 部门id，多选，传数组（没有选择时传空数组）
+      params.dept = dept && dept.length ? dept : []
       // 费用分类id，多选，传数组（没有选择时传空数组）
       params.classification = classification && classification.length ? classification : []
       // 项目id，多选，传数组（没有选择时传空数组）
@@ -649,7 +649,6 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
   z-index: 100;
 }
 
