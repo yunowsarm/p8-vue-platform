@@ -3,7 +3,10 @@
     <div class="kpi-row">
       <div v-for="item in kpis" :key="item.title" class="kpi-card">
         <div class="kpi-title">{{ item.title }}</div>
-        <div class="kpi-value">{{ item.value }}<span class="kpi-unit">{{ item.unit }}</span></div>
+        <div class="kpi-value">
+          {{ item.value }}
+          <span class="kpi-unit">{{ item.unit }}</span>
+        </div>
       </div>
     </div>
 
