@@ -1,21 +1,8 @@
-<!-- 消防设备维保页面：负责设备档案、维保记录、详情操作与提醒配置。 -->
+<!-- 消防维保入口：五个工作区共享业务数据和关联规则。 -->
 <template>
   <div class="fire-maintenance-page">
-    <header class="page-header">
-      <div>
-        <div class="title-row">
-          <h2>消防设备维保登记</h2>
-          <span class="scope-badge">
-            <i class="el-icon-document-checked"></i>
-            当前仅管理维保业务
-          </span>
-        </div>
-        <p>统一管理消防设备台账、维保计划、执行登记、现场凭证和到期提醒</p>
-      </div>
-    </header>
-
     <section class="kpi-grid">
-      <article v-for="item in dataSet.kpis" :key="item.title" class="kpi-card">
+      <article v-for="item in kpis" :key="item.title" class="kpi-card">
         <i :class="[item.icon, 'kpi-icon', item.type]"></i>
         <div class="kpi-label">{{ item.title }}</div>
         <div class="kpi-number">
@@ -27,588 +14,77 @@
     </section>
 
     <iot-workspace-nav v-model="activeTab" :items="workspaceNav" aria-label="消防设备维保业务工作区" @change="handleWorkspaceChange" />
-
-    <section v-if="activeTab === 'overview'" ref="workspaceContent" class="overview-grid" tabindex="-1">
-      <article class="surface category-panel">
-        <div class="surface-head">
-          <div>
-            <h3>
-              <i class="el-icon-pie-chart"></i>
-              设备分类与本年维保
-            </h3>
-            <p>按设备类型统计计划覆盖情况</p>
-          </div>
-          <span class="head-note">共 6 类</span>
-        </div>
-        <div class="category-list">
-          <div v-for="item in dataSet.categories" :key="item.name" class="category-row">
-            <div class="category-meta">
-              <span>
-                <i :style="{ background: item.color }"></i>
-                {{ item.name }}
-              </span>
-              <b>{{ item.maintained }}/{{ item.total }}</b>
-            </div>
-            <div class="category-progress"><i :style="{ width: Math.round((item.maintained / item.total) * 100) + '%', background: item.color }"></i></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="surface progress-panel">
-        <div class="surface-head">
-          <div>
-            <h3>
-              <i class="el-icon-data-line"></i>
-              本月维保进度
-            </h3>
-            <p>计划 32 次，已完成 26 次</p>
-          </div>
-          <el-button type="text" size="mini" @click="openWorkspace('plans')">
-            进入计划管理
-            <i class="el-icon-arrow-right"></i>
-          </el-button>
-        </div>
-        <div class="progress-layout">
-          <div class="progress-ring">
-            <div>
-              <strong>81.3%</strong>
-              <span>本月完成率</span>
-            </div>
-          </div>
-          <div class="progress-stats">
-            <div>
-              <span>
-                <i class="dot completed"></i>
-                已完成
-              </span>
-              <strong>
-                26
-                <small>次</small>
-              </strong>
-            </div>
-            <div>
-              <span>
-                <i class="dot pending"></i>
-                待执行
-              </span>
-              <strong>
-                6
-                <small>次</small>
-              </strong>
-            </div>
-            <div>
-              <span>
-                <i class="dot overdue"></i>
-                其中逾期
-              </span>
-              <strong>
-                4
-                <small>次</small>
-              </strong>
-            </div>
-          </div>
-        </div>
-        <div class="month-summary">
-          <span>
-            内部维保
-            <b>21 次</b>
-          </span>
-          <span>
-            外委维保
-            <b>5 次</b>
-          </span>
-          <span>
-            一次合格率
-            <b>92.3%</b>
-          </span>
-        </div>
-      </article>
-
-      <article class="surface reminder-panel">
-        <div class="surface-head">
-          <div>
-            <h3>
-              <i class="el-icon-alarm-clock"></i>
-              近期维保提醒
-            </h3>
-            <p>按到期紧急程度自动排序</p>
-          </div>
-          <el-button type="text" size="mini" @click="openWorkspace('reminders')">
-            进入提醒管理
-            <i class="el-icon-arrow-right"></i>
-          </el-button>
-        </div>
-        <div class="reminder-list">
-          <button v-for="item in dataSet.reminders.slice(0, 5)" :key="item.id" type="button" class="reminder-item" @click="openReminder(item)">
-            <span :class="['date-box', item.overdueDays > 0 ? 'overdue' : item.overdueDays === 0 ? 'today' : 'upcoming']">
-              <b>{{ item.dueDate.slice(8) }}</b>
-              <small>07月</small>
-            </span>
-            <span class="reminder-info">
-              <b>{{ item.device }}</b>
-              <small>{{ item.location }}</small>
-            </span>
-            <span :class="['reminder-status', item.overdueDays >= 0 ? 'danger' : 'warning']">{{ item.status }}</span>
-          </button>
-        </div>
-      </article>
+    <maintenance-overview
+      v-show="activeTab === 'overview'"
+      ref="overview"
+      :category-stats="categoryStats"
+      :month-progress="monthProgress"
+      :reminders="reminders"
+      :unplanned-count="devices.filter((item) => !nextPlan(item.id)).length"
+      :record-count="records.length"
+      @navigate="openWorkspace"
+      @view-plan="viewPlan" />
+    <section v-show="activeTab !== 'overview'" ref="workspaceContent" class="surface ledger-card workspace-detail" tabindex="-1">
+      <div class="workspace-tabs">
+        <device-ledger
+          ref="devices"
+          :buildings="buildings"
+          :category-stats="categoryStats"
+          :device-plans="devicePlans"
+          :device-maintenance-status="deviceMaintenanceStatus"
+          @save-device="saveDevice"
+          @add-type="addDeviceType"
+          @rename-type="renameDeviceType"
+          @remove-type="removeDeviceType"
+          v-show="activeTab === 'devices'"
+          :active="activeTab === 'devices'"
+          :devices="devices"
+          :plans="plans"
+          :categories="categories"
+          :page-size="pageSize"
+          @size-change="pageSize = $event"
+          @detail="openDeviceDetail" />
+        <plan-list
+          ref="plans"
+          :categories="categories"
+          :buildings="buildings"
+          :check-templates="checkTemplates"
+          :device-plans="devicePlans"
+          :pending-plan-devices="pendingPlanDevices"
+          @save-plan="savePlan"
+          v-show="activeTab === 'plans'"
+          :active="activeTab === 'plans'"
+          :plans="plans"
+          :devices="devices"
+          :page-size="pageSize"
+          @size-change="pageSize = $event"
+          @execute="executePlan" />
+        <record-list
+          ref="records"
+          :devices="devices"
+          :plans="plans"
+          :check-templates="checkTemplates"
+          :device-plans="devicePlans"
+          :device-maintenance-status="deviceMaintenanceStatus"
+          @save-record="saveRecord"
+          v-show="activeTab === 'records'"
+          :active="activeTab === 'records'"
+          :records="records"
+          :page-size="pageSize"
+          @size-change="pageSize = $event"
+          @detail="openRecordDetail" />
+        <reminder-list
+          ref="reminders"
+          :initial-rule="reminderRule"
+          @save-rule="saveReminderRule"
+          v-show="activeTab === 'reminders'"
+          :active="activeTab === 'reminders'"
+          :reminders="reminders"
+          :page-size="pageSize"
+          @size-change="pageSize = $event"
+          @view-plan="viewPlan" />
+      </div>
     </section>
-
-    <section v-else ref="workspaceContent" class="surface ledger-card workspace-detail" tabindex="-1">
-      <iot-workspace-header :item="currentWorkspace" updated-at="10:42:14" @back="openWorkspace('overview')" />
-      <el-tabs v-model="activeTab" class="workspace-tabs">
-        <el-tab-pane name="devices">
-          <span slot="label" class="tab-label">
-            <i class="el-icon-cpu"></i>
-            设备台账
-            <b>{{ devices.length }}</b>
-          </span>
-          <div class="toolbar">
-            <div class="toolbar-left">
-              <el-input v-model.trim="deviceKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="设备编号 / 名称 / 位置" style="width: 230px"></el-input>
-              <el-select v-model="deviceCategory" size="small" clearable placeholder="设备类型" style="width: 150px">
-                <el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option>
-              </el-select>
-              <el-select v-model="deviceStatus" size="small" clearable placeholder="维保状态" style="width: 130px">
-                <el-option v-for="item in deviceStatuses" :key="item" :label="item" :value="item"></el-option>
-              </el-select>
-            </div>
-            <div class="toolbar-right">
-              <span class="toolbar-note">
-                <i class="el-icon-info"></i>
-                点击设备行可查看完整维保履历
-              </span>
-              <el-button type="primary" size="small" icon="el-icon-plus" @click="openDeviceDialog()">新增设备</el-button>
-            </div>
-          </div>
-          <el-table :data="pagedDevices" size="small" stripe @row-click="openDeviceDetail">
-            <el-table-column prop="id" label="设备编号" width="118"></el-table-column>
-            <el-table-column prop="name" label="设备名称" min-width="180"></el-table-column>
-            <el-table-column prop="category" label="设备类型" width="125"></el-table-column>
-            <el-table-column label="安装位置" min-width="190">
-              <template slot-scope="scope">{{ scope.row.building }} / {{ scope.row.floor }} / {{ scope.row.location }}</template>
-            </el-table-column>
-            <el-table-column prop="cycle" label="周期" width="78">
-              <template slot-scope="scope">{{ scope.row.cycle }}个月</template>
-            </el-table-column>
-            <el-table-column prop="lastDate" label="上次维保" width="105"></el-table-column>
-            <el-table-column prop="nextDate" label="下次维保" width="105"></el-table-column>
-            <el-table-column prop="owner" label="责任人" width="82"></el-table-column>
-            <el-table-column label="状态" width="105">
-              <template slot-scope="scope">
-                <span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" width="145" fixed="right">
-              <template slot-scope="scope">
-                <el-button type="text" size="mini" @click.stop="openRecordDialog(scope.row)">登记维保</el-button>
-                <el-button type="text" size="mini" @click.stop="openDeviceDialog(scope.row)">编辑</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div class="pagination-row"><el-pagination :current-page.sync="devicePage" :page-size="6" layout="total, prev, pager, next" :total="filteredDevices.length"></el-pagination></div>
-        </el-tab-pane>
-
-        <el-tab-pane name="plans">
-          <span slot="label" class="tab-label">
-            <i class="el-icon-date"></i>
-            维保计划
-            <b>{{ plans.length }}</b>
-          </span>
-          <div class="toolbar">
-            <div class="toolbar-left">
-              <el-input v-model.trim="planKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="计划编号 / 名称 / 范围" style="width: 240px"></el-input>
-              <el-select v-model="planStatus" size="small" clearable placeholder="计划状态" style="width: 130px">
-                <el-option v-for="item in ['待执行', '执行中', '已完成']" :key="item" :label="item" :value="item"></el-option>
-              </el-select>
-            </div>
-            <el-button type="primary" size="small" icon="el-icon-plus" @click="openPlanDialog()">新建计划</el-button>
-          </div>
-          <el-table :data="pagedPlans" size="small" stripe>
-            <el-table-column prop="id" label="计划编号" width="125"></el-table-column>
-            <el-table-column prop="name" label="计划名称" min-width="190"></el-table-column>
-            <el-table-column prop="scope" label="维保范围" min-width="220"></el-table-column>
-            <el-table-column prop="frequency" label="频次" width="88"></el-table-column>
-            <el-table-column prop="plannedDate" label="计划日期" width="105"></el-table-column>
-            <el-table-column label="完成进度" width="170">
-              <template slot-scope="scope">
-                <div class="table-progress">
-                  <el-progress :percentage="planProgress(scope.row)" :show-text="false" :stroke-width="7"></el-progress>
-                  <span>{{ scope.row.completed }}/{{ scope.row.devices }}</span>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="serviceType" label="维保方式" width="95"></el-table-column>
-            <el-table-column prop="owner" label="负责人" width="82"></el-table-column>
-            <el-table-column label="状态" width="90">
-              <template slot-scope="scope">
-                <span :class="['status-pill', statusClass(scope.row.status)]">{{ scope.row.status }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" width="145" fixed="right">
-              <template slot-scope="scope">
-                <el-button type="text" size="mini" @click="executePlan(scope.row)">执行登记</el-button>
-                <el-button type="text" size="mini" @click="openPlanDialog(scope.row)">编辑</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div class="pagination-row"><el-pagination :current-page.sync="planPage" :page-size="6" layout="total, prev, pager, next" :total="filteredPlans.length"></el-pagination></div>
-        </el-tab-pane>
-
-        <el-tab-pane name="records">
-          <span slot="label" class="tab-label">
-            <i class="el-icon-document-checked"></i>
-            维保记录
-            <b>{{ records.length }}</b>
-          </span>
-          <div class="toolbar">
-            <div class="toolbar-left">
-              <el-input v-model.trim="recordKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="记录编号 / 设备 / 执行人" style="width: 240px"></el-input>
-              <el-select v-model="recordResult" size="small" clearable placeholder="维保结果" style="width: 130px">
-                <el-option v-for="item in ['合格', '需维修', '不合格']" :key="item" :label="item" :value="item"></el-option>
-              </el-select>
-              <el-date-picker v-model="recordDate" type="date" size="small" value-format="yyyy-MM-dd" placeholder="维保日期" style="width: 150px"></el-date-picker>
-            </div>
-            <el-button type="primary" size="small" icon="el-icon-edit-outline" @click="openRecordDialog()">新增登记</el-button>
-          </div>
-          <el-table :data="pagedRecords" size="small" stripe @row-click="openRecordDetail">
-            <el-table-column prop="id" label="记录编号" width="140"></el-table-column>
-            <el-table-column prop="device" label="设备名称" min-width="180"></el-table-column>
-            <el-table-column prop="category" label="设备类型" width="120"></el-table-column>
-            <el-table-column prop="date" label="维保时间" width="145"></el-table-column>
-            <el-table-column prop="type" label="维保类型" width="95"></el-table-column>
-            <el-table-column prop="executor" label="执行人" width="90"></el-table-column>
-            <el-table-column prop="company" label="执行单位" min-width="145"></el-table-column>
-            <el-table-column label="结果" width="88">
-              <template slot-scope="scope">
-                <span :class="['result-pill', resultClass(scope.row.result)]">{{ scope.row.result }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="现场凭证" width="90">
-              <template slot-scope="scope">
-                <span class="evidence-link">
-                  <i class="el-icon-picture-outline"></i>
-                  {{ scope.row.photos.length }}项
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="nextDate" label="下次维保" width="110"></el-table-column>
-            <el-table-column label="操作" width="70" fixed="right">
-              <template slot-scope="scope"><el-button type="text" size="mini" @click.stop="openRecordDetail(scope.row)">详情</el-button></template>
-            </el-table-column>
-          </el-table>
-          <div class="pagination-row"><el-pagination :current-page.sync="recordPage" :page-size="6" layout="total, prev, pager, next" :total="filteredRecords.length"></el-pagination></div>
-        </el-tab-pane>
-
-        <el-tab-pane name="reminders">
-          <span slot="label" class="tab-label">
-            <i class="el-icon-alarm-clock"></i>
-            到期提醒
-            <b class="danger-count">{{ reminders.length }}</b>
-          </span>
-          <div class="toolbar">
-            <div class="toolbar-left">
-              <el-input
-                v-model.trim="reminderKeyword"
-                size="small"
-                clearable
-                prefix-icon="el-icon-search"
-                placeholder="设备编号 / 设备名称 / 类型 / 位置 / 责任人 / 计划"
-                style="width: 300px"></el-input>
-            </div>
-            <el-button size="small" @click="reminderRuleDialog = true">提醒规则</el-button>
-          </div>
-          <el-table :data="pagedReminders" size="small" stripe>
-            <el-table-column label="紧急程度" width="100">
-              <template slot-scope="scope">
-                <span :class="['urgency-mark', scope.row.overdueDays > 0 ? 'danger' : scope.row.overdueDays === 0 ? 'today' : 'warning']">
-                  <i></i>
-                  {{ scope.row.status }}
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="deviceId" label="设备编号" width="118"></el-table-column>
-            <el-table-column prop="device" label="设备名称" min-width="180"></el-table-column>
-            <el-table-column prop="category" label="设备类型" width="120"></el-table-column>
-            <el-table-column prop="location" label="安装位置" min-width="220"></el-table-column>
-            <el-table-column prop="dueDate" label="到期日期" width="105"></el-table-column>
-            <el-table-column prop="owner" label="责任人" width="85"></el-table-column>
-            <el-table-column prop="plan" label="关联计划" min-width="190"></el-table-column>
-            <el-table-column label="操作" width="100" fixed="right">
-              <template slot-scope="scope"><el-button type="primary" plain size="mini" @click="openReminder(scope.row)">立即登记</el-button></template>
-            </el-table-column>
-          </el-table>
-          <div class="pagination-row"><el-pagination :current-page.sync="reminderPage" :page-size="6" layout="total, prev, pager, next" :total="filteredReminders.length"></el-pagination></div>
-        </el-tab-pane>
-      </el-tabs>
-    </section>
-
-    <el-dialog :title="deviceForm.editingId ? '编辑消防设备' : '新增消防设备'" :visible.sync="deviceDialog" width="720px" custom-class="maintenance-dialog">
-      <div class="dialog-intro">
-        <i class="el-icon-info"></i>
-        建立设备基础档案后，系统将按维保周期自动计算到期时间并生成提醒。
-      </div>
-      <el-form ref="deviceForm" :model="deviceForm" :rules="deviceRules" label-width="105px" size="small">
-        <div class="form-section-title">基础信息</div>
-        <el-row :gutter="16">
-          <el-col :span="12">
-            <el-form-item label="设备编号" prop="id"><el-input v-model.trim="deviceForm.id" :disabled="!!deviceForm.editingId"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="设备类型" prop="category">
-              <el-select v-model="deviceForm.category" style="width: 100%"><el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option></el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="设备名称" prop="name"><el-input v-model.trim="deviceForm.name"></el-input></el-form-item>
-        <el-row :gutter="16">
-          <el-col :span="12">
-            <el-form-item label="品牌"><el-input v-model.trim="deviceForm.brand"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="规格型号"><el-input v-model.trim="deviceForm.model"></el-input></el-form-item>
-          </el-col>
-        </el-row>
-        <div class="form-section-title">安装与责任信息</div>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="建筑" prop="building">
-              <el-select v-model="deviceForm.building" style="width: 100%"><el-option v-for="item in buildings" :key="item" :label="item" :value="item"></el-option></el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="楼层"><el-input v-model.trim="deviceForm.floor"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="具体位置" prop="location"><el-input v-model.trim="deviceForm.location"></el-input></el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="16">
-          <el-col :span="12">
-            <el-form-item label="责任部门"><el-input v-model.trim="deviceForm.department"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="责任人" prop="owner"><el-input v-model.trim="deviceForm.owner"></el-input></el-form-item>
-          </el-col>
-        </el-row>
-        <div class="form-section-title">维保周期</div>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="安装日期"><el-date-picker v-model="deviceForm.installDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="维保周期" prop="cycle">
-              <el-select v-model="deviceForm.cycle" style="width: 100%"><el-option v-for="item in [1, 3, 6, 12]" :key="item" :label="item + '个月'" :value="item"></el-option></el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="下次维保" prop="nextDate"><el-date-picker v-model="deviceForm.nextDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="deviceDialog = false">取消</el-button>
-        <el-button type="primary" @click="saveDevice">保存设备档案</el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog :title="planForm.editingId ? '编辑维保计划' : '新建维保计划'" :visible.sync="planDialog" width="720px" custom-class="maintenance-dialog">
-      <div class="dialog-intro">
-        <i class="el-icon-date"></i>
-        计划保存后按设备范围生成待办；责任人将在设定的提前天数收到到期提醒。
-      </div>
-      <el-form ref="planForm" :model="planForm" :rules="planRules" label-width="105px" size="small">
-        <el-form-item label="计划名称" prop="name"><el-input v-model.trim="planForm.name"></el-input></el-form-item>
-        <el-row :gutter="16">
-          <el-col :span="12">
-            <el-form-item label="建筑范围" prop="building">
-              <el-select v-model="planForm.building" multiple collapse-tags style="width: 100%"><el-option v-for="item in buildings" :key="item" :label="item" :value="item"></el-option></el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="设备类型" prop="categories">
-              <el-select v-model="planForm.categories" multiple collapse-tags style="width: 100%"><el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option></el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="执行频次">
-              <el-select v-model="planForm.frequency" style="width: 100%">
-                <el-option v-for="item in ['每月', '每3个月', '每6个月', '每年']" :key="item" :label="item" :value="item"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="计划日期" prop="plannedDate"><el-date-picker v-model="planForm.plannedDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="提前提醒"><el-input-number v-model="planForm.advanceDays" :min="1" :max="30" style="width: 100%"></el-input-number></el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="16">
-          <el-col :span="10">
-            <el-form-item label="维保方式">
-              <el-radio-group v-model="planForm.serviceType">
-                <el-radio label="内部维保"></el-radio>
-                <el-radio label="外委维保"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="14">
-            <el-form-item label="负责人" prop="owner"><el-input v-model.trim="planForm.owner"></el-input></el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item v-if="planForm.serviceType === '外委维保'" label="维保单位" prop="vendor">
-          <el-input v-model.trim="planForm.vendor" placeholder="填写具备相应资质的维保单位"></el-input>
-        </el-form-item>
-        <el-form-item label="检查模板">
-          <div class="template-preview">
-            <span v-for="item in planChecklist" :key="item">
-              <i class="el-icon-check"></i>
-              {{ item }}
-            </span>
-            <small v-if="!planChecklist.length">选择设备类型后自动带出检查项目</small>
-          </div>
-        </el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="planDialog = false">取消</el-button>
-        <el-button type="primary" @click="savePlan">保存并生成维保任务</el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog title="消防设备维保执行登记" :visible.sync="recordDialog" width="780px" custom-class="maintenance-dialog record-dialog" :close-on-click-modal="false">
-      <div class="dialog-intro">
-        <i class="el-icon-edit-outline"></i>
-        维保记录提交后不可直接删除；如需更正，应通过补充记录保留修改原因和人员。
-      </div>
-      <el-form ref="recordForm" :model="recordForm" :rules="recordRules" label-width="105px" size="small">
-        <div class="form-section-title">执行对象</div>
-        <el-row :gutter="16">
-          <el-col :span="14">
-            <el-form-item label="消防设备" prop="deviceId">
-              <el-select v-model="recordForm.deviceId" filterable style="width: 100%" @change="onRecordDeviceChange">
-                <el-option v-for="item in devices" :key="item.id" :label="item.name + '（' + item.id + '）'" :value="item.id"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="维保类型">
-              <el-select v-model="recordForm.type" style="width: 100%">
-                <el-option v-for="item in ['定期维保', '功能测试', '试运行', '故障检查', '逾期补检']" :key="item" :label="item" :value="item"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <div v-if="recordDevice" class="device-summary">
-          <span>
-            <small>设备类型</small>
-            <b>{{ recordDevice.category }}</b>
-          </span>
-          <span>
-            <small>安装位置</small>
-            <b>{{ recordDevice.building }} / {{ recordDevice.floor }} / {{ recordDevice.location }}</b>
-          </span>
-          <span>
-            <small>当前状态</small>
-            <b>{{ recordDevice.status }}</b>
-          </span>
-        </div>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="维保时间" prop="date"><el-date-picker v-model="recordForm.date" type="datetime" value-format="yyyy-MM-dd HH:mm" style="width: 100%"></el-date-picker></el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="执行人" prop="executor"><el-input v-model.trim="recordForm.executor"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="执行单位" prop="company"><el-input v-model.trim="recordForm.company"></el-input></el-form-item>
-          </el-col>
-        </el-row>
-        <div class="form-section-title">检查项目</div>
-        <div v-if="recordChecklist.length" class="checklist-grid">
-          <el-checkbox v-for="item in recordChecklist" :key="item" v-model="recordForm.checkedItems" :label="item" border>{{ item }}</el-checkbox>
-        </div>
-        <div v-else class="checklist-empty">请先选择消防设备</div>
-        <div class="form-section-title">维保结论与凭证</div>
-        <el-row :gutter="16">
-          <el-col :span="10">
-            <el-form-item label="维保结果" prop="result">
-              <el-radio-group v-model="recordForm.result">
-                <el-radio label="合格"></el-radio>
-                <el-radio label="需维修"></el-radio>
-                <el-radio label="不合格"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="14">
-            <el-form-item label="下次维保" prop="nextDate"><el-date-picker v-model="recordForm.nextDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="问题说明">
-          <el-input v-model.trim="recordForm.issue" type="textarea" :rows="2" :placeholder="recordForm.result === '合格' ? '可填写现场调整情况' : '请填写缺陷、影响和后续处理要求'"></el-input>
-        </el-form-item>
-        <el-row :gutter="16">
-          <el-col :span="12">
-            <el-form-item label="更换部件"><el-input v-model.trim="recordForm.parts"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="维保费用"><el-input-number v-model="recordForm.cost" :min="0" :precision="2" style="width: 100%"></el-input-number></el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="现场凭证" required>
-          <div class="evidence-uploader">
-            <button type="button" @click="addEvidence">
-              <i class="el-icon-plus"></i>
-              <span>添加图片或视频</span>
-            </button>
-            <span v-for="(item, index) in recordForm.photos" :key="item" class="evidence-chip">
-              <i :class="item.indexOf('视频') > -1 ? 'el-icon-video-camera' : 'el-icon-picture-outline'"></i>
-              {{ item }}
-              <button type="button" aria-label="移除凭证" @click="recordForm.photos.splice(index, 1)"><i class="el-icon-close"></i></button>
-            </span>
-          </div>
-          <div class="form-help">仿真环境使用文件占位；正式系统应上传原图、拍摄时间和定位信息。</div>
-        </el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="recordDialog = false">取消</el-button>
-        <el-button type="primary" @click="saveRecord">提交维保记录</el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog title="到期提醒规则" :visible.sync="reminderRuleDialog" width="560px" custom-class="maintenance-dialog">
-      <el-form :model="reminderRule" label-width="115px" size="small">
-        <el-form-item label="默认提前提醒">
-          <el-input-number v-model="reminderRule.advanceDays" :min="1" :max="30"></el-input-number>
-          <span class="form-unit">天</span>
-        </el-form-item>
-        <el-form-item label="提醒对象">
-          <el-checkbox-group v-model="reminderRule.receivers">
-            <el-checkbox label="设备责任人"></el-checkbox>
-            <el-checkbox label="部门负责人"></el-checkbox>
-            <el-checkbox label="消防管理员"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="提醒方式">
-          <el-checkbox-group v-model="reminderRule.channels">
-            <el-checkbox label="系统消息"></el-checkbox>
-            <el-checkbox label="移动端"></el-checkbox>
-            <el-checkbox label="短信"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="逾期升级">
-          <el-switch v-model="reminderRule.escalate"></el-switch>
-          <span class="form-help inline">逾期超过3天升级至园区工程负责人</span>
-        </el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="reminderRuleDialog = false">取消</el-button>
-        <el-button type="primary" @click="saveReminderRule">保存规则</el-button>
-      </span>
-    </el-dialog>
-
     <el-drawer :title="drawerMode === 'device' ? '消防设备维保档案' : '维保记录详情'" :visible.sync="drawerVisible" size="500px" custom-class="maintenance-drawer">
       <div v-if="currentRecord" class="drawer-scroll">
         <div class="drawer-hero">
@@ -617,8 +93,8 @@
             <h3>{{ drawerMode === 'device' ? currentRecord.name : currentRecord.device }}</h3>
             <p>{{ currentRecord.id }}</p>
           </div>
-          <span :class="['status-pill', drawerMode === 'device' ? statusClass(currentRecord.status) : resultClass(currentRecord.result)]">
-            {{ drawerMode === 'device' ? currentRecord.status : currentRecord.result }}
+          <span :class="['status-pill', drawerMode === 'device' ? statusClass(deviceMaintenanceStatus(currentRecord)) : resultClass(currentRecord.result)]">
+            {{ drawerMode === 'device' ? deviceMaintenanceStatus(currentRecord) : currentRecord.result }}
           </span>
         </div>
         <template v-if="drawerMode === 'device'">
@@ -640,12 +116,12 @@
               <b>{{ currentRecord.department }} / {{ currentRecord.owner }}</b>
             </div>
             <div>
-              <span>维保周期</span>
-              <b>{{ currentRecord.cycle }}个月</b>
+              <span>最近待执行计划</span>
+              <b>{{ nextPlan(currentRecord.id) ? nextPlan(currentRecord.id).name : '未安排计划' }}</b>
             </div>
             <div>
               <span>下次维保</span>
-              <b>{{ currentRecord.nextDate }}</b>
+              <b>{{ nextPlan(currentRecord.id) ? nextPlan(currentRecord.id).plannedDate : '未安排计划' }}</b>
             </div>
             <div>
               <span>设备二维码</span>
@@ -661,7 +137,7 @@
             <small>{{ deviceHistory.length }} 条</small>
           </div>
           <div v-if="deviceHistory.length" class="history-list">
-            <button v-for="item in deviceHistory" :key="item.id" type="button" @click="openRecordDetail(item)">
+            <button v-for="item in deviceHistory" :key="item.id" type="button" @click="openRecordDetail(item, currentId)">
               <i :class="['history-mark', resultClass(item.result)]"></i>
               <span>
                 <b>{{ item.type }} · {{ item.result }}</b>
@@ -711,112 +187,174 @@
               {{ item }}
             </span>
           </div>
-          <div class="drawer-section-title">登记留痕</div>
-          <div v-for="(trace, index) in currentRecord.traces" :key="index" class="trace-item">
-            <span>{{ trace.time }}</span>
-            <div>
-              <b>{{ trace.action }}</b>
-              <small>{{ trace.user }} · {{ trace.remark }}</small>
-            </div>
+          <div class="drawer-section-title">
+            登记留痕
+            <small>{{ (currentRecord.traces || []).length }} 条</small>
           </div>
+          <ol v-if="(currentRecord.traces || []).length" class="trace-timeline" aria-label="登记留痕时间线">
+            <li v-for="(trace, index) in currentRecord.traces" :key="index" class="trace-item" :class="{ 'is-latest': index === currentRecord.traces.length - 1 }">
+              <div class="trace-card">
+                <div class="trace-head">
+                  <b>{{ trace.action }}</b>
+                  <time class="trace-time">
+                    <i class="el-icon-time" aria-hidden="true"></i>
+                    {{ trace.time }}
+                  </time>
+                </div>
+                <div class="trace-actor">
+                  <i class="el-icon-user" aria-hidden="true"></i>
+                  {{ trace.user }}
+                </div>
+                <p v-if="trace.remark" class="trace-remark">{{ trace.remark }}</p>
+              </div>
+            </li>
+          </ol>
+          <div v-else class="trace-empty">暂无登记留痕</div>
         </template>
       </div>
       <div v-if="currentRecord" class="drawer-actions">
+        <el-button v-if="drawerMode === 'record' && recordReturnDeviceId" size="small" icon="el-icon-back" @click="backToDeviceDetail">返回设备档案</el-button>
         <el-button v-if="drawerMode === 'device'" size="small" @click="openDeviceDialog(currentRecord)">编辑设备</el-button>
-        <el-button v-if="drawerMode === 'device'" type="primary" size="small" @click="openRecordFromDrawer">登记维保</el-button>
-        <el-button v-else type="primary" size="small" @click="simulatePrint">打印维保单</el-button>
+        <el-button v-if="drawerMode === 'device' && nextPlan(currentRecord.id)" type="primary" size="small" @click="viewPlan(nextPlan(currentRecord.id).id)">查看计划</el-button>
+        <el-button v-if="drawerMode === 'record'" type="primary" size="small" @click="simulatePrint">打印维保单</el-button>
       </div>
     </el-drawer>
   </div>
 </template>
 
 <script>
-import IotWorkspaceHeader from '../components/IotWorkspaceHeader.vue'
 import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
 import { fireMaintenance } from '../mock/fireMaintenanceMockData'
-
+import MaintenanceOverview from './fireAlarm/MaintenanceOverview.vue'
+import DeviceLedger from './fireAlarm/DeviceLedger.vue'
+import PlanList from './fireAlarm/PlanList.vue'
+import RecordList from './fireAlarm/RecordList.vue'
+import ReminderList from './fireAlarm/ReminderList.vue'
+function initialPlans(fireMaintenance) {
+  const aliases = { 报警按钮: '手动报警按钮', 消火栓: '消火栓箱' }
+  return fireMaintenance.plans.map((plan) => {
+    const [building, categoryText = ''] = plan.scope.split(' · ')
+    const categories = categoryText.split('/').map((item) => aliases[item] || item)
+    const deviceIds = fireMaintenance.devices
+      .filter((device) => (building === '全园区' || device.building === building || (building === '宿舍区' && device.building.startsWith('宿舍'))) && categories.includes(device.category))
+      .map((device) => device.id)
+    const completedDeviceIds = plan.status === '已完成' ? deviceIds.slice() : []
+    return { ...plan, deviceIds, completedDeviceIds, devices: deviceIds.length, completed: completedDeviceIds.length, status: plan.status === '已完成' ? '已完成' : '待执行' }
+  })
+}
+function localDateTime() {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(
+    2,
+    '0'
+  )}`
+}
+function dueDays(date) {
+  return Math.round((new Date(localDateTime().slice(0, 10) + 'T00:00:00') - new Date(date + 'T00:00:00')) / 86400000)
+}
+function devicePlans(plans, deviceId, excludedId) {
+  return plans
+    .filter((plan) => plan.id !== excludedId && plan.status !== '已完成' && plan.deviceIds.includes(deviceId) && !plan.completedDeviceIds.includes(deviceId))
+    .sort((a, b) => a.plannedDate.localeCompare(b.plannedDate))
+}
+function pendingPlanDevices(devices, plan) {
+  return devices.filter((device) => plan.status !== '已完成' && plan.deviceIds.includes(device.id) && !plan.completedDeviceIds.includes(device.id))
+}
+function deviceMaintenanceStatus(device, plans) {
+  if (/故障/.test(device.status)) return '故障待修'
+  const plan = devicePlans(plans, device.id)[0]
+  if (!plan) return '未安排计划'
+  const days = dueDays(plan.plannedDate)
+  return days > 0 ? '已逾期' : days === 0 ? '今日到期' : days >= -plan.advanceDays ? '即将到期' : '已安排'
+}
+function planScope(devices, ids) {
+  const selected = devices.filter((device) => ids.includes(device.id))
+  return [...new Set(selected.map((device) => device.building))].join('、') + ' · ' + [...new Set(selected.map((device) => device.category))].join('/')
+}
 export default {
+  components: { IotWorkspaceNav, MaintenanceOverview, DeviceLedger, PlanList, RecordList, ReminderList },
   name: 'SmartIOTFireAlarm',
-  components: { IotWorkspaceHeader, IotWorkspaceNav },
   data() {
     return {
       dataSet: fireMaintenance,
       devices: JSON.parse(JSON.stringify(fireMaintenance.devices)),
-      plans: JSON.parse(JSON.stringify(fireMaintenance.plans)),
+      plans: initialPlans(fireMaintenance),
       records: JSON.parse(JSON.stringify(fireMaintenance.records)),
-      reminders: JSON.parse(JSON.stringify(fireMaintenance.reminders)),
+      deviceTypes: fireMaintenance.categories.map((item) => item.name),
+      checkTemplates: JSON.parse(JSON.stringify(fireMaintenance.checkTemplates)),
       activeTab: 'overview',
-      deviceKeyword: '',
-      deviceCategory: '',
-      deviceStatus: '',
-      devicePage: 1,
-      planKeyword: '',
-      planStatus: '',
-      planPage: 1,
-      recordKeyword: '',
-      recordResult: '',
-      recordDate: '',
-      recordPage: 1,
-      reminderKeyword: '',
-      reminderPage: 1,
-      deviceDialog: false,
-      planDialog: false,
-      recordDialog: false,
-      reminderRuleDialog: false,
+      pageSize: 10,
+      reminderRule: { advanceDays: 7, receivers: ['设备责任人', '消防管理员'], channels: ['系统消息', '移动端'], escalate: true },
       drawerVisible: false,
       drawerMode: 'device',
-      currentRecord: null,
-      deviceForm: {},
-      planForm: {},
-      recordForm: {},
-      reminderRule: { advanceDays: 7, receivers: ['设备责任人', '消防管理员'], channels: ['系统消息', '移动端'], escalate: true },
-      deviceRules: {
-        id: [{ required: true, message: '请输入设备编号', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入设备名称', trigger: 'blur' }],
-        category: [{ required: true, message: '请选择设备类型', trigger: 'change' }],
-        building: [{ required: true, message: '请选择建筑', trigger: 'change' }],
-        location: [{ required: true, message: '请输入具体位置', trigger: 'blur' }],
-        owner: [{ required: true, message: '请输入责任人', trigger: 'blur' }],
-        cycle: [{ required: true, message: '请选择维保周期', trigger: 'change' }],
-        nextDate: [{ required: true, message: '请选择下次维保日期', trigger: 'change' }]
-      },
-      planRules: {
-        name: [{ required: true, message: '请输入计划名称', trigger: 'blur' }],
-        building: [{ type: 'array', required: true, message: '请选择建筑范围', trigger: 'change' }],
-        categories: [{ type: 'array', required: true, message: '请选择设备类型', trigger: 'change' }],
-        plannedDate: [{ required: true, message: '请选择计划日期', trigger: 'change' }],
-        owner: [{ required: true, message: '请输入负责人', trigger: 'blur' }],
-        vendor: [
-          {
-            validator: (rule, value, callback) => {
-              if (this.planForm.serviceType === '外委维保' && !value) callback(new Error('请填写维保单位'))
-              else callback()
-            },
-            trigger: 'blur'
-          }
-        ]
-      },
-      recordRules: {
-        deviceId: [{ required: true, message: '请选择消防设备', trigger: 'change' }],
-        date: [{ required: true, message: '请选择维保时间', trigger: 'change' }],
-        executor: [{ required: true, message: '请输入执行人', trigger: 'blur' }],
-        company: [{ required: true, message: '请输入执行单位', trigger: 'blur' }],
-        result: [{ required: true, message: '请选择维保结果', trigger: 'change' }],
-        nextDate: [{ required: true, message: '请选择下次维保日期', trigger: 'change' }]
-      }
+      currentId: '',
+      recordReturnDeviceId: ''
     }
   },
   computed: {
+    categoryStats() {
+      return this.categories.map((name, index) => {
+        const devices = this.devices.filter((device) => device.category === name)
+        return { name, total: devices.length, maintained: devices.filter((device) => this.nextPlan(device.id)).length, color: this.dataSet.categories[index % this.dataSet.categories.length].color }
+      })
+    },
+    monthProgress() {
+      const plans = this.plans.filter((plan) => plan.plannedDate.slice(0, 7) === localDateTime().slice(0, 7))
+      const total = plans.reduce((sum, plan) => sum + plan.devices, 0)
+      const completed = plans.reduce((sum, plan) => sum + plan.completed, 0)
+      return { total, completed, plans: plans.length, percent: total ? Math.round((completed / total) * 1000) / 10 : 0 }
+    },
+    kpis() {
+      const covered = this.devices.filter((device) => this.nextPlan(device.id)).length
+      return [
+        { title: '消防设备', value: this.devices.length, unit: '台', sub: `共 ${this.categories.length} 种设备类型`, icon: 'el-icon-cpu', type: 'blue' },
+        { title: '已安排计划', value: covered, unit: '台', sub: '已关联待执行维保计划', icon: 'el-icon-circle-check', type: 'green' },
+        { title: '待安排计划', value: this.devices.length - covered, unit: '台', sub: '请在计划管理中安排', icon: 'el-icon-date', type: 'orange' },
+        { title: '逾期任务', value: this.reminders.filter((item) => item.overdueDays > 0).length, unit: '项', sub: '按计划日期自动统计', icon: 'el-icon-warning-outline', type: 'red' },
+        {
+          title: '本月已维保',
+          value: this.records.filter((item) => item.date.slice(0, 7) === localDateTime().slice(0, 7)).length,
+          unit: '次',
+          sub: `本月计划完成率 ${this.monthProgress.percent}%`,
+          icon: 'el-icon-finished',
+          type: 'cyan'
+        },
+        { title: '故障待修', value: this.devices.filter((item) => /故障/.test(item.status)).length, unit: '台', sub: '设备异常需跟进处理', icon: 'el-icon-setting', type: 'purple' }
+      ]
+    },
+    reminders() {
+      const list = []
+      this.plans.forEach((plan) => {
+        const overdueDays = this.dueDays(plan.plannedDate)
+        if (overdueDays < -plan.advanceDays) return
+        this.pendingPlanDevices(plan).forEach((device) => {
+          list.push({
+            id: `${plan.id}-${device.id}`,
+            planId: plan.id,
+            deviceId: device.id,
+            device: device.name,
+            category: device.category,
+            location: `${device.building} / ${device.floor} / ${device.location}`,
+            dueDate: plan.plannedDate,
+            owner: plan.owner,
+            plan: plan.name,
+            overdueDays,
+            status: overdueDays > 0 ? `逾期${overdueDays}天` : overdueDays === 0 ? '今日到期' : `${-overdueDays}天后到期`
+          })
+        })
+      })
+      return list.sort((a, b) => b.overdueDays - a.overdueDays)
+    },
     workspaceNav() {
       return [
         { key: 'overview', title: '维保总览', description: '分类、进度与到期', detail: '查看消防设备分类、本月维保进度和近期到期提醒。', icon: 'el-icon-data-analysis', count: null },
-        { key: 'devices', title: '设备台账', description: '档案、位置与周期', detail: '管理消防设备编码、安装位置、责任人、维保周期和设备状态。', icon: 'el-icon-cpu', count: this.devices.length },
+        { key: 'devices', title: '设备台账', description: '设备档案与类型管理', detail: '维护设备基础信息和类型；下次维保日期随关联计划自动同步。', icon: 'el-icon-cpu', count: this.devices.length },
         { key: 'plans', title: '维保计划', description: '范围、频次与执行', detail: '编排设备维保范围、计划日期、执行单位、负责人和提醒周期。', icon: 'el-icon-date', count: this.plans.length },
         {
           key: 'records',
           title: '维保记录',
           description: '检查、凭证与结论',
-          detail: '登记检查项目、现场图片视频、维保结果、费用和下次维保日期。',
+          detail: '按计划登记检查项目、现场凭证、维保结果和费用，保留完整履历。',
           icon: 'el-icon-document-checked',
           count: this.records.length
         },
@@ -831,117 +369,34 @@ export default {
         }
       ]
     },
-    currentWorkspace() {
-      return this.workspaceNav.find((item) => item.key === this.activeTab) || this.workspaceNav[0]
-    },
     categories() {
-      return this.dataSet.categories.map((item) => item.name)
+      return this.deviceTypes
     },
     buildings() {
       return ['A栋研发楼', 'B栋生产楼', '综合服务中心', '物流仓储', '宿舍1号楼', '园区室外']
     },
-    deviceStatuses() {
-      return [...new Set(this.devices.map((item) => item.status))]
-    },
-    filteredDevices() {
-      const keyword = this.deviceKeyword.toLowerCase()
-      return this.devices.filter(
-        (item) =>
-          (!keyword || [item.id, item.name, item.building, item.floor, item.location].join(' ').toLowerCase().includes(keyword)) &&
-          (!this.deviceCategory || item.category === this.deviceCategory) &&
-          (!this.deviceStatus || item.status === this.deviceStatus)
-      )
-    },
-    pagedDevices() {
-      const start = (this.devicePage - 1) * 6
-      return this.filteredDevices.slice(start, start + 6)
-    },
-    filteredPlans() {
-      const keyword = this.planKeyword.toLowerCase()
-      return this.plans.filter((item) => (!keyword || [item.id, item.name, item.scope].join(' ').toLowerCase().includes(keyword)) && (!this.planStatus || item.status === this.planStatus))
-    },
-    pagedPlans() {
-      const start = (this.planPage - 1) * 6
-      return this.filteredPlans.slice(start, start + 6)
-    },
-    filteredRecords() {
-      const keyword = this.recordKeyword.toLowerCase()
-      return this.records.filter(
-        (item) =>
-          (!keyword || [item.id, item.device, item.executor, item.company].join(' ').toLowerCase().includes(keyword)) &&
-          (!this.recordResult || item.result === this.recordResult) &&
-          (!this.recordDate || item.date.indexOf(this.recordDate) === 0)
-      )
-    },
-    pagedRecords() {
-      const start = (this.recordPage - 1) * 6
-      return this.filteredRecords.slice(start, start + 6)
-    },
-    pagedReminders() {
-      const start = (this.reminderPage - 1) * 6
-      return this.filteredReminders.slice(start, start + 6)
-    },
-    filteredReminders() {
-      const keyword = this.reminderKeyword.toLowerCase()
-      if (!keyword) return this.reminders
-      return this.reminders.filter((item) => [item.deviceId, item.device, item.category, item.location, item.owner, item.plan, item.status, item.dueDate].join(' ').toLowerCase().includes(keyword))
-    },
-    recordDevice() {
-      return this.devices.find((item) => item.id === this.recordForm.deviceId) || null
-    },
-    recordChecklist() {
-      return this.recordDevice ? this.dataSet.checkTemplates[this.recordDevice.category] || [] : []
-    },
-    planChecklist() {
-      const list = []
-      this.planForm.categories &&
-        this.planForm.categories.forEach((category) =>
-          (this.dataSet.checkTemplates[category] || []).forEach((item) => {
-            if (!list.includes(item)) list.push(item)
-          })
-        )
-      return list.slice(0, 10)
+    currentRecord() {
+      return (this.drawerMode === 'device' ? this.devices : this.records).find((item) => item.id === this.currentId) || null
     },
     deviceHistory() {
       if (!this.currentRecord || this.drawerMode !== 'device') return []
       return this.records.filter((item) => item.deviceId === this.currentRecord.id)
     }
   },
-  watch: {
-    deviceKeyword() {
-      this.devicePage = 1
-    },
-    deviceCategory() {
-      this.devicePage = 1
-    },
-    deviceStatus() {
-      this.devicePage = 1
-    },
-    planKeyword() {
-      this.planPage = 1
-    },
-    planStatus() {
-      this.planPage = 1
-    },
-    recordKeyword() {
-      this.recordPage = 1
-    },
-    recordResult() {
-      this.recordPage = 1
-    },
-    recordDate() {
-      this.recordPage = 1
-    },
-    reminderKeyword() {
-      this.reminderPage = 1
-    }
-  },
-  created() {
-    this.resetDeviceForm()
-    this.resetPlanForm()
-    this.resetRecordForm()
-  },
   methods: {
+    dueDays,
+    devicePlans(id, excludedId) {
+      return devicePlans(this.plans, id, excludedId)
+    },
+    nextPlan(id) {
+      return this.devicePlans(id)[0] || null
+    },
+    pendingPlanDevices(plan) {
+      return pendingPlanDevices(this.devices, plan)
+    },
+    planScope(ids) {
+      return planScope(this.devices, ids)
+    },
     openWorkspace(view) {
       if (!this.workspaceNav.some((item) => item.key === view)) return
       this.activeTab = view
@@ -949,9 +404,178 @@ export default {
     },
     handleWorkspaceChange() {
       this.$nextTick(() => {
-        const content = this.$refs.workspaceContent
+        const view = this.activeTab === 'overview' ? this.$refs.overview : this.$refs.workspaceContent
+        const content = view && (view.$el || view)
         if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
       })
+    },
+    openDeviceDialog(row) {
+      this.$refs.devices.openDeviceDialog(row)
+    },
+    openPlanDialog(row) {
+      this.$refs.plans.openPlanDialog(row)
+    },
+    openRecordDialog(device, plan, type) {
+      this.$refs.records.openRecordDialog(device, plan, type)
+    },
+    viewPlan(planId) {
+      if (!this.plans.some((plan) => plan.id === planId)) return this.$message.warning('关联计划不存在，请刷新后重试')
+      this.drawerVisible = false
+      this.openWorkspace('plans')
+      this.$refs.plans.focusPlan(planId)
+    },
+    openDeviceDetail(row) {
+      this.recordReturnDeviceId = ''
+      this.drawerMode = 'device'
+      this.currentId = row.id
+      this.drawerVisible = true
+    },
+    openRecordDetail(row, fromDeviceId = '') {
+      this.recordReturnDeviceId = fromDeviceId
+      this.drawerMode = 'record'
+      this.currentId = row.id
+      this.drawerVisible = true
+    },
+    backToDeviceDetail() {
+      const device = this.devices.find((item) => item.id === this.recordReturnDeviceId)
+      if (!device) return this.$message.warning('原设备档案不存在，请重新选择设备')
+      this.openDeviceDetail(device)
+    },
+    saveDevice(form) {
+      if (this.devices.some((item) => item.id === form.id && item.id !== form.editingId)) return this.$message.warning('设备编号已存在，请使用唯一编号')
+      const payload = { ...JSON.parse(JSON.stringify(form)), qrCode: form.qrCode || 'QR-' + form.id }
+      delete payload.editingId
+      if (form.editingId) {
+        const index = this.devices.findIndex((item) => item.id === form.editingId)
+        this.$set(this.devices, index, payload)
+      } else this.devices.unshift(payload)
+      this.plans.forEach((plan) => {
+        plan.scope = this.planScope(plan.deviceIds)
+      })
+      this.$refs.devices.closeDeviceDialog()
+      this.$message.success('消防设备档案已保存')
+    },
+    savePlan(form) {
+      if (form.completedDeviceIds.some((id) => !form.deviceIds.includes(id))) return this.$message.warning('已完成登记的设备需要保留在原计划中')
+      if (form.deviceIds.some((id) => !this.devices.some((device) => device.id === id))) return this.$message.warning('部分设备已不在台账中，请重新选择')
+      const payload = {
+        id: form.editingId || 'MP' + Date.now() + this.plans.length,
+        name: form.name,
+        scope: this.planScope(form.deviceIds),
+        deviceIds: form.deviceIds.slice(),
+        completedDeviceIds: form.completedDeviceIds.slice(),
+        frequency: form.frequency,
+        plannedDate: form.plannedDate,
+        devices: form.deviceIds.length,
+        completed: form.completedDeviceIds.length,
+        serviceType: form.serviceType,
+        vendor: form.vendor || '-',
+        owner: form.owner,
+        advanceDays: form.advanceDays,
+        status: form.completedDeviceIds.length === form.deviceIds.length ? '已完成' : form.completedDeviceIds.length ? '执行中' : '待执行'
+      }
+      if (form.editingId) {
+        const index = this.plans.findIndex((item) => item.id === form.editingId)
+        this.$set(this.plans, index, payload)
+      } else this.plans.unshift(payload)
+      this.$refs.plans.closePlanDialog()
+      this.openWorkspace('plans')
+      this.$message.success('维保计划已保存，相关设备任务已生成')
+    },
+    saveRecord(form) {
+      const device = this.devices.find((item) => item.id === form.deviceId)
+      const checklist = device ? this.checkTemplates[device.category] || ['外观与安装检查', '功能测试', '运行状态检查'] : []
+      const followingPlan = this.devicePlans(form.deviceId, form.planId)[0] || null
+      if (form.checkedItems.length !== checklist.length) return this.$message.warning('请完成全部检查项目后再提交')
+      if (!form.photos.length) return this.$message.warning('请至少添加一项现场图片或视频凭证')
+      if (form.result !== '合格' && !form.issue) return this.$message.warning('非合格结果必须填写问题说明')
+
+      const plan = this.plans.find((item) => item.id === form.planId)
+      if (!device || !plan || !this.pendingPlanDevices(plan).some((item) => item.id === device.id)) return this.$message.warning('设备不属于该计划或已完成登记，请重新选择')
+      const record = {
+        id: 'MR' + Date.now() + this.records.length,
+        planId: plan.id,
+        planName: plan.name,
+        deviceId: device.id,
+        device: device.name,
+        category: device.category,
+        date: form.date,
+        executor: form.executor,
+        company: form.company,
+        type: form.type,
+        content: form.checkedItems.join('、'),
+        result: form.result,
+        issue: form.issue || '无',
+        parts: form.parts || '-',
+        cost: form.cost,
+        nextDate: followingPlan ? followingPlan.plannedDate : '未安排计划',
+        photos: form.photos.slice(),
+        traces: [
+          { time: form.date.slice(11), action: '开始维保登记', user: form.executor, remark: '设备身份与台账信息已核对' },
+          { time: '当前', action: '提交维保记录', user: form.executor, remark: `完成${form.checkedItems.length}项检查，结果：${form.result}` }
+        ]
+      }
+      this.records.unshift(record)
+      device.lastDate = form.date.slice(0, 10)
+      device.status = form.result === '合格' ? '正常' : '故障待修'
+      plan.completedDeviceIds.push(device.id)
+      plan.completed = plan.completedDeviceIds.length
+      plan.status = plan.completed === plan.devices ? '已完成' : '执行中'
+      this.$refs.records.closeRecordDialog()
+      this.openWorkspace('records')
+      this.$message.success('维保记录已提交，计划进度与台账日期已同步')
+    },
+    addDeviceType(name) {
+      if (!name || this.deviceTypes.includes(name)) return
+      this.deviceTypes.push(name)
+      this.$message.success('设备类型已添加')
+    },
+    renameDeviceType(name) {
+      this.$prompt('请输入新的设备类型名称', '重命名设备类型', {
+        inputValue: name,
+        inputValidator: (value) => {
+          const next = (value || '').trim()
+          return !next ? '请输入设备类型名称' : next.length > 30 ? '类型名称最多30个字' : next !== name && this.deviceTypes.includes(next) ? '该设备类型已存在' : true
+        }
+      })
+        .then(({ value }) => {
+          const next = value.trim()
+          if (next === name) return
+          this.$set(this.deviceTypes, this.deviceTypes.indexOf(name), next)
+          this.devices.forEach((device) => {
+            if (device.category === name) device.category = next
+          })
+          if (this.checkTemplates[name]) {
+            this.$set(this.checkTemplates, next, this.checkTemplates[name])
+            this.$delete(this.checkTemplates, name)
+          }
+          this.plans.forEach((plan) => {
+            plan.scope = this.planScope(plan.deviceIds)
+          })
+          this.$message.success('类型名称已更新，相关设备已同步')
+        })
+        .catch(() => {})
+    },
+    removeDeviceType(name) {
+      if (this.devices.some((device) => device.category === name)) return
+      this.deviceTypes.splice(this.deviceTypes.indexOf(name), 1)
+      this.$delete(this.checkTemplates, name)
+      this.$message.success('设备类型已删除')
+    },
+    executePlan(row) {
+      const device = this.pendingPlanDevices(row)[0]
+      if (!device) return this.$message.info('该计划暂无待执行设备')
+      this.openRecordDialog(device, row, this.dueDays(row.plannedDate) > 0 ? '逾期补检' : '定期维保')
+    },
+    saveReminderRule(rule) {
+      this.reminderRule = rule
+      this.$message.success('维保到期提醒规则已保存')
+    },
+    simulatePrint() {
+      this.$message.success('仿真环境：维保单已生成打印预览')
+    },
+    deviceMaintenanceStatus(device) {
+      return deviceMaintenanceStatus(device, this.plans)
     },
     statusClass(status) {
       if (/逾期|故障/.test(status)) return 'danger'
@@ -963,224 +587,169 @@ export default {
       if (result === '合格') return 'success'
       if (result === '需维修') return 'warning'
       return 'danger'
-    },
-    planProgress(row) {
-      return row.devices ? Math.round((row.completed / row.devices) * 100) : 0
-    },
-    resetDeviceForm() {
-      this.deviceForm = {
-        editingId: '',
-        id: '',
-        name: '',
-        category: '',
-        building: '',
-        floor: '1F',
-        location: '',
-        brand: '',
-        model: '',
-        installDate: '2026-07-20',
-        cycle: 3,
-        lastDate: '-',
-        nextDate: '2026-10-20',
-        owner: '',
-        department: '园区工程部',
-        status: '正常',
-        qrCode: ''
-      }
-    },
-    resetPlanForm() {
-      this.planForm = { editingId: '', name: '', building: [], categories: [], frequency: '每3个月', plannedDate: '2026-07-25', serviceType: '内部维保', vendor: '', owner: '', advanceDays: 7 }
-    },
-    resetRecordForm() {
-      this.recordForm = {
-        deviceId: '',
-        type: '定期维保',
-        date: '2026-07-20 10:30',
-        executor: '',
-        company: '园区工程部',
-        checkedItems: [],
-        result: '合格',
-        issue: '',
-        parts: '',
-        cost: 0,
-        nextDate: '2026-10-20',
-        photos: []
-      }
-    },
-    openDeviceDialog(row) {
-      this.resetDeviceForm()
-      if (row) this.deviceForm = { ...JSON.parse(JSON.stringify(row)), editingId: row.id }
-      this.deviceDialog = true
-      this.$nextTick(() => this.$refs.deviceForm && this.$refs.deviceForm.clearValidate())
-    },
-    openPlanDialog(row) {
-      this.resetPlanForm()
-      if (row) {
-        const building = row.scope.split(' · ')[0]
-        const categoryPart = row.scope.split(' · ')[1] || ''
-        this.planForm = {
-          editingId: row.id,
-          name: row.name,
-          building: building === '全园区' ? this.buildings.slice() : [building],
-          categories: categoryPart.split('/').filter(Boolean),
-          frequency: row.frequency,
-          plannedDate: row.plannedDate,
-          serviceType: row.serviceType,
-          vendor: row.vendor === '-' ? '' : row.vendor,
-          owner: row.owner,
-          advanceDays: row.advanceDays
-        }
-      }
-      this.planDialog = true
-      this.$nextTick(() => this.$refs.planForm && this.$refs.planForm.clearValidate())
-    },
-    openRecordDialog(device) {
-      this.resetRecordForm()
-      if (device) {
-        this.recordForm.deviceId = device.id
-        this.onRecordDeviceChange(device.id)
-      }
-      this.recordDialog = true
-      this.$nextTick(() => this.$refs.recordForm && this.$refs.recordForm.clearValidate())
-    },
-    openReminder(item) {
-      const device = this.devices.find((row) => row.id === item.deviceId)
-      this.openRecordDialog(device)
-      this.recordForm.type = item.overdueDays > 0 ? '逾期补检' : '定期维保'
-    },
-    openDeviceDetail(row) {
-      this.drawerMode = 'device'
-      this.currentRecord = row
-      this.drawerVisible = true
-    },
-    openRecordDetail(row) {
-      this.drawerMode = 'record'
-      this.currentRecord = row
-      this.drawerVisible = true
-    },
-    openRecordFromDrawer() {
-      const device = this.currentRecord
-      this.drawerVisible = false
-      this.openRecordDialog(device)
-    },
-    onRecordDeviceChange() {
-      this.recordForm.checkedItems = []
-      const device = this.recordDevice
-      if (!device) return
-      this.recordForm.executor = device.owner
-      this.recordForm.company = device.department
-      const nextDate = new Date(2026, 6, 20)
-      nextDate.setMonth(nextDate.getMonth() + device.cycle)
-      const year = nextDate.getFullYear()
-      const month = String(nextDate.getMonth() + 1).padStart(2, '0')
-      const day = String(nextDate.getDate()).padStart(2, '0')
-      this.recordForm.nextDate = `${year}-${month}-${day}`
-    },
-    saveDevice() {
-      this.$refs.deviceForm.validate((valid) => {
-        if (!valid) return
-        const payload = { ...JSON.parse(JSON.stringify(this.deviceForm)), qrCode: this.deviceForm.qrCode || 'QR-' + this.deviceForm.id }
-        delete payload.editingId
-        if (this.deviceForm.editingId) {
-          const index = this.devices.findIndex((item) => item.id === this.deviceForm.editingId)
-          this.$set(this.devices, index, payload)
-        } else this.devices.unshift(payload)
-        this.deviceDialog = false
-        this.$message.success('消防设备档案已保存')
-      })
-    },
-    savePlan() {
-      this.$refs.planForm.validate((valid) => {
-        if (!valid) return
-        const payload = {
-          id: this.planForm.editingId || 'MP202607' + String(this.plans.length + 1).padStart(2, '0'),
-          name: this.planForm.name,
-          scope: (this.planForm.building.length === this.buildings.length ? '全园区' : this.planForm.building.join('、')) + ' · ' + this.planForm.categories.join('/'),
-          frequency: this.planForm.frequency,
-          plannedDate: this.planForm.plannedDate,
-          devices: this.devices.filter((item) => this.planForm.building.includes(item.building) && this.planForm.categories.includes(item.category)).length,
-          completed: 0,
-          serviceType: this.planForm.serviceType,
-          vendor: this.planForm.vendor || '-',
-          owner: this.planForm.owner,
-          advanceDays: this.planForm.advanceDays,
-          status: '待执行'
-        }
-        if (this.planForm.editingId) {
-          const index = this.plans.findIndex((item) => item.id === this.planForm.editingId)
-          payload.completed = this.plans[index].completed
-          payload.status = this.plans[index].status
-          this.$set(this.plans, index, payload)
-        } else this.plans.unshift(payload)
-        this.planDialog = false
-        this.openWorkspace('plans')
-        this.$message.success('维保计划已保存，相关设备任务已生成')
-      })
-    },
-    executePlan(row) {
-      const categoryText = row.scope.split(' · ')[1] || ''
-      const device = this.devices.find((item) => categoryText.indexOf(item.category) > -1) || this.devices[0]
-      this.openRecordDialog(device)
-    },
-    addEvidence() {
-      const index = this.recordForm.photos.length + 1
-      this.recordForm.photos.push(index === 3 ? `现场视频${index}.mp4` : `现场照片${index}.jpg`)
-    },
-    saveRecord() {
-      this.$refs.recordForm.validate((valid) => {
-        if (!valid) return
-        if (this.recordForm.checkedItems.length !== this.recordChecklist.length) return this.$message.warning('请完成全部检查项目后再提交')
-        if (!this.recordForm.photos.length) return this.$message.warning('请至少添加一项现场图片或视频凭证')
-        if (this.recordForm.result !== '合格' && !this.recordForm.issue) return this.$message.warning('非合格结果必须填写问题说明')
-        const device = this.recordDevice
-        const record = {
-          id: 'MR20260720' + String(this.records.length + 19).padStart(3, '0'),
-          deviceId: device.id,
-          device: device.name,
-          category: device.category,
-          date: this.recordForm.date,
-          executor: this.recordForm.executor,
-          company: this.recordForm.company,
-          type: this.recordForm.type,
-          content: this.recordForm.checkedItems.join('、'),
-          result: this.recordForm.result,
-          issue: this.recordForm.issue || '无',
-          parts: this.recordForm.parts || '-',
-          cost: this.recordForm.cost,
-          nextDate: this.recordForm.nextDate,
-          photos: this.recordForm.photos.slice(),
-          traces: [
-            { time: this.recordForm.date.slice(11), action: '开始维保登记', user: this.recordForm.executor, remark: '设备身份与台账信息已核对' },
-            { time: '当前', action: '提交维保记录', user: this.recordForm.executor, remark: `完成${this.recordForm.checkedItems.length}项检查，结果：${this.recordForm.result}` }
-          ]
-        }
-        this.records.unshift(record)
-        device.lastDate = this.recordForm.date.slice(0, 10)
-        device.nextDate = this.recordForm.nextDate
-        device.status = this.recordForm.result === '合格' ? '正常' : '故障待修'
-        this.reminders = this.reminders.filter((item) => item.deviceId !== device.id)
-        this.recordDialog = false
-        this.openWorkspace('records')
-        this.$message.success('维保记录已提交，设备下次维保日期已更新')
-      })
-    },
-    saveReminderRule() {
-      this.reminderRuleDialog = false
-      this.$message.success('维保到期提醒规则已保存')
-    },
-    simulatePrint() {
-      this.$message.success('仿真环境：维保单已生成打印预览')
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-@import '../components/iotWorkspacePage.scss';
+<style lang="scss">
+// 弹窗挂在 body 下，跨工作区登记时也能正常显示，并沿用页面字体与配色。
+.fire-maintenance-dialog {
+  --primary: #2f78d7;
+  --text: #1e2c42;
+  --muted: #8793a6;
+  --line: #e5eaf1;
+  --iot-font-caption: 11px;
+  --iot-font-secondary: 12px;
+  --iot-font-body: 13px;
+  --iot-font-title: 15px;
+  font-size: var(--iot-font-body);
+  line-height: 1.5;
+}
+// 仅作用于消防维保页面；下拉框挂在 body 下，单独使用专属类名。
+
+.fire-plan-device-options .el-select-dropdown__item {
+  height: auto;
+  min-height: 54px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  line-height: 20px;
+}
+.fire-plan-device-options .plan-device-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.fire-plan-device-options .plan-device-option small {
+  display: block;
+  color: #8793a6;
+  font-size: 11px;
+}
 
 .fire-maintenance-page {
-  --iot-overview-height: clamp(500px, calc(100vh - 400px), 580px);
-  --iot-overview-height: clamp(500px, calc(100dvh - 400px), 580px);
+  --iot-font-caption: 11px;
+  --iot-font-secondary: 12px;
+  --iot-font-body: 13px;
+  --iot-font-title: 15px;
+  --iot-font-page-title: 24px;
+  font-size: var(--iot-font-body);
+  line-height: 1.5;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .page-header h2 {
+  font-size: var(--iot-font-page-title) !important;
+  line-height: 34px !important;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .page-header p,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .page-subtitle {
+  font-size: var(--iot-font-body) !important;
+  line-height: 20px !important;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .surface-title,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .surface-head h3,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .panel-title {
+  font-size: var(--iot-font-title) !important;
+  line-height: 22px !important;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-label,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-title,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .item-name {
+  font-size: var(--iot-font-body) !important;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-sub,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .surface-subtitle,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .surface-head p,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar-note,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .head-note,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .muted,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .item-meta {
+  font-size: var(--iot-font-secondary) !important;
+  line-height: 18px !important;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .surface-meta,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .map-legend,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .rail-title,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .summary-title,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .task-card-meta,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .task-current,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .alarm-time,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .zone-info {
+  font-size: var(--iot-font-secondary) !important;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .status-pill,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .level-pill,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .method-pill,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .tab-count,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-status,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .date-box,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .mini-tag {
+  font-size: var(--iot-font-caption) !important;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) small {
+  font-size: var(--iot-font-caption) !important;
+  line-height: 1.45 !important;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) button:not(.el-button) {
+  font-size: var(--iot-font-secondary);
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-table {
+  font-size: var(--iot-font-body);
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-table th {
+  font-size: var(--iot-font-body);
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-table th,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-table td {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-input__inner,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-textarea__inner,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-form-item__label,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-radio__label,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-checkbox__label,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-button--small,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-button--mini,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-tag {
+  font-size: var(--iot-font-body);
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-pagination,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-pagination button,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-pager li {
+  font-size: var(--iot-font-body);
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .el-input__inner {
+  min-height: 34px;
+}
+
+@media (max-width: 760px) {
+  .fire-maintenance-page {
+    --iot-font-caption: 11px;
+    --iot-font-secondary: 12px;
+    --iot-font-body: 13px;
+    --iot-font-title: 15px;
+    --iot-font-page-title: 22px;
+  }
+}
+.fire-maintenance-page {
+  --iot-overview-height: clamp(430px, calc(100vh - 430px), 720px);
+  --iot-overview-height: clamp(430px, calc(100dvh - 430px), 720px);
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-detail {
+  margin-top: 0;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-detail > .iot-workspace-header {
+  margin: 0 -16px;
+}
+
+@media (min-width: 1451px) {
+  .fire-maintenance-page {
+    --iot-overview-height: clamp(460px, calc(100vh - 330px), 720px);
+    --iot-overview-height: clamp(460px, calc(100dvh - 330px), 720px);
+  }
 }
 .fire-maintenance-page {
   --primary: #2f78d7;
@@ -1190,38 +759,48 @@ export default {
   --text: #1e2c42;
   --muted: #8793a6;
   --line: #e5eaf1;
-  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
   padding: 16px;
   color: var(--text);
   background: #f4f7fb;
   box-sizing: border-box;
+  overflow: hidden;
 }
-.fire-maintenance-page * {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) * {
   box-sizing: border-box;
 }
-.page-header {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .page-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 14px;
 }
-.title-row {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .title-row {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.title-row h2 {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .title-row h2 {
   margin: 0;
   font-size: 22px;
   line-height: 30px;
 }
-.page-header p {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .page-header p {
   margin: 3px 0 0;
   color: #7c899d;
   font-size: 12px;
 }
-.scope-badge {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .scope-badge {
   display: inline-flex;
   height: 24px;
   align-items: center;
@@ -1233,22 +812,26 @@ export default {
   border-radius: 12px;
   font-size: 11px;
 }
-.toolbar,
-.toolbar-left,
-.toolbar-right {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar-left,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar-right {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
-.kpi-grid {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
-  margin-top: 12px;
+  flex-shrink: 0;
+  margin-top: 0;
   margin-bottom: 12px;
 }
-.kpi-card {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-card {
   position: relative;
   min-height: 92px;
   padding: 14px 12px 12px 51px;
@@ -1258,7 +841,8 @@ export default {
   border-radius: 7px;
   box-shadow: 0 2px 8px rgba(30, 49, 79, 0.035);
 }
-.kpi-icon {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-icon {
   position: absolute;
   left: 13px;
   top: 17px;
@@ -1272,408 +856,126 @@ export default {
   border-radius: 8px;
   font-size: 16px;
 }
-.kpi-icon.green {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-icon.green {
   color: #16946b;
   background: #e9f8f2;
 }
-.kpi-icon.orange {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-icon.orange {
   color: #dd891d;
   background: #fff4e5;
 }
-.kpi-icon.red {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-icon.red {
   color: #df4b54;
   background: #ffedef;
 }
-.kpi-icon.cyan {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-icon.cyan {
   color: #1095a1;
   background: #e9f8fa;
 }
-.kpi-icon.purple {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-icon.purple {
   color: #7257ce;
   background: #f2effd;
 }
-.kpi-label {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-label {
   color: #758198;
   font-size: 12px;
 }
-.kpi-number {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-number {
   margin-top: 3px;
   color: #17253b;
   font-size: 23px;
   line-height: 28px;
   font-weight: 700;
 }
-.kpi-number small {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-number small {
   margin-left: 4px;
   color: #77849a;
   font-size: 11px;
   font-weight: 400;
 }
-.kpi-sub {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-sub {
   margin-top: 2px;
   color: #99a3b3;
   font-size: 10px;
   white-space: nowrap;
-}
-.overview-grid {
-  display: grid;
-  grid-template-columns: minmax(320px, 1.05fr) minmax(340px, 1fr) minmax(430px, 1.3fr);
-  min-height: var(--iot-overview-height);
-  align-items: stretch;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.overview-grid > .surface {
-  display: flex;
-  min-height: 0;
-  flex-direction: column;
-}
-.surface {
-  min-width: 0;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  box-shadow: 0 2px 9px rgba(30, 49, 79, 0.035);
-}
-.surface-head {
-  display: flex;
-  min-height: 58px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 9px 14px;
-  border-bottom: 1px solid #edf1f5;
-}
-.surface-head h3,
-.surface-head p {
-  margin: 0;
-}
-.surface-head h3 {
-  color: #26364d;
-  font-size: 13px;
-}
-.surface-head h3 i {
-  margin-right: 6px;
-  color: var(--primary);
-}
-.surface-head p {
-  margin-top: 3px;
-  color: #98a2b2;
-  font-size: 10px;
-}
-.head-note {
-  color: #8996a9;
-  font-size: 10px;
-}
-.category-list {
-  display: flex;
-  min-height: 0;
-  flex: 1 1 auto;
-  flex-direction: column;
-  justify-content: space-evenly;
-  padding: 16px 16px 18px;
-}
-.category-row {
-  margin-bottom: 12px;
-}
-.category-row:last-child {
-  margin-bottom: 0;
-}
-.category-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  color: #5c6a7f;
-  font-size: 13px;
-  line-height: 20px;
-}
-.category-meta span {
-  display: flex;
-  align-items: center;
-}
-.category-meta i {
-  width: 8px;
-  height: 8px;
-  margin-right: 8px;
-  border-radius: 2px;
-}
-.category-meta b {
-  color: #34445c;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
-.category-progress {
-  height: 8px;
-  overflow: hidden;
-  background: #edf1f5;
-  border-radius: 4px;
-}
-.category-progress i {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-}
-.progress-layout {
-  display: flex;
-  min-height: 0;
-  flex: 1 1 auto;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 26px;
-  padding: 24px 22px 16px;
-}
-.progress-ring {
-  position: relative;
-  display: flex;
-  width: 200px;
-  height: 200px;
-  flex: 0 0 200px;
-  align-items: center;
-  justify-content: center;
-  background: conic-gradient(#2f78d7 0 81.3%, #e8eef6 81.3% 100%);
-  border-radius: 50%;
-  box-shadow: 0 12px 28px rgba(47, 120, 215, 0.13);
-}
-.progress-ring::before {
-  position: absolute;
-  width: 154px;
-  height: 154px;
-  background: #fff;
-  border-radius: 50%;
-  content: '';
-}
-.progress-ring div {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-}
-.progress-ring strong,
-.progress-ring span {
-  display: block;
-}
-.progress-ring strong {
-  color: #254267;
-  font-size: 34px;
-  line-height: 42px;
-  font-variant-numeric: tabular-nums;
-}
-.progress-ring span {
-  margin-top: 4px;
-  color: #8b97a9;
-  font-size: 12px;
-  line-height: 18px;
-}
-.progress-stats {
-  display: grid;
-  width: 100%;
-  order: -1;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.progress-stats > div {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 5px;
-  margin: 0;
-  padding: 0 8px;
-  color: #68768a;
-  font-size: 13px;
-  line-height: 20px;
-  border-right: 1px solid #edf1f6;
-}
-.progress-stats > div:last-child {
-  border-right: 0;
-}
-.progress-stats strong {
-  color: #2a3d58;
-  font-size: 22px;
-  line-height: 28px;
-  font-variant-numeric: tabular-nums;
-}
-.progress-stats small {
-  margin-left: 4px;
-  color: #8a96a8;
-  font-size: 12px;
-  font-weight: 400;
-}
-.dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-right: 7px;
-  border-radius: 50%;
-}
-.dot.completed {
-  background: #2f78d7;
-}
-.dot.pending {
-  background: #b7c3d1;
-}
-.dot.overdue {
-  background: #e4545c;
-}
-.month-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin: 0 14px 12px;
-  padding: 12px 9px;
-  background: #f7f9fc;
-  border-radius: 5px;
-}
-.month-summary span {
-  color: #8a96a8;
-  text-align: center;
-  font-size: 12px;
-  line-height: 18px;
-}
-.month-summary b {
-  display: block;
-  margin-top: 4px;
-  color: #3f5067;
-  font-size: 14px;
-  line-height: 20px;
-  font-variant-numeric: tabular-nums;
-}
-.reminder-list {
-  min-height: 0;
-  flex: 1 1 auto;
-  padding: 10px 14px 14px;
-}
-.reminder-item {
-  display: flex;
-  width: 100%;
-  min-height: 58px;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 6px;
-  color: inherit;
-  text-align: left;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid #f0f2f6;
-  cursor: pointer;
-  transition: background 0.18s;
-}
-.reminder-item:hover {
-  background: #f7faff;
-}
-.reminder-item:focus-visible {
-  outline: 2px solid #409eff;
-  outline-offset: -2px;
-}
-.date-box {
-  display: flex;
-  width: 46px;
-  height: 42px;
-  flex: 0 0 46px;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  background: #f1f5fa;
-  border-radius: 5px;
-}
-.date-box b {
-  color: #486078;
-  font-size: 16px;
-  line-height: 18px;
-  font-variant-numeric: tabular-nums;
-}
-.date-box small {
-  color: #8e99a9;
-  font-size: 11px !important;
-  line-height: 15px !important;
-}
-.date-box.overdue {
-  background: #ffebed;
-}
-.date-box.overdue b {
-  color: #d9434c;
-}
-.date-box.today {
-  background: #fff2df;
-}
-.date-box.today b {
-  color: #db861d;
-}
-.date-box.upcoming {
-  background: #edf4ff;
-}
-.date-box.upcoming b {
-  color: #2f78d7;
-}
-.reminder-info {
-  min-width: 0;
-  flex: 1;
-}
-.reminder-info b,
-.reminder-info small {
-  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
-.reminder-info b {
-  color: #35455c;
-  font-size: 13px;
-  line-height: 20px;
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .ledger-card {
+  padding: 0 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
-.reminder-info small {
-  margin-top: 4px;
-  color: #929dae;
-  font-size: 12px !important;
-  line-height: 18px !important;
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) > .iot-workspace-nav,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .ledger-card > .iot-workspace-header {
+  flex-shrink: 0;
 }
-.fire-maintenance-page .reminder-status {
-  flex: 0 0 auto;
-  padding: 3px 8px;
-  font-size: 12px !important;
-  line-height: 18px;
-  background: #fff7f7;
-  border-radius: 10px;
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) > .iot-workspace-nav .workspace-item.active {
+  box-shadow: none;
 }
-.reminder-status.danger {
-  color: #d94750;
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
 }
-.reminder-status.warning {
-  color: #db891f;
-  background: #fff8ec;
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs .el-table {
+  flex: 1;
+  min-height: 0;
 }
-.ledger-card {
-  padding: 0 14px 12px;
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs .toolbar,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs .pagination-row {
+  flex-shrink: 0;
 }
-.ledger-card.workspace-detail > .iot-workspace-header {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs .toolbar {
+  padding: 12px 0;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .action-wrapper {
+  display: inline-flex;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .muted-text {
+  color: #97a2b2;
+  font-size: 12px;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .plan-date {
+  color: var(--primary);
+  cursor: help;
+  font-variant-numeric: tabular-nums;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .type-create {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .ledger-card.workspace-detail > .iot-workspace-header {
   margin: 0 -14px;
 }
-::v-deep .ledger-card .el-tabs__header {
-  margin-bottom: 12px;
-}
-::v-deep .ledger-card .el-tabs__item {
-  height: 48px;
-  line-height: 48px;
-}
-.tab-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.tab-label b {
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  color: #68758a;
-  background: #edf1f5;
-  border-radius: 9px;
-  line-height: 18px;
-  text-align: center;
-  font-size: 9px;
-}
-.tab-label b.danger-count {
-  color: #d7474f;
-  background: #ffedef;
-}
-.toolbar {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar {
   display: flex;
   justify-content: space-between;
   min-height: 49px;
@@ -1681,15 +983,17 @@ export default {
   gap: 12px;
   flex-wrap: wrap;
 }
-.toolbar-left,
-.toolbar-right {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar-left,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar-right {
   min-height: 32px;
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
-.toolbar-note {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar-note {
   display: inline-flex;
   min-height: 32px;
   align-items: center;
@@ -1698,32 +1002,112 @@ export default {
   font-size: 10px;
   line-height: 18px;
 }
-.toolbar-note i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar-note i {
   color: #3c81d9;
 }
-::v-deep .toolbar .el-input__inner {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar .el-input__inner {
   height: 32px;
   line-height: 32px;
 }
-::v-deep .toolbar .el-button--small {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar .el-button--small {
   display: inline-flex;
   height: 32px;
   align-items: center;
   justify-content: center;
   line-height: 1;
 }
-::v-deep .toolbar .el-button--small span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar .el-button--small span {
   display: inline-flex;
   align-items: center;
   line-height: 1;
 }
-.pagination-row {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row {
   display: flex;
-  justify-content: flex-end;
-  padding-top: 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  background: #fff;
 }
-.status-pill,
-.result-pill {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-summary b {
+  margin: 0 3px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  white-space: nowrap;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination .el-input__inner {
+  height: 32px;
+  min-height: 32px;
+  line-height: 32px;
+  border-color: var(--line);
+  border-radius: 6px;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination__sizes {
+  height: 32px;
+  margin: 0 12px 0 0;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination__jump {
+  height: 32px;
+  margin-left: 12px;
+  color: #758198;
+  line-height: 32px;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination__editor {
+  height: 32px;
+  padding: 0;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination.is-background .el-pager li,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination.is-background .btn-prev,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination.is-background .btn-next {
+  min-width: 32px;
+  height: 32px;
+  margin: 0 4px;
+  color: #607089;
+  background: #f3f6fa;
+  border-radius: 6px;
+  line-height: 32px;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination.is-background .el-pager li:not(.disabled).active {
+  color: #fff;
+  background: var(--primary);
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination.is-background button:disabled {
+  color: #bcc5d2;
+  background: #f8fafc;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .status-pill,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .result-pill {
   display: inline-flex;
   height: 21px;
   align-items: center;
@@ -1731,46 +1115,56 @@ export default {
   border-radius: 11px;
   white-space: nowrap;
 }
-.status-pill.success,
-.result-pill.success {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .status-pill.success,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .result-pill.success {
   color: #158660;
   background: #e8f7f1;
 }
-.status-pill.warning,
-.result-pill.warning {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .status-pill.warning,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .result-pill.warning {
   color: #d47b16;
   background: #fff2df;
 }
-.status-pill.danger,
-.result-pill.danger {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .status-pill.danger,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .result-pill.danger {
   color: #dc414a;
   background: #ffebed;
 }
-.status-pill.info {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .status-pill.info {
   color: #68758a;
   background: #edf1f5;
 }
-.evidence-link {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-link {
   color: #2f78d7;
   font-size: 10px;
 }
-.evidence-link i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-link i {
   margin-right: 4px;
 }
-.table-progress {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .table-progress {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-::v-deep .table-progress .el-progress {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .table-progress .el-progress {
   flex: 1;
 }
-.table-progress span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .table-progress span {
   width: 34px;
   color: #748198;
   font-size: 9px;
 }
-.reminder-tip {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-tip {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1781,57 +1175,69 @@ export default {
   border: 1px solid #dcebf9;
   border-radius: 5px;
 }
-.reminder-tip > i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-tip > i {
   color: #2f78d7;
   font-size: 20px;
 }
-.reminder-tip > div {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-tip > div {
   flex: 1;
 }
-.reminder-tip b,
-.reminder-tip span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-tip b,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-tip span {
   display: block;
 }
-.reminder-tip b {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-tip b {
   color: #315172;
   font-size: 11px;
 }
-.reminder-tip span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-tip span {
   margin-top: 3px;
   font-size: 9px;
 }
-.urgency-mark {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .urgency-mark {
   display: inline-flex;
   align-items: center;
   color: #d38520;
   font-size: 9px;
 }
-.urgency-mark i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .urgency-mark i {
   width: 6px;
   height: 6px;
   margin-right: 5px;
   background: #e4a13e;
   border-radius: 50%;
 }
-.urgency-mark.danger {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .urgency-mark.danger {
   color: #db414a;
 }
-.urgency-mark.danger i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .urgency-mark.danger i {
   background: #e4545c;
 }
-.urgency-mark.today {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .urgency-mark.today {
   color: #d77b17;
 }
-.urgency-mark.today i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .urgency-mark.today i {
   background: #ec9b29;
 }
 
-::v-deep .maintenance-dialog .el-dialog__body {
+.fire-maintenance-dialog .el-dialog__body {
   max-height: 66vh;
   padding: 18px 22px 8px;
   overflow-y: auto;
 }
-.dialog-intro {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .dialog-intro {
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -1839,22 +1245,24 @@ export default {
   padding: 10px 12px;
   color: #58718f;
   background: #f2f7fd;
-  border-left: 3px solid #3c83dc;
   border-radius: 4px;
   font-size: 11px;
   line-height: 18px;
 }
-.dialog-intro i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .dialog-intro i {
   margin-top: 2px;
   color: #3c83dc;
 }
-.form-section-title {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .form-section-title {
   margin: 14px 0 11px;
   color: #33445d;
   font-size: 12px;
   font-weight: 700;
 }
-.form-section-title::before {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .form-section-title::before {
   display: inline-block;
   width: 3px;
   height: 12px;
@@ -1864,7 +1272,8 @@ export default {
   border-radius: 2px;
   content: '';
 }
-.template-preview {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .template-preview {
   display: flex;
   min-height: 55px;
   align-items: flex-start;
@@ -1875,21 +1284,25 @@ export default {
   border: 1px solid #e5eaf0;
   border-radius: 4px;
 }
-.template-preview span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .template-preview span {
   padding: 3px 7px;
   color: #52708f;
   background: #eef5fd;
   border-radius: 10px;
   font-size: 9px;
 }
-.template-preview span i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .template-preview span i {
   margin-right: 3px;
   color: #279774;
 }
-.template-preview small {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .template-preview small {
   color: #9aa4b4;
 }
-.device-summary {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .device-summary {
   clear: both;
   display: grid;
   grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1.7fr) minmax(110px, 0.7fr);
@@ -1898,23 +1311,27 @@ export default {
   min-width: 0;
   margin: 4px 0 16px 105px;
 }
-.device-summary span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .device-summary span {
   min-width: 0;
   padding: 10px 12px;
   background: #f7f9fc;
   border: 1px solid #e9eef5;
   border-radius: 6px;
 }
-.device-summary small,
-.device-summary b {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .device-summary small,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .device-summary b {
   display: block;
 }
-.device-summary small {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .device-summary small {
   color: #7d899b;
   font-size: 11px;
   line-height: 1.4;
 }
-.device-summary b {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .device-summary b {
   margin-top: 4px;
   color: #40516a;
   font-size: 12px;
@@ -1922,25 +1339,30 @@ export default {
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
-.checklist-grid {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .checklist-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   margin: 0 0 14px 105px;
 }
-::v-deep .checklist-grid .el-checkbox {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .checklist-grid .el-checkbox {
   width: auto;
   margin: 0;
   padding: 8px 10px;
 }
-::v-deep .checklist-grid .el-checkbox.is-bordered + .el-checkbox.is-bordered {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .checklist-grid .el-checkbox.is-bordered + .el-checkbox.is-bordered {
   margin-left: 0;
 }
-::v-deep .checklist-grid .el-checkbox__label {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .checklist-grid .el-checkbox__label {
   padding-left: 6px;
   font-size: 10px;
 }
-.checklist-empty {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .checklist-empty {
   margin: 0 0 14px 105px;
   padding: 18px;
   color: #9aa4b3;
@@ -1949,13 +1371,15 @@ export default {
   border-radius: 4px;
   font-size: 10px;
 }
-.evidence-uploader {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-uploader {
   display: flex;
   align-items: center;
   gap: 7px;
   flex-wrap: wrap;
 }
-.evidence-uploader > button {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-uploader > button {
   display: flex;
   width: 112px;
   height: 58px;
@@ -1969,17 +1393,21 @@ export default {
   border-radius: 5px;
   cursor: pointer;
 }
-.evidence-uploader > button:hover {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-uploader > button:hover {
   color: #2d72cc;
   border-color: #4385d7;
 }
-.evidence-uploader > button i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-uploader > button i {
   font-size: 17px;
 }
-.evidence-uploader > button span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-uploader > button span {
   font-size: 9px;
 }
-.evidence-chip {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-chip {
   position: relative;
   display: flex;
   width: 112px;
@@ -1993,11 +1421,13 @@ export default {
   border-radius: 5px;
   font-size: 8px;
 }
-.evidence-chip > i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-chip > i {
   color: #3880d7;
   font-size: 16px;
 }
-.evidence-chip button {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .evidence-chip button {
   position: absolute;
   right: 2px;
   top: 2px;
@@ -2006,44 +1436,51 @@ export default {
   border: 0;
   cursor: pointer;
 }
-.form-help {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .form-help {
   margin-top: 5px;
   color: #96a1b1;
   font-size: 9px;
 }
-.form-help.inline {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .form-help.inline {
   margin-left: 8px;
 }
-.form-unit {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .form-unit {
   margin-left: 6px;
   color: #7f8b9c;
   font-size: 10px;
 }
 
-::v-deep .maintenance-drawer .el-drawer__header {
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .maintenance-drawer .el-drawer__header {
   flex: 0 0 auto;
   margin: 0;
   padding: 17px 20px;
   border-bottom: 1px solid #e8edf3;
 }
-::v-deep .maintenance-drawer .el-drawer__title {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .maintenance-drawer .el-drawer__title {
   color: #293b55;
   font-size: 16px;
   font-weight: 600;
 }
-::v-deep .maintenance-drawer .el-drawer__body {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .maintenance-drawer .el-drawer__body {
   display: flex;
   min-height: 0;
   flex-direction: column;
   overflow: hidden;
 }
-.drawer-scroll {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-scroll {
   min-height: 0;
   flex: 1;
   padding: 18px 20px;
   overflow-y: auto;
 }
-.drawer-actions {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-actions {
   display: flex;
   flex: 0 0 auto;
   justify-content: flex-end;
@@ -2052,11 +1489,13 @@ export default {
   background: #fff;
   border-top: 1px solid #e8edf3;
 }
-::v-deep .maintenance-drawer .drawer-actions .el-button {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .maintenance-drawer .drawer-actions .el-button {
   min-width: 68px;
   font-size: 12px;
 }
-.drawer-hero {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-hero {
   display: flex;
   align-items: center;
   gap: 11px;
@@ -2066,7 +1505,8 @@ export default {
   border: 1px solid #dce9f8;
   border-radius: 7px;
 }
-.hero-icon {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .hero-icon {
   display: flex;
   width: 38px;
   height: 38px;
@@ -2077,66 +1517,78 @@ export default {
   border-radius: 8px;
   font-size: 18px;
 }
-.drawer-hero > div:nth-child(2) {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-hero > div:nth-child(2) {
   min-width: 0;
   flex: 1;
 }
-.drawer-hero h3,
-.drawer-hero p {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-hero h3,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-hero p {
   margin: 0;
 }
-.drawer-hero h3 {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-hero h3 {
   overflow: hidden;
   color: #293b55;
   font-size: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.drawer-hero p {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-hero p {
   margin-top: 4px;
   color: #8c98a9;
   font-family: Consolas, monospace;
   font-size: 11px;
 }
-.detail-grid {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   border-top: 1px solid #e6ebf2;
   border-left: 1px solid #e6ebf2;
 }
-.detail-grid > div {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .detail-grid > div {
   min-height: 68px;
   padding: 10px 12px;
   border-right: 1px solid #e6ebf2;
   border-bottom: 1px solid #e6ebf2;
 }
-.detail-grid span,
-.detail-grid b {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .detail-grid span,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .detail-grid b {
   display: block;
 }
-.detail-grid span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .detail-grid span {
   color: #98a2b2;
   font-size: 11px;
 }
-.detail-grid b {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .detail-grid b {
   margin-top: 6px;
   color: #3e4f67;
   font-size: 12px;
   line-height: 18px;
 }
-.drawer-section-title {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-section-title {
   margin: 19px 0 10px;
   color: #34455e;
   font-size: 13px;
   font-weight: 700;
 }
-.drawer-section-title small {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-section-title small {
   margin-left: 4px;
   color: #8d99aa;
   font-size: 11px;
   font-weight: 400;
 }
-.history-list button {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list button {
   display: flex;
   width: 100%;
   align-items: flex-start;
@@ -2149,10 +1601,12 @@ export default {
   border-bottom: 1px solid #edf0f4;
   cursor: pointer;
 }
-.history-list button:hover {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list button:hover {
   background: #f7faff;
 }
-.history-mark {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-mark {
   width: 9px;
   height: 9px;
   flex: 0 0 9px;
@@ -2160,31 +1614,38 @@ export default {
   background: #25a87a;
   border-radius: 50%;
 }
-.history-mark.warning {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-mark.warning {
   background: #e99a25;
 }
-.history-mark.danger {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-mark.danger {
   background: #e4545c;
 }
-.history-list button > span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list button > span {
   min-width: 0;
   flex: 1;
 }
-.history-list b,
-.history-list small,
-.history-list em {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list b,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list small,
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list em {
   display: block;
 }
-.history-list b {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list b {
   color: #3a4b64;
   font-size: 12px;
 }
-.history-list small {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list small {
   margin-top: 3px;
   color: #929dac;
   font-size: 10px;
 }
-.history-list em {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list em {
   margin-top: 4px;
   overflow: hidden;
   color: #778497;
@@ -2193,18 +1654,21 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.history-list button > i:last-child {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .history-list button > i:last-child {
   margin-top: 12px;
   color: #a5afbd;
 }
-.empty-history {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .empty-history {
   padding: 26px;
   color: #99a3b2;
   text-align: center;
   background: #f8fafc;
   font-size: 11px;
 }
-.detail-description {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .detail-description {
   margin: 0;
   padding: 10px 12px;
   color: #56667c;
@@ -2213,16 +1677,19 @@ export default {
   font-size: 12px;
   line-height: 20px;
 }
-.detail-description.warning {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .detail-description.warning {
   color: #a65f12;
   background: #fff6e8;
 }
-.drawer-evidence {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-evidence {
   display: flex;
   gap: 7px;
   flex-wrap: wrap;
 }
-.drawer-evidence span {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-evidence span {
   display: flex;
   min-width: 132px;
   height: 56px;
@@ -2235,115 +1702,256 @@ export default {
   border-radius: 5px;
   font-size: 11px;
 }
-.drawer-evidence span i {
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-evidence span i {
   color: #337dd5;
   font-size: 16px;
 }
-.trace-item {
-  position: relative;
-  display: flex;
-  gap: 12px;
-  margin-left: 5px;
-  padding: 0 0 17px 16px;
-  border-left: 1px solid #dce3ec;
+
+.fire-maintenance-page .trace-timeline {
+  margin: 12px 0 2px;
+  padding: 0;
+  list-style: none;
 }
-.trace-item::before {
+
+.fire-maintenance-page .trace-item {
+  position: relative;
+  padding: 0 0 14px 26px;
+}
+
+.fire-maintenance-page .trace-item::before {
   position: absolute;
-  left: -5px;
-  top: 2px;
-  width: 9px;
-  height: 9px;
-  background: #347ed8;
-  border: 2px solid #fff;
+  z-index: 1;
+  left: 0;
+  top: 19px;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border: 2px solid #a9bfdc;
   border-radius: 50%;
   content: '';
-  box-shadow: 0 0 0 1px #bad0ec;
+  box-shadow: 0 0 0 4px #fff;
 }
-.trace-item > span {
-  width: 38px;
-  flex: 0 0 38px;
-  color: #8f9aaa;
-  font-size: 10px;
+
+.fire-maintenance-page .trace-item::after {
+  position: absolute;
+  top: 29px;
+  bottom: -19px;
+  left: 4px;
+  width: 1px;
+  background: #e0e8f2;
+  content: '';
 }
-.trace-item b,
-.trace-item small {
-  display: block;
+
+.fire-maintenance-page .trace-item:last-child {
+  padding-bottom: 0;
 }
-.trace-item b {
-  color: #3b4d65;
+
+.fire-maintenance-page .trace-item:last-child::after {
+  display: none;
+}
+
+.fire-maintenance-page .trace-item.is-latest::before {
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px #edf4ff;
+}
+
+.fire-maintenance-page .trace-card {
+  min-width: 0;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e8edf4;
+  border-radius: 8px;
+}
+
+.fire-maintenance-page .trace-item.is-latest .trace-card {
+  background: #f5f9ff;
+  border-color: #dce8fa;
+}
+
+.fire-maintenance-page .trace-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.fire-maintenance-page .trace-head b {
+  min-width: 0;
+  color: #34465f;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 21px;
+  overflow-wrap: anywhere;
+}
+
+.fire-maintenance-page .trace-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #8b98aa;
   font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 20px;
+  white-space: nowrap;
 }
-.trace-item small {
-  margin-top: 3px;
-  color: #7f8b9c;
-  font-size: 10px;
-  line-height: 16px;
+
+.fire-maintenance-page .trace-actor {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  max-width: 100%;
+  margin-top: 7px;
+  padding: 2px 7px;
+  color: #60748f;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
 }
-@media (max-width: 1280px) {
-  .kpi-grid {
+
+.fire-maintenance-page .trace-remark {
+  margin: 7px 0 0;
+  color: #77869b;
+  font-size: 12px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.fire-maintenance-page .trace-empty {
+  padding: 18px;
+  color: var(--muted);
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (max-width: 1000px) {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .overview-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 901px) and (max-width: 1250px) {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar-note {
+    display: none;
   }
-  .reminder-panel {
-    grid-column: 1 / -1;
-  }
-  .reminder-list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0 12px;
+}
+@media (min-width: 901px) {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) > .iot-workspace-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 @media (min-width: 1281px) {
-  .category-list {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .category-list {
     display: grid;
-    grid-template-rows: repeat(6, minmax(58px, 1fr));
+    grid-auto-rows: minmax(45px, 1fr);
+    overflow: auto;
     justify-content: stretch;
   }
-  .category-row {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .category-row {
     align-self: center;
     margin-bottom: 0;
   }
-  .reminder-list {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-list {
     display: grid;
-    grid-template-rows: repeat(5, minmax(64px, 1fr));
+    grid-auto-rows: minmax(58px, 1fr);
+    overflow: auto;
   }
-  .reminder-item {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-item {
     min-height: 0;
   }
 }
 @media (max-width: 900px) {
   .fire-maintenance-page {
     padding: 12px;
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
   }
-  .page-header {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .page-header {
     flex-direction: column;
   }
-  .kpi-grid {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .kpi-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .overview-grid {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .overview-grid {
     grid-template-columns: 1fr;
     min-height: 0;
   }
-  .reminder-panel {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .ledger-card,
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs,
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs .el-tabs__content {
+    flex: auto;
+    overflow: visible;
+  }
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .el-dialog {
+    width: calc(100% - 24px) !important;
+  }
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-summary {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .pagination-row .el-pagination {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    margin-left: auto;
+  }
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-panel {
     grid-column: auto;
   }
-  .reminder-list {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .reminder-list {
     display: block;
   }
-  .checklist-grid {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .checklist-grid {
     grid-template-columns: 1fr;
     margin-left: 0;
   }
-  .device-summary {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .device-summary {
     width: 100%;
     margin-left: 0;
   }
-  .toolbar {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .toolbar {
     align-items: flex-start;
     flex-direction: column;
   }
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs > .maintenance-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+}
+@media (max-width: 900px) {
+  :is(.fire-maintenance-page, .fire-maintenance-dialog) .workspace-tabs > .maintenance-list {
+    flex: auto;
+    height: 620px;
+  }
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .maintenance-table-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 12px;
+}
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .maintenance-table-area > .el-table {
+  flex: 1;
+  min-height: 0;
+}
+
+// 固定操作列的伪元素会在表格空白区底部留下短线，分隔线由分页底栏统一提供。
+.fire-maintenance-page .maintenance-table-area .el-table__fixed::before,
+.fire-maintenance-page .maintenance-table-area .el-table__fixed-right::before {
+  display: none;
 }
 </style>
