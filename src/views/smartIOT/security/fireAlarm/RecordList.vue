@@ -2,40 +2,33 @@
   <div class="maintenance-list">
     <div class="toolbar">
       <div class="toolbar-left">
-        <el-input v-model.trim="recordKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="记录编号 / 设备 / 执行人" style="width: 240px"></el-input>
-        <el-select v-model="recordResult" size="small" clearable placeholder="维保结果" style="width: 130px">
-          <el-option v-for="item in ['合格', '需维修', '不合格']" :key="item" :label="item" :value="item"></el-option>
+        <el-input v-model.trim="keyword" size="small" clearable prefix-icon="el-icon-search" placeholder="记录名称 / 设备编号 / 名称 / 计划负责人" style="width: 300px" />
+        <el-select v-model="result" size="small" clearable placeholder="维保结果" style="width: 130px">
+          <el-option v-for="item in ['合格', '不合格']" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-date-picker v-model="recordDate" type="date" size="small" value-format="yyyy-MM-dd" placeholder="维保日期" style="width: 150px"></el-date-picker>
+        <el-date-picker v-model="date" type="date" size="small" value-format="yyyy-MM-dd" placeholder="实际养护日期" style="width: 155px" />
+        <el-tag v-if="contextPlanId" closable @close="clearPlanContext">关联计划记录</el-tag>
+        <el-button v-if="contextPlanId" type="text" size="small" @click="clearPlanContext">查看全部记录</el-button>
       </div>
     </div>
     <div class="maintenance-table-area">
       <el-table ref="table" :data="pagedRows" size="small" stripe height="100%" @row-click="$emit('detail', $event)">
-        <el-table-column prop="id" label="记录编号" width="140"></el-table-column>
-        <el-table-column label="设备信息" min-width="180" show-overflow-tooltip>
+        <el-table-column prop="recordName" label="记录名称" min-width="210" show-overflow-tooltip />
+        <el-table-column label="设备信息" min-width="190" show-overflow-tooltip>
           <template slot-scope="scope">
             <div>{{ scope.row.device }}</div>
-            <small class="muted-text">{{ scope.row.category }}</small>
+            <small class="muted-text">{{ scope.row.deviceCode }} · {{ scope.row.category }}</small>
           </template>
         </el-table-column>
-        <el-table-column prop="date" label="维保时间" width="145"></el-table-column>
-        <el-table-column prop="type" label="维保类型" width="95"></el-table-column>
-        <el-table-column prop="executor" label="执行人" width="90"></el-table-column>
-        <el-table-column prop="company" label="执行单位" min-width="145" show-overflow-tooltip></el-table-column>
-        <el-table-column label="结果" width="88">
+        <el-table-column prop="date" label="实际养护日期" width="130" />
+        <el-table-column prop="responsiblePerson" label="计划负责人" width="110" />
+        <el-table-column label="结果" width="95">
           <template slot-scope="scope">
-            <span :class="['result-pill', resultClass(scope.row.result)]">{{ scope.row.result }}</span>
+            <span :class="['result-pill', scope.row.status === '合格' ? 'success' : scope.row.status === '不合格' ? 'danger' : 'info']">{{ scope.row.status || '未填写' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="现场凭证" width="90">
-          <template slot-scope="scope">
-            <span class="evidence-link">
-              <i class="el-icon-picture-outline"></i>
-              {{ scope.row.photos.length }}项
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="70" fixed="right">
+        <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip />
+        <el-table-column label="操作" class-name="maintenance-actions-column" width="85" fixed="right">
           <template slot-scope="scope"><el-button type="text" size="mini" @click.stop="$emit('detail', scope.row)">详情</el-button></template>
         </el-table-column>
       </el-table>
@@ -64,186 +57,155 @@
       append-to-body
       title="消防设备维保执行登记"
       :visible.sync="recordDialog"
-      width="780px"
+      width="700px"
       custom-class="maintenance-dialog fire-maintenance-dialog record-dialog"
-      :close-on-click-modal="false">
-      <div class="dialog-intro">
-        <i class="el-icon-edit-outline"></i>
-        维保记录提交后不可直接删除；如需更正，应通过补充记录保留修改原因和人员。
-      </div>
-      <el-form ref="recordForm" :model="recordForm" :rules="recordRules" label-width="105px" size="small">
-        <div class="form-section-title">执行对象</div>
-        <el-row :gutter="16">
-          <el-col :span="14">
-            <el-form-item label="消防设备" prop="deviceId">
-              <el-select v-model="recordForm.deviceId" filterable style="width: 100%" @change="onRecordDeviceChange">
-                <el-option v-for="item in executionDevices" :key="item.id" :label="item.name + '（' + item.id + '）'" :value="item.id"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="维保类型">
-              <el-select v-model="recordForm.type" style="width: 100%">
-                <el-option v-for="item in ['定期维保', '功能测试', '试运行', '故障检查', '逾期补检']" :key="item" :label="item" :value="item"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="关联计划" prop="planId">
-          <el-input :value="executionPlan ? executionPlan.name + ' · ' + executionPlan.plannedDate : ''" readonly />
-        </el-form-item>
-        <div v-if="recordDevice" class="device-summary">
-          <span>
-            <small>设备类型</small>
-            <b>{{ recordDevice.category }}</b>
-          </span>
-          <span>
-            <small>安装位置</small>
-            <b>{{ recordDevice.building }} / {{ recordDevice.floor }} / {{ recordDevice.location }}</b>
-          </span>
-          <span>
-            <small>当前状态</small>
-            <b>{{ deviceMaintenanceStatus(recordDevice) }}</b>
-          </span>
-        </div>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="维保时间" prop="date"><el-date-picker v-model="recordForm.date" type="datetime" value-format="yyyy-MM-dd HH:mm" style="width: 100%"></el-date-picker></el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="执行人" prop="executor"><el-input v-model.trim="recordForm.executor"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="执行单位" prop="company"><el-input v-model.trim="recordForm.company"></el-input></el-form-item>
-          </el-col>
-        </el-row>
-        <div class="form-section-title">检查项目</div>
-        <div v-if="recordChecklist.length" class="checklist-grid">
-          <el-checkbox v-for="item in recordChecklist" :key="item" v-model="recordForm.checkedItems" :label="item" border>{{ item }}</el-checkbox>
-        </div>
-        <div v-else class="checklist-empty">请先选择消防设备</div>
-        <div class="form-section-title">维保结论与凭证</div>
-        <el-row :gutter="16">
-          <el-col :span="10">
-            <el-form-item label="维保结果" prop="result">
-              <el-radio-group v-model="recordForm.result">
-                <el-radio label="合格"></el-radio>
-                <el-radio label="需维修"></el-radio>
-                <el-radio label="不合格"></el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="14">
-            <el-form-item label="后续维保">
-              <span class="form-help">{{ followingPlan ? followingPlan.plannedDate + '（' + followingPlan.name + '）' : '暂无后续计划，请在计划管理中安排' }}</span>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="问题说明">
-          <el-input v-model.trim="recordForm.issue" type="textarea" :rows="2" :placeholder="recordForm.result === '合格' ? '可填写现场调整情况' : '请填写缺陷、影响和后续处理要求'"></el-input>
-        </el-form-item>
+      :close-on-click-modal="false"
+      :before-close="closeWhenIdle">
+      <el-alert v-if="blocked" title="数据读取失败，已填写内容保留；可重新加载或取消登记" type="error" :closable="false" />
+      <el-button v-if="blocked" size="mini" :disabled="saving" @click="$emit('reload')">重新加载</el-button>
+      <el-alert v-if="cycleChanged" title="本期已登记或计划时间已变更，请核对记录后重新进入登记" type="warning" :closable="false" />
+      <el-button
+        v-if="cycleChanged"
+        type="text"
+        :disabled="saving || uploading > 0"
+        @click="
+          recordDialog = false
+          $emit('view-records', executionPlan)
+        ">
+        查看已有记录
+      </el-button>
+      <el-form ref="recordForm" :model="recordForm" :rules="recordRules" label-width="120px" size="small" :disabled="saving || blocked || cycleChanged">
+        <el-form-item label="关联计划"><el-input :value="executionPlan ? executionPlan.planName : ''" disabled /></el-form-item>
+        <el-form-item label="关联设备"><el-input :value="recordDevice ? recordDevice.name + '（' + recordDevice.deviceCode + '）' : ''" disabled /></el-form-item>
         <el-row :gutter="16">
           <el-col :span="12">
-            <el-form-item label="更换部件"><el-input v-model.trim="recordForm.parts"></el-input></el-form-item>
+            <el-form-item label="本次维保时间"><el-input :value="recordForm.scheduledDate" disabled /></el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="维保费用"><el-input-number v-model="recordForm.cost" :min="0" :precision="2" style="width: 100%"></el-input-number></el-form-item>
+            <el-form-item label="登记后下次时间"><el-input :value="executionPlan ? executionPlan.nextMaintenanceDate : ''" disabled /></el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="现场凭证" required>
-          <div class="evidence-uploader">
-            <button type="button" @click="addEvidence">
-              <i class="el-icon-plus"></i>
-              <span>添加图片或视频</span>
-            </button>
-            <span v-for="(item, index) in recordForm.photos" :key="item" class="evidence-chip">
-              <i :class="item.indexOf('视频') > -1 ? 'el-icon-video-camera' : 'el-icon-picture-outline'"></i>
-              {{ item }}
-              <button type="button" aria-label="移除凭证" @click="recordForm.photos.splice(index, 1)"><i class="el-icon-close"></i></button>
-            </span>
-          </div>
-          <div class="form-help">仿真环境使用文件占位；正式系统应上传原图、拍摄时间和定位信息。</div>
+        <el-form-item label="记录名称" prop="recordName"><el-input v-model.trim="recordForm.recordName" /></el-form-item>
+        <el-form-item label="计划负责人"><el-input :value="executionPlan ? executionPlan.responsiblePerson || '未填写' : ''" disabled /></el-form-item>
+        <el-form-item label="实际养护日期" prop="actualDate">
+          <el-date-picker v-model="recordForm.actualDate" type="date" value-format="yyyy-MM-dd" :picker-options="dateOptions" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="维保结果" prop="status">
+          <el-radio-group v-model="recordForm.status">
+            <el-radio label="合格" />
+            <el-radio label="不合格" />
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item :label="recordForm.status === '不合格' ? '问题说明' : '备注'" prop="remark" :required="recordForm.status === '不合格'">
+          <el-input v-model.trim="recordForm.remark" type="textarea" :rows="3" placeholder="填写现场情况、发现的问题及处理说明" />
+        </el-form-item>
+        <el-form-item label="附件">
+          <el-upload
+            ref="upload"
+            action=""
+            name="thefile"
+            :http-request="uploadFile"
+            :file-list="uploadList"
+            :before-upload="beforeUpload"
+            :before-remove="beforeRemove"
+            :on-success="uploadSuccess"
+            :on-remove="removeFile"
+            :on-exceed="uploadExceeded"
+            :limit="20"
+            :disabled="saving || blocked || cycleChanged"
+            multiple>
+            <el-button size="small" icon="el-icon-upload2" :disabled="saving || blocked">上传附件</el-button>
+            <div slot="tip" class="el-upload__tip">支持图片、视频、PDF及办公文档，单个文件不超过10MB，最多20个。</div>
+          </el-upload>
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button @click="recordDialog = false">取消</el-button>
-        <el-button type="primary" @click="saveRecord">提交维保记录</el-button>
+        <el-button :disabled="saving || uploading > 0" @click="recordDialog = false">取消</el-button>
+        <el-button type="primary" :loading="saving" :disabled="blocked || uploading > 0 || cycleChanged" @click="saveRecord">
+          {{ uploading ? '附件上传中' : '提交维保记录' }}
+        </el-button>
       </span>
     </el-dialog>
   </div>
 </template>
-
 <script>
-function localDateTime() {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(
-    2,
-    '0'
-  )}`
-}
+import { maintenanceToday, uploadMaintenanceAttachment, isMaintenanceDate } from '@/service/maintenance'
 export default {
   name: 'RecordList',
   props: {
     pageSize: { type: Number, required: true },
     active: Boolean,
+    saving: Boolean,
+    blocked: Boolean,
     records: { type: Array, required: true },
     devices: { type: Array, required: true },
-    plans: { type: Array, required: true },
-    checkTemplates: { type: Object, required: true },
-    devicePlans: { type: Function, required: true },
-    deviceMaintenanceStatus: { type: Function, required: true }
+    plans: { type: Array, required: true }
   },
   data() {
     return {
       page: 1,
-      recordKeyword: '',
-      recordResult: '',
-      recordDate: '',
+      keyword: '',
+      result: '',
+      date: '',
+      contextPlanId: '',
+      dateOptions: { disabledDate: (date) => date.getTime() > Date.now() },
       recordDialog: false,
       executionPlanId: '',
       recordForm: {},
+      uploadList: [],
+      uploading: 0,
       recordRules: {
-        deviceId: [{ required: true, message: '请选择消防设备', trigger: 'change' }],
-        planId: [{ required: true, message: '请选择关联维保计划', trigger: 'change' }],
-        date: [{ required: true, message: '请选择维保时间', trigger: 'change' }],
-        executor: [{ required: true, message: '请输入执行人', trigger: 'blur' }],
-        company: [{ required: true, message: '请输入执行单位', trigger: 'blur' }],
-        result: [{ required: true, message: '请选择维保结果', trigger: 'change' }]
+        recordName: [{ required: true, message: '请输入记录名称', trigger: 'blur' }],
+        actualDate: [
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              if (!isMaintenanceDate(value) || value > maintenanceToday()) callback(new Error('实际日期应为今天或之前的有效日期'))
+              else callback()
+            },
+            trigger: 'change'
+          }
+        ],
+        remark: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.recordForm.status === '不合格' && !(value || '').trim()) callback(new Error('请说明发现的问题及处理要求'))
+              else callback()
+            },
+            trigger: 'blur'
+          }
+        ],
+        status: [{ required: true, message: '请选择维保结果', trigger: 'change' }]
       }
     }
   },
   computed: {
     executionPlan() {
-      return this.plans.find((plan) => plan.id === this.executionPlanId) || null
+      return this.plans.find((item) => item.id === this.executionPlanId) || null
     },
-    executionDevices() {
+    cycleChanged() {
       const plan = this.executionPlan
-      return plan && plan.status !== '已完成' ? this.devices.filter((device) => plan.deviceIds.includes(device.id) && !plan.completedDeviceIds.includes(device.id)) : []
+      return !!this.recordDialog && (!plan || plan.cycleNo !== this.recordForm.cycleNo || plan.plannedDate !== this.recordForm.scheduledDate)
+    },
+    recordDevice() {
+      return this.devices.find((item) => item.id === this.recordForm.deviceId) || null
+    },
+    filteredRows() {
+      const keyword = this.keyword.toLowerCase()
+      return this.records.filter(
+        (item) =>
+          (!keyword || [item.recordName, item.deviceCode, item.device, item.responsiblePerson].join(' ').toLowerCase().includes(keyword)) &&
+          (!this.result || item.status === this.result) &&
+          (!this.date || item.date === this.date) &&
+          (!this.contextPlanId || item.planId === this.contextPlanId)
+      )
     },
     pagedRows() {
       const start = (this.page - 1) * this.pageSize
       return this.filteredRows.slice(start, start + this.pageSize)
     },
-    filteredRows() {
-      const keyword = this.recordKeyword.toLowerCase()
-      return this.records.filter(
-        (item) =>
-          (!keyword || [item.id, item.device, item.executor, item.company].join(' ').toLowerCase().includes(keyword)) &&
-          (!this.recordResult || item.result === this.recordResult) &&
-          (!this.recordDate || item.date.indexOf(this.recordDate) === 0)
-      )
-    },
     pageRange() {
       return this.filteredRows.length ? '当前显示 ' + ((this.page - 1) * this.pageSize + 1) + '–' + Math.min(this.page * this.pageSize, this.filteredRows.length) + ' 条' : '暂无数据'
-    },
-    recordDevice() {
-      return this.devices.find((item) => item.id === this.recordForm.deviceId) || null
-    },
-    recordChecklist() {
-      return this.recordDevice ? this.checkTemplates[this.recordDevice.category] || ['外观与安装检查', '功能测试', '运行状态检查'] : []
-    },
-    followingPlan() {
-      return this.devicePlans(this.recordForm.deviceId, this.recordForm.planId)[0] || null
     }
   },
   watch: {
@@ -256,15 +218,18 @@ export default {
     active(value) {
       if (value) this.refreshLayout()
     },
-    recordKeyword() {
+    keyword() {
       this.page = 1
     },
-    recordResult() {
+    result() {
       this.page = 1
     },
-    recordDate() {
+    date() {
       this.page = 1
     }
+  },
+  mounted() {
+    if (this.active) this.refreshLayout()
   },
   methods: {
     refreshLayout() {
@@ -272,68 +237,93 @@ export default {
         if (this.$refs.table) this.$refs.table.doLayout()
       })
     },
-    resultClass(result) {
-      if (result === '合格') return 'success'
-      if (result === '需维修') return 'warning'
-      return 'danger'
+    closeWhenIdle(done) {
+      if (!this.saving && !this.uploading) done()
     },
     closeRecordDialog() {
       this.recordDialog = false
     },
-    resetRecordForm() {
-      this.recordForm = {
-        deviceId: '',
-        planId: '',
-        type: '定期维保',
-        date: localDateTime(),
-        executor: '',
-        company: '园区工程部',
-        checkedItems: [],
-        result: '合格',
-        issue: '',
-        parts: '',
-        cost: 0,
-        photos: []
-      }
+    focusPlanRecords(id) {
+      this.keyword = ''
+      this.result = ''
+      this.date = ''
+      this.page = 1
+      this.contextPlanId = id
     },
-    openRecordDialog(device, plan, type = '定期维保') {
-      if (!plan || !this.plans.some((item) => item.id === plan.id)) return this.$message.warning('请从维保计划的执行登记入口操作')
-      if (!device || plan.status === '已完成' || !plan.deviceIds.includes(device.id) || plan.completedDeviceIds.includes(device.id)) return this.$message.warning('该计划暂无待登记设备')
-      this.resetRecordForm()
+    clearPlanContext() {
+      this.contextPlanId = ''
+      this.page = 1
+    },
+    openRecordDialog(device, plan) {
+      if (this.saving || this.blocked || this.uploading) return
+      if (!plan || !plan.canRegister || !device || device.id !== plan.deviceId) return this.$message.warning('请从本次维保时间前7天内、到期或逾期的有效计划进入登记')
       this.executionPlanId = plan.id
-      this.recordForm.type = type
-      this.recordForm.deviceId = device.id
-      this.onRecordDeviceChange()
+      this.recordForm = {
+        planId: plan.id,
+        deviceId: device.id,
+        cycleNo: plan.cycleNo,
+        scheduledDate: plan.plannedDate,
+        recordName: plan.planName + '第' + plan.cycleNo + '期养护记录',
+        responsiblePerson: plan.responsiblePerson || '',
+        actualDate: maintenanceToday(),
+        status: '合格',
+        remark: '',
+        uploadFiles: []
+      }
+      this.uploadList = []
       this.recordDialog = true
-      this.$nextTick(() => this.$refs.recordForm && this.$refs.recordForm.clearValidate())
+      this.$nextTick(() => {
+        if (this.$refs.upload) this.$refs.upload.clearFiles()
+        if (this.$refs.recordForm) this.$refs.recordForm.clearValidate()
+      })
     },
-    onRecordDeviceChange() {
-      this.recordForm.checkedItems = []
-      this.recordForm.planId = this.executionPlanId
-      this.onRecordPlanChange()
+    beforeUpload(file) {
+      if (file.size > 10 * 1024 * 1024) {
+        this.$message.warning('单个附件不能超过10MB')
+        return false
+      }
+      if (!/\.(jpe?g|png|gif|webp|bmp|mp4|mov|avi|webm|pdf|docx?|xlsx?|pptx?)$/i.test(file.name)) {
+        this.$message.warning('请选择图片、视频、PDF或办公文档')
+        return false
+      }
+      return true
     },
-    onRecordPlanChange() {
-      const plan = this.plans.find((item) => item.id === this.recordForm.planId)
-      this.recordForm.executor = plan ? plan.owner : ''
-      this.recordForm.company = plan ? (plan.serviceType === '外委维保' ? plan.vendor : (this.recordDevice && this.recordDevice.department) || '园区工程部') : ''
+    beforeRemove(file) {
+      return !this.saving && !this.uploading && file.status !== 'uploading'
     },
-    addEvidence() {
-      const index = this.recordForm.photos.length + 1
-      this.recordForm.photos.push(index === 3 ? `现场视频${index}.mp4` : `现场照片${index}.jpg`)
+    uploadExceeded() {
+      this.$message.warning('最多上传20个附件')
+    },
+    uploadFile(options) {
+      this.uploading++
+      // 自定义请求不会自动把ready改成uploading，须通知Upload，防止请求未完成就移除文件。
+      if (options.onProgress) options.onProgress({ percent: 0 })
+      return uploadMaintenanceAttachment(this.$api, options.file)
+        .catch((error) => {
+          this.$message.error(error.message || '附件上传失败')
+          throw error
+        })
+        .finally(() => {
+          this.uploading--
+        })
+    },
+    uploadSuccess(response, file) {
+      file.maintenanceAttachment = response
+      this.recordForm.uploadFiles.push(response)
+    },
+    removeFile(file) {
+      const attachment = file.maintenanceAttachment || file.response
+      if (attachment) this.recordForm.uploadFiles = this.recordForm.uploadFiles.filter((item) => item !== attachment)
     },
     saveRecord() {
-      if (this.recordForm.planId !== this.executionPlanId || !this.executionDevices.some((device) => device.id === this.recordForm.deviceId))
-        return this.$message.warning('该设备不属于当前计划或已完成登记，请重新选择')
+      if (this.saving || this.blocked || this.uploading) return
+      const plan = this.executionPlan
+      if (!plan || this.cycleChanged || !plan.canRegister || plan.id !== this.recordForm.planId || plan.deviceId !== this.recordForm.deviceId)
+        return this.$message.warning('本期已登记或计划已变更，请重新打开登记')
       this.$refs.recordForm.validate((valid) => {
-        if (valid) this.$emit('save-record', JSON.parse(JSON.stringify(this.recordForm)))
+        if (valid) this.$emit('save-record', { ...this.recordForm, uploadFiles: this.recordForm.uploadFiles.slice() })
       })
     }
-  },
-  mounted() {
-    if (this.active) this.refreshLayout()
-  },
-  created() {
-    this.resetRecordForm()
   }
 }
 </script>

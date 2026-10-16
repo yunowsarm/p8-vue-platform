@@ -1,6 +1,10 @@
-<!-- 消防维保入口：五个工作区共享业务数据和关联规则。 -->
+<!-- 消防维保入口：五个工作区共享后端数据和关联规则。 -->
 <template>
-  <div class="fire-maintenance-page">
+  <div v-loading="loading" class="fire-maintenance-page">
+    <div v-if="loadError" class="maintenance-load-error" role="alert">
+      <span>{{ loadError }}</span>
+      <el-button size="mini" :disabled="loading || saving" @click="loadData">重新加载</el-button>
+    </div>
     <section class="kpi-grid">
       <article v-for="item in kpis" :key="item.title" class="kpi-card">
         <i :class="[item.icon, 'kpi-icon', item.type]"></i>
@@ -12,7 +16,6 @@
         <div class="kpi-sub">{{ item.sub }}</div>
       </article>
     </section>
-
     <iot-workspace-nav v-model="activeTab" :items="workspaceNav" aria-label="消防设备维保业务工作区" @change="handleWorkspaceChange" />
     <maintenance-overview
       v-show="activeTab === 'overview'"
@@ -27,57 +30,68 @@
     <section v-show="activeTab !== 'overview'" ref="workspaceContent" class="surface ledger-card workspace-detail" tabindex="-1">
       <div class="workspace-tabs">
         <device-ledger
+          v-show="activeTab === 'devices'"
           ref="devices"
-          :buildings="buildings"
+          :active="activeTab === 'devices'"
+          :devices="devices"
+          :device-types="deviceTypes"
+          :refresh-options="refreshEditorOptions"
           :category-stats="categoryStats"
           :device-plans="devicePlans"
           :device-maintenance-status="deviceMaintenanceStatus"
+          :has-history="deviceHasHistory"
+          :page-size="pageSize"
+          :saving="saving || loading"
+          :blocked="!ready || !!loadError"
+          :type-loading="typeLoading"
+          :type-error="typeError"
+          @size-change="pageSize = $event"
           @save-device="saveDevice"
           @add-type="addDeviceType"
+          @load-types="loadTypes"
           @rename-type="renameDeviceType"
           @remove-type="removeDeviceType"
-          v-show="activeTab === 'devices'"
-          :active="activeTab === 'devices'"
-          :devices="devices"
-          :plans="plans"
-          :categories="categories"
-          :page-size="pageSize"
-          @size-change="pageSize = $event"
+          @delete-device="deleteDevice"
+          @schedule="scheduleDevice"
+          @view-plan="viewPlan"
+          @reload="loadData"
           @detail="openDeviceDetail" />
         <plan-list
-          ref="plans"
-          :categories="categories"
-          :buildings="buildings"
-          :check-templates="checkTemplates"
-          :device-plans="devicePlans"
-          :pending-plan-devices="pendingPlanDevices"
-          @save-plan="savePlan"
           v-show="activeTab === 'plans'"
+          ref="plans"
           :active="activeTab === 'plans'"
           :plans="plans"
           :devices="devices"
+          :refresh-options="refreshEditorOptions"
+          :device-plans="devicePlans"
           :page-size="pageSize"
+          :saving="saving || loading"
+          :blocked="!ready || !!loadError"
+          @reload="loadData"
+          @create-device="createDeviceFromPlan"
+          @view-records="showPlanRecords"
           @size-change="pageSize = $event"
+          @save-plan="savePlan"
+          @delete-plan="deletePlan"
           @execute="executePlan" />
         <record-list
-          ref="records"
-          :devices="devices"
-          :plans="plans"
-          :check-templates="checkTemplates"
-          :device-plans="devicePlans"
-          :device-maintenance-status="deviceMaintenanceStatus"
-          @save-record="saveRecord"
           v-show="activeTab === 'records'"
+          ref="records"
           :active="activeTab === 'records'"
           :records="records"
+          :devices="devices"
+          :plans="plans"
           :page-size="pageSize"
+          :saving="saving || loading"
+          :blocked="!ready || !!loadError"
+          @reload="loadData"
+          @view-records="showPlanRecords"
           @size-change="pageSize = $event"
+          @save-record="saveRecord"
           @detail="openRecordDetail" />
         <reminder-list
-          ref="reminders"
-          :initial-rule="reminderRule"
-          @save-rule="saveReminderRule"
           v-show="activeTab === 'reminders'"
+          ref="reminders"
           :active="activeTab === 'reminders'"
           :reminders="reminders"
           :page-size="pageSize"
@@ -86,321 +100,333 @@
       </div>
     </section>
     <el-drawer :title="drawerMode === 'device' ? '消防设备维保档案' : '维保记录详情'" :visible.sync="drawerVisible" size="500px" custom-class="maintenance-drawer">
-      <div v-if="currentRecord" class="drawer-scroll">
-        <div class="drawer-hero">
-          <div class="hero-icon"><i :class="drawerMode === 'device' ? 'el-icon-cpu' : 'el-icon-document-checked'"></i></div>
-          <div>
-            <h3>{{ drawerMode === 'device' ? currentRecord.name : currentRecord.device }}</h3>
-            <p>{{ currentRecord.id }}</p>
-          </div>
-          <span :class="['status-pill', drawerMode === 'device' ? statusClass(deviceMaintenanceStatus(currentRecord)) : resultClass(currentRecord.result)]">
-            {{ drawerMode === 'device' ? deviceMaintenanceStatus(currentRecord) : currentRecord.result }}
-          </span>
-        </div>
-        <template v-if="drawerMode === 'device'">
-          <div class="detail-grid">
+      <div v-loading="detailLoading" class="drawer-scroll">
+        <div v-if="detailError" class="empty-history">{{ detailError }}</div>
+        <template v-if="currentRecord">
+          <div class="drawer-hero">
+            <div class="hero-icon"><i :class="drawerMode === 'device' ? 'el-icon-cpu' : 'el-icon-document-checked'"></i></div>
             <div>
-              <span>设备类型</span>
-              <b>{{ currentRecord.category }}</b>
+              <h3>{{ drawerMode === 'device' ? currentRecord.name : currentRecord.recordName }}</h3>
+              <p>{{ drawerMode === 'device' ? currentRecord.deviceCode : currentRecord.device }}</p>
             </div>
-            <div>
-              <span>品牌型号</span>
-              <b>{{ currentRecord.brand }} / {{ currentRecord.model }}</b>
-            </div>
-            <div>
-              <span>安装位置</span>
-              <b>{{ currentRecord.building }} / {{ currentRecord.floor }} / {{ currentRecord.location }}</b>
-            </div>
-            <div>
-              <span>责任单位</span>
-              <b>{{ currentRecord.department }} / {{ currentRecord.owner }}</b>
-            </div>
-            <div>
-              <span>最近待执行计划</span>
-              <b>{{ nextPlan(currentRecord.id) ? nextPlan(currentRecord.id).name : '未安排计划' }}</b>
-            </div>
-            <div>
-              <span>下次维保</span>
-              <b>{{ nextPlan(currentRecord.id) ? nextPlan(currentRecord.id).plannedDate : '未安排计划' }}</b>
-            </div>
-            <div>
-              <span>设备二维码</span>
-              <b>{{ currentRecord.qrCode }}</b>
-            </div>
-            <div>
-              <span>安装日期</span>
-              <b>{{ currentRecord.installDate }}</b>
-            </div>
-          </div>
-          <div class="drawer-section-title">
-            历次维保记录
-            <small>{{ deviceHistory.length }} 条</small>
-          </div>
-          <div v-if="deviceHistory.length" class="history-list">
-            <button v-for="item in deviceHistory" :key="item.id" type="button" @click="openRecordDetail(item, currentId)">
-              <i :class="['history-mark', resultClass(item.result)]"></i>
-              <span>
-                <b>{{ item.type }} · {{ item.result }}</b>
-                <small>{{ item.date }} · {{ item.executor }}</small>
-                <em>{{ item.content }}</em>
-              </span>
-              <i class="el-icon-arrow-right"></i>
-            </button>
-          </div>
-          <div v-else class="empty-history">暂无维保记录</div>
-        </template>
-        <template v-else>
-          <div class="detail-grid">
-            <div>
-              <span>维保类型</span>
-              <b>{{ currentRecord.type }}</b>
-            </div>
-            <div>
-              <span>维保时间</span>
-              <b>{{ currentRecord.date }}</b>
-            </div>
-            <div>
-              <span>执行人员</span>
-              <b>{{ currentRecord.executor }}</b>
-            </div>
-            <div>
-              <span>执行单位</span>
-              <b>{{ currentRecord.company }}</b>
-            </div>
-            <div>
-              <span>维保费用</span>
-              <b>{{ currentRecord.cost }} 元</b>
-            </div>
-            <div>
-              <span>下次维保</span>
-              <b>{{ currentRecord.nextDate }}</b>
-            </div>
-          </div>
-          <div class="drawer-section-title">维保内容</div>
-          <p class="detail-description">{{ currentRecord.content }}</p>
-          <div class="drawer-section-title">发现问题</div>
-          <p :class="['detail-description', currentRecord.issue !== '无' ? 'warning' : '']">{{ currentRecord.issue }}</p>
-          <div class="drawer-section-title">现场凭证</div>
-          <div class="drawer-evidence">
-            <span v-for="item in currentRecord.photos" :key="item">
-              <i :class="item.indexOf('视频') > -1 ? 'el-icon-video-camera' : 'el-icon-picture-outline'"></i>
-              {{ item }}
+            <span :class="['status-pill', drawerMode === 'device' ? statusClass(deviceMaintenanceStatus(currentRecord)) : resultClass(currentRecord.status)]">
+              {{ drawerMode === 'device' ? deviceMaintenanceStatus(currentRecord) : currentRecord.status || '未填写结果' }}
             </span>
           </div>
-          <div class="drawer-section-title">
-            登记留痕
-            <small>{{ (currentRecord.traces || []).length }} 条</small>
-          </div>
-          <ol v-if="(currentRecord.traces || []).length" class="trace-timeline" aria-label="登记留痕时间线">
-            <li v-for="(trace, index) in currentRecord.traces" :key="index" class="trace-item" :class="{ 'is-latest': index === currentRecord.traces.length - 1 }">
-              <div class="trace-card">
-                <div class="trace-head">
-                  <b>{{ trace.action }}</b>
-                  <time class="trace-time">
-                    <i class="el-icon-time" aria-hidden="true"></i>
-                    {{ trace.time }}
-                  </time>
-                </div>
-                <div class="trace-actor">
-                  <i class="el-icon-user" aria-hidden="true"></i>
-                  {{ trace.user }}
-                </div>
-                <p v-if="trace.remark" class="trace-remark">{{ trace.remark }}</p>
+          <template v-if="drawerMode === 'device'">
+            <div class="detail-grid">
+              <div>
+                <span>设备类型</span>
+                <b>{{ currentRecord.category }}</b>
               </div>
-            </li>
-          </ol>
-          <div v-else class="trace-empty">暂无登记留痕</div>
+              <div>
+                <span>品牌 / 型号</span>
+                <b>{{ currentRecord.brand || '—' }} / {{ currentRecord.model || '—' }}</b>
+              </div>
+              <div>
+                <span>安装位置</span>
+                <b>{{ currentRecord.installLocation || '—' }}</b>
+              </div>
+              <div>
+                <span>最近待执行计划</span>
+                <b>{{ nextPlan(currentRecord.id) ? nextPlan(currentRecord.id).name : '未安排计划' }}</b>
+              </div>
+              <div>
+                <span>下次维保</span>
+                <b>{{ nextPlan(currentRecord.id) ? nextPlan(currentRecord.id).plannedDate || '未设日期' : '未安排计划' }}</b>
+              </div>
+              <div>
+                <span>安装日期</span>
+                <b>{{ currentRecord.installDate || '—' }}</b>
+              </div>
+            </div>
+            <div class="drawer-section-title">
+              历史维保记录
+              <small>{{ deviceHistory.length }} 条</small>
+            </div>
+            <div v-if="deviceHistory.length" class="history-list">
+              <button v-for="item in deviceHistory" :key="item.id" type="button" @click="openRecordDetail(item, currentId)">
+                <i :class="['history-mark', resultClass(item.status)]"></i>
+                <span>
+                  <b>{{ item.recordName }} · {{ item.status }}</b>
+                  <small>{{ item.date || '未填日期' }} · {{ item.responsiblePerson || '未填负责人' }}</small>
+                  <em>{{ item.remark }}</em>
+                </span>
+                <i class="el-icon-arrow-right"></i>
+              </button>
+            </div>
+            <div v-else class="empty-history">暂无维保记录</div>
+          </template>
+          <template v-else>
+            <div class="detail-grid">
+              <div>
+                <span>设备编号</span>
+                <b>{{ currentRecord.deviceCode || '—' }}</b>
+              </div>
+              <div>
+                <span>关联计划</span>
+                <b>{{ currentPlanName }}</b>
+              </div>
+              <div>
+                <span>实际养护日期</span>
+                <b>{{ currentRecord.date || '—' }}</b>
+              </div>
+              <div>
+                <span>计划负责人</span>
+                <b>{{ currentRecord.responsiblePerson || '—' }}</b>
+              </div>
+              <div>
+                <span>维保结果</span>
+                <b>{{ currentRecord.status || '—' }}</b>
+              </div>
+            </div>
+            <div class="drawer-section-title">备注</div>
+            <p class="detail-description">{{ currentRecord.remark || '无' }}</p>
+            <div class="drawer-section-title">
+              附件
+              <small>{{ currentRecord.uploadFiles.length }} 个</small>
+            </div>
+            <ul v-if="currentRecord.uploadFiles.length" class="record-attachment-list">
+              <li v-for="(file, index) in currentRecord.uploadFiles" :key="file.id || index">
+                <el-link
+                  type="primary"
+                  icon="el-icon-link"
+                  :title="file.name || '附件' + (index + 1)"
+                  role="link"
+                  tabindex="0"
+                  @click="downloadAttachment(file)"
+                  @keydown.enter.native.prevent="downloadAttachment(file)">
+                  {{ file.name || '附件' + (index + 1) }}
+                </el-link>
+              </li>
+            </ul>
+            <div v-else class="empty-history">暂无附件</div>
+          </template>
         </template>
       </div>
-      <div v-if="currentRecord" class="drawer-actions">
+      <div v-if="currentRecord || recordReturnDeviceId" class="drawer-actions">
         <el-button v-if="drawerMode === 'record' && recordReturnDeviceId" size="small" icon="el-icon-back" @click="backToDeviceDetail">返回设备档案</el-button>
-        <el-button v-if="drawerMode === 'device'" size="small" @click="openDeviceDialog(currentRecord)">编辑设备</el-button>
-        <el-button v-if="drawerMode === 'device' && nextPlan(currentRecord.id)" type="primary" size="small" @click="viewPlan(nextPlan(currentRecord.id).id)">查看计划</el-button>
-        <el-button v-if="drawerMode === 'record'" type="primary" size="small" @click="simulatePrint">打印维保单</el-button>
+        <el-button v-if="drawerMode === 'device' && currentRecord" size="small" :disabled="writeDisabled" @click="openDeviceDialog(currentRecord)">编辑设备</el-button>
+        <el-button v-if="drawerMode === 'device' && currentRecord && nextPlan(currentRecord.id)" type="primary" size="small" @click="viewPlan(nextPlan(currentRecord.id).id)">查看计划</el-button>
+        <el-button v-if="drawerMode === 'device' && currentRecord && !nextPlan(currentRecord.id)" type="primary" size="small" :disabled="writeDisabled" @click="scheduleDevice(currentRecord)">
+          安排维保计划
+        </el-button>
       </div>
     </el-drawer>
   </div>
 </template>
-
 <script>
 import IotWorkspaceNav from '../components/IotWorkspaceNav.vue'
-import { fireMaintenance } from '../mock/fireMaintenanceMockData'
 import MaintenanceOverview from './fireAlarm/MaintenanceOverview.vue'
 import DeviceLedger from './fireAlarm/DeviceLedger.vue'
 import PlanList from './fireAlarm/PlanList.vue'
 import RecordList from './fireAlarm/RecordList.vue'
 import ReminderList from './fireAlarm/ReminderList.vue'
-function initialPlans(fireMaintenance) {
-  const aliases = { 报警按钮: '手动报警按钮', 消火栓: '消火栓箱' }
-  return fireMaintenance.plans.map((plan) => {
-    const [building, categoryText = ''] = plan.scope.split(' · ')
-    const categories = categoryText.split('/').map((item) => aliases[item] || item)
-    const deviceIds = fireMaintenance.devices
-      .filter((device) => (building === '全园区' || device.building === building || (building === '宿舍区' && device.building.startsWith('宿舍'))) && categories.includes(device.category))
-      .map((device) => device.id)
-    const completedDeviceIds = plan.status === '已完成' ? deviceIds.slice() : []
-    return { ...plan, deviceIds, completedDeviceIds, devices: deviceIds.length, completed: completedDeviceIds.length, status: plan.status === '已完成' ? '已完成' : '待执行' }
-  })
-}
-function localDateTime() {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(
-    2,
-    '0'
-  )}`
-}
-function dueDays(date) {
-  return Math.round((new Date(localDateTime().slice(0, 10) + 'T00:00:00') - new Date(date + 'T00:00:00')) / 86400000)
-}
-function devicePlans(plans, deviceId, excludedId) {
-  return plans
-    .filter((plan) => plan.id !== excludedId && plan.status !== '已完成' && plan.deviceIds.includes(deviceId) && !plan.completedDeviceIds.includes(deviceId))
-    .sort((a, b) => a.plannedDate.localeCompare(b.plannedDate))
-}
-function pendingPlanDevices(devices, plan) {
-  return devices.filter((device) => plan.status !== '已完成' && plan.deviceIds.includes(device.id) && !plan.completedDeviceIds.includes(device.id))
-}
-function deviceMaintenanceStatus(device, plans) {
-  if (/故障/.test(device.status)) return '故障待修'
-  const plan = devicePlans(plans, device.id)[0]
-  if (!plan) return '未安排计划'
-  const days = dueDays(plan.plannedDate)
-  return days > 0 ? '已逾期' : days === 0 ? '今日到期' : days >= -plan.advanceDays ? '即将到期' : '已安排'
-}
-function planScope(devices, ids) {
-  const selected = devices.filter((device) => ids.includes(device.id))
-  return [...new Set(selected.map((device) => device.building))].join('、') + ' · ' + [...new Set(selected.map((device) => device.category))].join('/')
-}
+import {
+  requestMaintenance,
+  loadMaintenanceCollection,
+  maintenanceDevicePayload,
+  maintenancePlanPayload,
+  maintenanceRecordPayload,
+  normalizeMaintenanceData,
+  maintenanceToday,
+  maintenanceDueDays,
+  fetchMaintenanceAttachment,
+  isMaintenanceDate,
+  maintenanceIntervalMonths,
+  maintenanceMonthProgress
+} from '@/service/maintenance'
+const COLORS = ['#3281f7', '#20ad85', '#13a6bd', '#f5a11a', '#8065d9', '#ef5365']
 export default {
-  components: { IotWorkspaceNav, MaintenanceOverview, DeviceLedger, PlanList, RecordList, ReminderList },
   name: 'SmartIOTFireAlarm',
+  components: { IotWorkspaceNav, MaintenanceOverview, DeviceLedger, PlanList, RecordList, ReminderList },
   data() {
     return {
-      dataSet: fireMaintenance,
-      devices: JSON.parse(JSON.stringify(fireMaintenance.devices)),
-      plans: initialPlans(fireMaintenance),
-      records: JSON.parse(JSON.stringify(fireMaintenance.records)),
-      deviceTypes: fireMaintenance.categories.map((item) => item.name),
-      checkTemplates: JSON.parse(JSON.stringify(fireMaintenance.checkTemplates)),
+      devices: [],
+      deviceTypes: [],
+      plans: [],
+      records: [],
       activeTab: 'overview',
       pageSize: 10,
-      reminderRule: { advanceDays: 7, receivers: ['设备责任人', '消防管理员'], channels: ['系统消息', '移动端'], escalate: true },
+      loading: false,
+      pendingLoads: 0,
+      saving: false,
+      ready: false,
+      loadError: '',
+      typeLoading: false,
+      typeError: '',
       drawerVisible: false,
       drawerMode: 'device',
       currentId: '',
-      recordReturnDeviceId: ''
+      recordReturnDeviceId: '',
+      detailRecord: null,
+      detailLoading: false,
+      detailError: '',
+      detailSequence: 0
     }
   },
   computed: {
+    writeDisabled() {
+      return this.loading || this.saving || !this.ready || !!this.loadError
+    },
     categoryStats() {
-      return this.categories.map((name, index) => {
-        const devices = this.devices.filter((device) => device.category === name)
-        return { name, total: devices.length, maintained: devices.filter((device) => this.nextPlan(device.id)).length, color: this.dataSet.categories[index % this.dataSet.categories.length].color }
+      return this.deviceTypes.map((type, index) => {
+        const devices = this.devices.filter((item) => item.typeId === type.id)
+        return { ...type, total: devices.length, maintained: devices.filter((item) => this.nextPlan(item.id)).length, color: COLORS[index % COLORS.length] }
       })
     },
     monthProgress() {
-      const plans = this.plans.filter((plan) => plan.plannedDate.slice(0, 7) === localDateTime().slice(0, 7))
-      const total = plans.reduce((sum, plan) => sum + plan.devices, 0)
-      const completed = plans.reduce((sum, plan) => sum + plan.completed, 0)
-      return { total, completed, plans: plans.length, percent: total ? Math.round((completed / total) * 1000) / 10 : 0 }
+      return maintenanceMonthProgress(this.plans)
     },
     kpis() {
-      const covered = this.devices.filter((device) => this.nextPlan(device.id)).length
+      const covered = this.devices.filter((item) => this.nextPlan(item.id)).length
       return [
-        { title: '消防设备', value: this.devices.length, unit: '台', sub: `共 ${this.categories.length} 种设备类型`, icon: 'el-icon-cpu', type: 'blue' },
-        { title: '已安排计划', value: covered, unit: '台', sub: '已关联待执行维保计划', icon: 'el-icon-circle-check', type: 'green' },
+        { title: '消防设备', value: this.devices.length, unit: '台', sub: '共 ' + this.deviceTypes.length + ' 种设备类型', icon: 'el-icon-cpu', type: 'blue' },
+        { title: '已安排计划', value: covered, unit: '台', sub: '关联待执行维保计划', icon: 'el-icon-circle-check', type: 'green' },
         { title: '待安排计划', value: this.devices.length - covered, unit: '台', sub: '请在计划管理中安排', icon: 'el-icon-date', type: 'orange' },
-        { title: '逾期任务', value: this.reminders.filter((item) => item.overdueDays > 0).length, unit: '项', sub: '按计划日期自动统计', icon: 'el-icon-warning-outline', type: 'red' },
+        { title: '逾期计划', value: this.reminders.filter((item) => item.overdueDays > 0).length, unit: '项', sub: '按待执行计划日期统计', icon: 'el-icon-warning-outline', type: 'red' },
         {
           title: '本月已维保',
-          value: this.records.filter((item) => item.date.slice(0, 7) === localDateTime().slice(0, 7)).length,
+          value: this.records.filter((item) => item.date.slice(0, 7) === maintenanceToday().slice(0, 7)).length,
           unit: '次',
-          sub: `本月计划完成率 ${this.monthProgress.percent}%`,
+          sub: '本月计划完成率 ' + this.monthProgress.percent + '%',
           icon: 'el-icon-finished',
           type: 'cyan'
         },
-        { title: '故障待修', value: this.devices.filter((item) => /故障/.test(item.status)).length, unit: '台', sub: '设备异常需跟进处理', icon: 'el-icon-setting', type: 'purple' }
+        { title: '不合格记录', value: this.records.filter((item) => item.status === '不合格').length, unit: '条', sub: '历史登记结果统计', icon: 'el-icon-document-delete', type: 'purple' }
       ]
     },
     reminders() {
       const list = []
       this.plans.forEach((plan) => {
-        const overdueDays = this.dueDays(plan.plannedDate)
-        if (overdueDays < -plan.advanceDays) return
-        this.pendingPlanDevices(plan).forEach((device) => {
-          list.push({
-            id: `${plan.id}-${device.id}`,
-            planId: plan.id,
-            deviceId: device.id,
-            device: device.name,
-            category: device.category,
-            location: `${device.building} / ${device.floor} / ${device.location}`,
-            dueDate: plan.plannedDate,
-            owner: plan.owner,
-            plan: plan.name,
-            overdueDays,
-            status: overdueDays > 0 ? `逾期${overdueDays}天` : overdueDays === 0 ? '今日到期' : `${-overdueDays}天后到期`
-          })
+        const overdueDays = maintenanceDueDays(plan.plannedDate)
+        if (overdueDays == null || overdueDays < -plan.advanceDays) return
+        const device = this.devices.find((item) => item.id === plan.deviceId)
+        if (!device) return
+        list.push({
+          id: plan.id,
+          planId: plan.id,
+          deviceId: device.id,
+          deviceCode: device.deviceCode,
+          device: device.name,
+          category: device.category,
+          location: device.installLocation || '',
+          dueDate: plan.plannedDate,
+          owner: plan.responsiblePerson || '',
+          plan: plan.planName,
+          overdueDays,
+          urgency: overdueDays > 0 ? '已逾期' : overdueDays === 0 ? '今日到期' : '即将到期',
+          status: overdueDays > 0 ? '逾期' + overdueDays + '天' : overdueDays === 0 ? '今日到期' : -overdueDays + '天后到期'
         })
       })
-      return list.sort((a, b) => b.overdueDays - a.overdueDays)
+      return list.sort((a, b) => b.overdueDays - a.overdueDays || a.id.localeCompare(b.id))
     },
     workspaceNav() {
       return [
-        { key: 'overview', title: '维保总览', description: '分类、进度与到期', detail: '查看消防设备分类、本月维保进度和近期到期提醒。', icon: 'el-icon-data-analysis', count: null },
-        { key: 'devices', title: '设备台账', description: '设备档案与类型管理', detail: '维护设备基础信息和类型；下次维保日期随关联计划自动同步。', icon: 'el-icon-cpu', count: this.devices.length },
-        { key: 'plans', title: '维保计划', description: '范围、频次与执行', detail: '编排设备维保范围、计划日期、执行单位、负责人和提醒周期。', icon: 'el-icon-date', count: this.plans.length },
-        {
-          key: 'records',
-          title: '维保记录',
-          description: '检查、凭证与结论',
-          detail: '按计划登记检查项目、现场凭证、维保结果和费用，保留完整履历。',
-          icon: 'el-icon-document-checked',
-          count: this.records.length
-        },
-        {
-          key: 'reminders',
-          title: '到期提醒',
-          description: '即将到期与逾期',
-          detail: '集中处理即将到期、今日到期和已经逾期的消防设备维保任务。',
-          icon: 'el-icon-alarm-clock',
-          count: this.reminders.length,
-          danger: this.reminders.some((item) => item.overdueDays >= 0)
-        }
+        { key: 'overview', title: '维保总览', description: '分类、进度与到期', icon: 'el-icon-data-analysis', count: null },
+        { key: 'devices', title: '设备台账', description: '设备档案与类型管理', icon: 'el-icon-cpu', count: this.devices.length },
+        { key: 'plans', title: '维保计划', description: '设备、频率与执行', icon: 'el-icon-date', count: this.plans.length },
+        { key: 'records', title: '维保记录', description: '结果、备注与附件', icon: 'el-icon-document-checked', count: this.records.length },
+        { key: 'reminders', title: '到期提醒', description: '即将到期与逾期', icon: 'el-icon-alarm-clock', count: this.reminders.length, danger: this.reminders.some((item) => item.overdueDays >= 0) }
       ]
     },
-    categories() {
-      return this.deviceTypes
-    },
-    buildings() {
-      return ['A栋研发楼', 'B栋生产楼', '综合服务中心', '物流仓储', '宿舍1号楼', '园区室外']
-    },
     currentRecord() {
-      return (this.drawerMode === 'device' ? this.devices : this.records).find((item) => item.id === this.currentId) || null
+      return this.detailRecord
     },
     deviceHistory() {
-      if (!this.currentRecord || this.drawerMode !== 'device') return []
-      return this.records.filter((item) => item.deviceId === this.currentRecord.id)
+      return this.records
+        .filter((item) => item.deviceId === this.currentId)
+        .slice()
+        .sort((a, b) => b.date.localeCompare(a.date))
+    },
+    currentPlanName() {
+      const plan = this.currentRecord && this.plans.find((item) => item.id === this.currentRecord.planId)
+      return plan ? plan.planName : '未关联或计划已移除'
     }
   },
+  created() {
+    this.loadData()
+  },
   methods: {
-    dueDays,
+    async refreshResources(resources) {
+      // 类型弹窗、编辑候选和保存后刷新共用一个队列，避免较早的响应覆盖刚保存的数据。
+      const previous = this._maintenanceRefresh || Promise.resolve()
+      const task = previous
+        .catch(() => {})
+        .then(async () => {
+          const results = await Promise.allSettled(resources.map((resource) => loadMaintenanceCollection(this.$api, resource)))
+          const failed = results.filter((item) => item.status === 'rejected')
+          if (failed.length) throw failed[0].reason
+          const collections = { deviceType: this.deviceTypes, device: this.devices, plan: this.plans, record: this.records }
+          resources.forEach((resource, index) => {
+            collections[resource] = results[index].value
+          })
+          Object.assign(this, normalizeMaintenanceData(collections.deviceType, collections.device, collections.plan, collections.record))
+        })
+      this._maintenanceRefresh = task
+      try {
+        await task
+      } finally {
+        if (this._maintenanceRefresh === task) this._maintenanceRefresh = null
+      }
+    },
+    async loadTypes() {
+      if (this.typeLoading) return false
+      this.typeLoading = true
+      this.typeError = ''
+      try {
+        await this.refreshResources(['deviceType'])
+        return true
+      } catch (error) {
+        this.typeError = error.message || '设备类型加载失败，请重试'
+        return false
+      } finally {
+        this.typeLoading = false
+      }
+    },
+    async loadData(resources) {
+      const selected = Array.isArray(resources) ? resources : ['deviceType', 'device', 'plan', 'record']
+      this.pendingLoads++
+      this.loading = true
+      try {
+        await this.refreshResources(selected)
+        this.ready = true
+        this.loadError = ''
+        return true
+      } catch (error) {
+        this.loadError = error.message || '养护数据加载失败，请重新加载'
+        return false
+      } finally {
+        this.pendingLoads--
+        this.loading = this.pendingLoads > 0
+      }
+    },
+    refreshEditorOptions(resource) {
+      return this.loadData(resource === 'device' ? ['deviceType'] : ['deviceType', 'device', 'plan', 'record'])
+    },
     devicePlans(id, excludedId) {
-      return devicePlans(this.plans, id, excludedId)
+      return this.plans
+        .filter((item) => item.deviceId === id && item.id !== excludedId)
+        .slice()
+        .sort((a, b) => (a.plannedDate || '9999').localeCompare(b.plannedDate || '9999') || a.id.localeCompare(b.id))
     },
     nextPlan(id) {
       return this.devicePlans(id)[0] || null
     },
-    pendingPlanDevices(plan) {
-      return pendingPlanDevices(this.devices, plan)
+    deviceHasHistory(id) {
+      return this.plans.some((item) => item.deviceId === id) || this.records.some((item) => item.deviceId === id)
     },
-    planScope(ids) {
-      return planScope(this.devices, ids)
+    deviceMaintenanceStatus(device) {
+      const plan = this.nextPlan(device.id)
+      if (!plan) return '未安排计划'
+      if (!maintenanceIntervalMonths(plan.frequency)) return '待设置周期'
+      const days = maintenanceDueDays(plan.plannedDate)
+      return days == null ? '待定日期' : days > 0 ? '已逾期' : days === 0 ? '今日到期' : days >= -plan.advanceDays ? '即将到期' : '已安排'
     },
     openWorkspace(view) {
       if (!this.workspaceNav.some((item) => item.key === view)) return
       this.activeTab = view
-      this.handleWorkspaceChange()
+      return this.handleWorkspaceChange()
     },
     handleWorkspaceChange() {
       this.$nextTick(() => {
@@ -408,191 +434,247 @@ export default {
         const content = view && (view.$el || view)
         if (content && typeof content.focus === 'function') content.focus({ preventScroll: true })
       })
+      if (this.ready && !this.saving && !this.loading) {
+        const resources = { devices: ['deviceType', 'device', 'plan', 'record'], plans: ['device', 'plan', 'record'], records: ['device', 'plan', 'record'], reminders: ['device', 'plan', 'record'] }
+        return this.loadData(resources[this.activeTab])
+      }
+    },
+    async viewPlan(id) {
+      if (!this.plans.some((item) => item.id === id)) return this.$message.warning('关联计划不存在，请重新加载')
+      this.drawerVisible = false
+      await this.openWorkspace('plans')
+      if (!this.plans.some((item) => item.id === id)) return this.$message.warning('关联计划已移除')
+      this.$refs.plans.focusPlan(id)
     },
     openDeviceDialog(row) {
       this.$refs.devices.openDeviceDialog(row)
     },
-    openPlanDialog(row) {
-      this.$refs.plans.openPlanDialog(row)
+    async createDeviceFromPlan() {
+      await this.openWorkspace('devices')
+      if (!this.writeDisabled) await this.$refs.devices.openDeviceDialog()
     },
-    openRecordDialog(device, plan, type) {
-      this.$refs.records.openRecordDialog(device, plan, type)
-    },
-    viewPlan(planId) {
-      if (!this.plans.some((plan) => plan.id === planId)) return this.$message.warning('关联计划不存在，请刷新后重试')
+    async scheduleDevice(device) {
+      await this.openWorkspace('plans')
+      if (this.writeDisabled) return
+      const existing = this.nextPlan(device.id)
+      if (existing) this.$refs.plans.focusPlan(existing.id)
+      else await this.$refs.plans.openPlanDialog(null, device.id)
       this.drawerVisible = false
-      this.openWorkspace('plans')
-      this.$refs.plans.focusPlan(planId)
+    },
+    async showPlanRecords(plan) {
+      const id = typeof plan === 'string' ? plan : plan.id
+      await this.openWorkspace('records')
+      this.$refs.records.focusPlanRecords(id)
+    },
+    async loadDetail(resource, id, fromDeviceId = '') {
+      const sequence = ++this.detailSequence
+      this.drawerMode = resource === 'device' ? 'device' : 'record'
+      this.currentId = id
+      this.recordReturnDeviceId = fromDeviceId
+      this.detailRecord = null
+      this.detailError = ''
+      this.detailLoading = true
+      this.drawerVisible = true
+      try {
+        const value = await requestMaintenance(this.$api, resource, 'queryById', { id })
+        if (!value || !value.id) throw new Error('详情不存在')
+        if (sequence !== this.detailSequence) return
+        const data =
+          resource === 'device' ? normalizeMaintenanceData(this.deviceTypes, [value], [], []).devices[0] : normalizeMaintenanceData(this.deviceTypes, this.devices, this.plans, [value]).records[0]
+        this.detailRecord = data
+        if (resource === 'device') {
+          const index = this.devices.findIndex((item) => item.id === id)
+          if (index >= 0) this.$set(this.devices, index, data)
+        }
+      } catch (error) {
+        if (sequence === this.detailSequence) this.detailError = error.message || '详情加载失败'
+      } finally {
+        if (sequence === this.detailSequence) this.detailLoading = false
+      }
     },
     openDeviceDetail(row) {
-      this.recordReturnDeviceId = ''
-      this.drawerMode = 'device'
-      this.currentId = row.id
-      this.drawerVisible = true
+      return this.loadDetail('device', row.id)
     },
     openRecordDetail(row, fromDeviceId = '') {
-      this.recordReturnDeviceId = fromDeviceId
-      this.drawerMode = 'record'
-      this.currentId = row.id
-      this.drawerVisible = true
+      return this.loadDetail('record', row.id, typeof fromDeviceId === 'string' ? fromDeviceId : '')
     },
     backToDeviceDetail() {
       const device = this.devices.find((item) => item.id === this.recordReturnDeviceId)
-      if (!device) return this.$message.warning('原设备档案不存在，请重新选择设备')
-      this.openDeviceDetail(device)
+      if (device) this.openDeviceDetail(device)
+      else this.$message.warning('原设备已移除')
+    },
+    async persist(resource, action, payload, onSaved) {
+      if (this.writeDisabled) return
+      this.saving = true
+      let committed = false
+      try {
+        await requestMaintenance(this.$api, resource, action, payload)
+        committed = true
+        if (onSaved) onSaved()
+        const refreshed = resource === 'deviceType' ? await this.loadTypes() : await this.loadData([resource])
+        if (refreshed) this.$message.success(action === 'delete' ? '删除成功' : '保存成功')
+        else this.$message.warning('操作已成功，但列表刷新失败，请重新加载；无需重复提交')
+      } catch (error) {
+        if (committed) {
+          this.loadError = '数据已保存，但页面同步失败，请重新加载核对'
+          this.$message.warning('操作已成功，但页面同步失败；请重新加载，无需重复提交')
+        } else this.$message.error(error.message || '操作失败，请稍后重试')
+      } finally {
+        this.saving = false
+      }
     },
     saveDevice(form) {
-      if (this.devices.some((item) => item.id === form.id && item.id !== form.editingId)) return this.$message.warning('设备编号已存在，请使用唯一编号')
-      const payload = { ...JSON.parse(JSON.stringify(form)), qrCode: form.qrCode || 'QR-' + form.id }
-      delete payload.editingId
-      if (form.editingId) {
-        const index = this.devices.findIndex((item) => item.id === form.editingId)
-        this.$set(this.devices, index, payload)
-      } else this.devices.unshift(payload)
-      this.plans.forEach((plan) => {
-        plan.scope = this.planScope(plan.deviceIds)
+      return this.persist('device', form.id ? 'edit' : 'add', maintenanceDevicePayload(form), () => {
+        this.$refs.devices.closeDeviceDialog()
+        if (this.drawerMode === 'device' && this.currentId === form.id) this.drawerVisible = false
       })
-      this.$refs.devices.closeDeviceDialog()
-      this.$message.success('消防设备档案已保存')
     },
-    savePlan(form) {
-      if (form.completedDeviceIds.some((id) => !form.deviceIds.includes(id))) return this.$message.warning('已完成登记的设备需要保留在原计划中')
-      if (form.deviceIds.some((id) => !this.devices.some((device) => device.id === id))) return this.$message.warning('部分设备已不在台账中，请重新选择')
-      const payload = {
-        id: form.editingId || 'MP' + Date.now() + this.plans.length,
-        name: form.name,
-        scope: this.planScope(form.deviceIds),
-        deviceIds: form.deviceIds.slice(),
-        completedDeviceIds: form.completedDeviceIds.slice(),
-        frequency: form.frequency,
-        plannedDate: form.plannedDate,
-        devices: form.deviceIds.length,
-        completed: form.completedDeviceIds.length,
-        serviceType: form.serviceType,
-        vendor: form.vendor || '-',
-        owner: form.owner,
-        advanceDays: form.advanceDays,
-        status: form.completedDeviceIds.length === form.deviceIds.length ? '已完成' : form.completedDeviceIds.length ? '执行中' : '待执行'
-      }
-      if (form.editingId) {
-        const index = this.plans.findIndex((item) => item.id === form.editingId)
-        this.$set(this.plans, index, payload)
-      } else this.plans.unshift(payload)
-      this.$refs.plans.closePlanDialog()
-      this.openWorkspace('plans')
-      this.$message.success('维保计划已保存，相关设备任务已生成')
+    async savePlan(form) {
+      if (this.writeDisabled) return
+      if (!(await this.loadData(['device', 'plan', 'record']))) return
+      if (!this.devices.some((item) => item.id === form.deviceId)) return this.$message.warning('请选择台账中存在的设备')
+      if (!isMaintenanceDate(form.planDate)) return this.$message.warning('请设置有效的第一次维保时间')
+      if (!maintenanceIntervalMonths(form.frequency)) return this.$message.warning('请选择有效的养护频率')
+      const current = form.id && this.plans.find((item) => item.id === form.id)
+      if (form.id && !current) return this.$message.warning('计划已移除，请关闭弹窗并刷新后重试')
+      // 旧数据可能已有多个计划，允许原设备上的资料编辑，但不再新增重复关联。
+      if ((!current || current.deviceId !== form.deviceId) && this.devicePlans(form.deviceId, form.id).length) return this.$message.warning('该设备已有维保计划，请查看或编辑已有计划，不能重复安排')
+      if (
+        current &&
+        current.recordCount > 0 &&
+        (current.deviceId !== form.deviceId ||
+          (isMaintenanceDate(current.firstMaintenanceDate) && current.firstMaintenanceDate !== form.planDate) ||
+          (maintenanceIntervalMonths(current.frequency) && maintenanceIntervalMonths(current.frequency) !== maintenanceIntervalMonths(form.frequency)))
+      )
+        return this.$message.warning('已有维保记录，不能修改设备、首次时间或周期，以免影响历史安排')
+      return this.persist('plan', form.id ? 'edit' : 'add', maintenancePlanPayload(form), () => this.$refs.plans.closePlanDialog())
     },
-    saveRecord(form) {
-      const device = this.devices.find((item) => item.id === form.deviceId)
-      const checklist = device ? this.checkTemplates[device.category] || ['外观与安装检查', '功能测试', '运行状态检查'] : []
-      const followingPlan = this.devicePlans(form.deviceId, form.planId)[0] || null
-      if (form.checkedItems.length !== checklist.length) return this.$message.warning('请完成全部检查项目后再提交')
-      if (!form.photos.length) return this.$message.warning('请至少添加一项现场图片或视频凭证')
-      if (form.result !== '合格' && !form.issue) return this.$message.warning('非合格结果必须填写问题说明')
-
+    async saveRecord(form) {
+      if (this.writeDisabled) return
+      // 登记弹窗可能打开很久，提交前核对最新记录，避免按旧状态再次登记。
+      if (!(await this.loadData(['device', 'plan', 'record']))) return
       const plan = this.plans.find((item) => item.id === form.planId)
-      if (!device || !plan || !this.pendingPlanDevices(plan).some((item) => item.id === device.id)) return this.$message.warning('设备不属于该计划或已完成登记，请重新选择')
-      const record = {
-        id: 'MR' + Date.now() + this.records.length,
-        planId: plan.id,
-        planName: plan.name,
-        deviceId: device.id,
-        device: device.name,
-        category: device.category,
-        date: form.date,
-        executor: form.executor,
-        company: form.company,
-        type: form.type,
-        content: form.checkedItems.join('、'),
-        result: form.result,
-        issue: form.issue || '无',
-        parts: form.parts || '-',
-        cost: form.cost,
-        nextDate: followingPlan ? followingPlan.plannedDate : '未安排计划',
-        photos: form.photos.slice(),
-        traces: [
-          { time: form.date.slice(11), action: '开始维保登记', user: form.executor, remark: '设备身份与台账信息已核对' },
-          { time: '当前', action: '提交维保记录', user: form.executor, remark: `完成${form.checkedItems.length}项检查，结果：${form.result}` }
-        ]
-      }
-      this.records.unshift(record)
-      device.lastDate = form.date.slice(0, 10)
-      device.status = form.result === '合格' ? '正常' : '故障待修'
-      plan.completedDeviceIds.push(device.id)
-      plan.completed = plan.completedDeviceIds.length
-      plan.status = plan.completed === plan.devices ? '已完成' : '执行中'
-      this.$refs.records.closeRecordDialog()
-      this.openWorkspace('records')
-      this.$message.success('维保记录已提交，计划进度与台账日期已同步')
+      if (!plan || plan.deviceId !== form.deviceId || !['合格', '不合格'].includes(form.status)) return this.$message.warning('计划或维保结果无效，请重新打开登记')
+      if (plan.cycleNo !== form.cycleNo || plan.plannedDate !== form.scheduledDate) return this.$message.warning('本期已登记或计划已变更，请核对记录后重新进入登记')
+      if (!plan.canRegister) return this.$message.warning('本次维保时间前7天开放登记，到期及逾期仍可登记；请核对本期时间和周期')
+      if (!(form.recordName || '').trim()) return this.$message.warning('请输入记录名称')
+      if (!isMaintenanceDate(form.actualDate) || form.actualDate > maintenanceToday()) return this.$message.warning('实际养护日期无效或晚于今天')
+      if (form.status === '不合格' && !(form.remark || '').trim()) return this.$message.warning('不合格时请填写问题及处理说明')
+      return this.persist(
+        'record',
+        'add',
+        maintenanceRecordPayload({
+          ...form,
+          recordName: form.recordName.trim(),
+          responsiblePerson: plan.responsiblePerson || ''
+        }),
+        () => {
+          this.$refs.records.closeRecordDialog()
+        }
+      )
     },
     addDeviceType(name) {
-      if (!name || this.deviceTypes.includes(name)) return
-      this.deviceTypes.push(name)
-      this.$message.success('设备类型已添加')
-    },
-    renameDeviceType(name) {
-      this.$prompt('请输入新的设备类型名称', '重命名设备类型', {
-        inputValue: name,
-        inputValidator: (value) => {
-          const next = (value || '').trim()
-          return !next ? '请输入设备类型名称' : next.length > 30 ? '类型名称最多30个字' : next !== name && this.deviceTypes.includes(next) ? '该设备类型已存在' : true
-        }
+      return this.persist('deviceType', 'add', { name }, () => {
+        this.$refs.devices.newTypeName = ''
       })
-        .then(({ value }) => {
-          const next = value.trim()
-          if (next === name) return
-          this.$set(this.deviceTypes, this.deviceTypes.indexOf(name), next)
-          this.devices.forEach((device) => {
-            if (device.category === name) device.category = next
-          })
-          if (this.checkTemplates[name]) {
-            this.$set(this.checkTemplates, next, this.checkTemplates[name])
-            this.$delete(this.checkTemplates, name)
+    },
+    async renameDeviceType(type) {
+      if (this.writeDisabled) return
+      try {
+        const { value } = await this.$prompt('请输入新的设备类型名称', '重命名设备类型', {
+          inputValue: type.name,
+          inputValidator: (value) => {
+            const next = (value || '').trim()
+            return !next ? '请输入类型名称' : next.length > 30 ? '最多30个字' : this.deviceTypes.some((item) => item.id !== type.id && item.name === next) ? '类型名称已存在' : true
           }
-          this.plans.forEach((plan) => {
-            plan.scope = this.planScope(plan.deviceIds)
-          })
-          this.$message.success('类型名称已更新，相关设备已同步')
         })
-        .catch(() => {})
+        if (value.trim() !== type.name) await this.persist('deviceType', 'edit', { id: type.id, name: value.trim() })
+      } catch (error) {
+        if (error !== 'cancel' && error !== 'close') this.$message.error(error.message || '修改失败')
+      }
     },
-    removeDeviceType(name) {
-      if (this.devices.some((device) => device.category === name)) return
-      this.deviceTypes.splice(this.deviceTypes.indexOf(name), 1)
-      this.$delete(this.checkTemplates, name)
-      this.$message.success('设备类型已删除')
+    async confirmDelete(resource, row, label) {
+      if (this.writeDisabled) return
+      try {
+        await this.$confirm('确定删除“' + label + '”？', '删除确认', { type: 'warning' })
+        await this.persist(resource, 'delete', { id: row.id }, () => {
+          this.drawerVisible = false
+        })
+      } catch (error) {
+        if (error !== 'cancel' && error !== 'close') this.$message.error(error.message || '删除失败')
+      }
     },
-    executePlan(row) {
-      const device = this.pendingPlanDevices(row)[0]
-      if (!device) return this.$message.info('该计划暂无待执行设备')
-      this.openRecordDialog(device, row, this.dueDays(row.plannedDate) > 0 ? '逾期补检' : '定期维保')
+    removeDeviceType(type) {
+      if (this.devices.some((item) => item.typeId === type.id)) return this.$message.warning('该类型下已有设备，不能删除')
+      return this.confirmDelete('deviceType', type, type.name)
     },
-    saveReminderRule(rule) {
-      this.reminderRule = rule
-      this.$message.success('维保到期提醒规则已保存')
+    deleteDevice(device) {
+      if (this.plans.some((item) => item.deviceId === device.id) || this.records.some((item) => item.deviceId === device.id)) return this.$message.warning('该设备已关联计划或历史记录，请保留设备档案')
+      return this.confirmDelete('device', device, device.name)
     },
-    simulatePrint() {
-      this.$message.success('仿真环境：维保单已生成打印预览')
+    deletePlan(plan) {
+      if (plan.recordCount > 0) return this.$message.warning('已登记计划需保留历史')
+      return this.confirmDelete('plan', plan, plan.planName)
     },
-    deviceMaintenanceStatus(device) {
-      return deviceMaintenanceStatus(device, this.plans)
+    async executePlan(plan) {
+      if (this.writeDisabled) return
+      if (!(await this.loadData(['device', 'plan', 'record']))) return
+      await this.$nextTick()
+      const current = this.plans.find((item) => item.id === plan.id)
+      const device = current && this.devices.find((item) => item.id === current.deviceId)
+      if (!device) return this.$message.warning('计划或设备不存在')
+      if (!isMaintenanceDate(current.plannedDate)) return this.$message.warning('请先编辑计划，补齐第一次维保时间及养护频率')
+      if (!current.canRegister) return this.$message.info('本次维保时间为' + current.plannedDate + '，提前7天开放登记，到期及逾期仍可登记')
+      this.$refs.records.openRecordDialog(device, current)
     },
     statusClass(status) {
-      if (/逾期|故障/.test(status)) return 'danger'
-      if (/即将|今日|执行中/.test(status)) return 'warning'
-      if (/完成|正常/.test(status)) return 'success'
-      return 'info'
+      return /逾期/.test(status) ? 'danger' : /今日|即将/.test(status) ? 'warning' : 'info'
     },
     resultClass(result) {
-      if (result === '合格') return 'success'
-      if (result === '需维修') return 'warning'
-      return 'danger'
+      return result === '合格' ? 'success' : result === '不合格' ? 'danger' : 'info'
+    },
+    async downloadAttachment(file) {
+      try {
+        if (file.id && this.$api['attachment.download']) {
+          const blob = await fetchMaintenanceAttachment(this.$api, file.id)
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = file.name || '附件'
+          link.click()
+          setTimeout(() => URL.revokeObjectURL(url), 1000)
+        } else {
+          const url = new URL(file.url || '', window.location.href)
+          if (!file.url || !['http:', 'https:'].includes(url.protocol)) throw new Error('附件缺少有效下载地址')
+          window.open(url.href, '_blank', 'noopener,noreferrer')
+        }
+      } catch (error) {
+        this.$message.error(error.message || '附件下载失败')
+      }
     }
   }
 }
 </script>
 
 <style lang="scss">
+.fire-maintenance-page .maintenance-load-error {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border: 1px solid #f3d1d4;
+  border-radius: 7px;
+  color: #bd414a;
+  background: #fff1f2;
+}
+
+.maintenance-drawer .drawer-scroll {
+  min-height: 140px;
+}
+
 // 弹窗挂在 body 下，跨工作区登记时也能正常显示，并沿用页面字体与配色。
 .fire-maintenance-dialog {
   --primary: #2f78d7;
@@ -954,6 +1036,17 @@ export default {
   display: inline-flex;
 }
 
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .maintenance-actions-column > .cell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  white-space: nowrap;
+}
+
+:is(.fire-maintenance-page, .fire-maintenance-dialog) .maintenance-actions-column > .cell > .el-button {
+  margin: 0;
+}
+
 :is(.fire-maintenance-page, .fire-maintenance-dialog) .muted-text {
   color: #97a2b2;
   font-size: 12px;
@@ -961,7 +1054,7 @@ export default {
 
 :is(.fire-maintenance-page, .fire-maintenance-dialog) .plan-date {
   color: var(--primary);
-  cursor: help;
+  cursor: default;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1683,29 +1776,32 @@ export default {
   background: #fff6e8;
 }
 
-:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-evidence {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
+.maintenance-drawer .record-attachment-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-evidence span {
-  display: flex;
-  min-width: 132px;
-  height: 56px;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  color: #55708e;
-  background: #f2f7fd;
-  border: 1px solid #dce9f8;
-  border-radius: 5px;
-  font-size: 11px;
+.maintenance-drawer .record-attachment-list li + li {
+  margin-top: 10px;
 }
 
-:is(.fire-maintenance-page, .fire-maintenance-dialog) .drawer-evidence span i {
-  color: #337dd5;
-  font-size: 16px;
+.maintenance-drawer .record-attachment-list .el-link {
+  max-width: 100%;
+  align-items: baseline;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: left;
+}
+
+.maintenance-drawer .record-attachment-list .el-link--inner {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.maintenance-drawer .record-attachment-list .el-icon-link {
+  flex-shrink: 0;
+  margin-right: 6px;
 }
 
 .fire-maintenance-page .trace-timeline {

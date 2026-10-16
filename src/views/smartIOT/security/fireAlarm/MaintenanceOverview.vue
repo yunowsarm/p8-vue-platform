@@ -12,6 +12,7 @@
         <span class="head-note">共 {{ categoryStats.length }} 类</span>
       </div>
       <div class="category-list">
+        <el-empty v-if="!categoryStats.length" description="暂无设备类型" :image-size="64" />
         <div v-for="item in categoryStats" :key="item.name" class="category-row">
           <div class="category-meta">
             <span>

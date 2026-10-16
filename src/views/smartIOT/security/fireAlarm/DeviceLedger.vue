@@ -2,48 +2,50 @@
   <div class="maintenance-list">
     <div class="toolbar">
       <div class="toolbar-left">
-        <el-input v-model.trim="deviceKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="设备编号 / 名称 / 位置" style="width: 230px"></el-input>
-        <el-select v-model="deviceCategory" size="small" clearable placeholder="设备类型" style="width: 150px">
-          <el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option>
+        <el-input v-model.trim="keyword" size="small" clearable prefix-icon="el-icon-search" placeholder="设备编号 / 名称 / 位置" style="width: 260px" />
+        <el-select v-model="typeId" size="small" clearable placeholder="设备类型" style="width: 150px">
+          <el-option v-for="item in deviceTypes" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
-        <el-select v-model="deviceStatus" size="small" clearable placeholder="维保状态" style="width: 130px">
-          <el-option v-for="item in deviceStatuses" :key="item" :label="item" :value="item"></el-option>
-        </el-select>
+        <el-select v-model="status" size="small" clearable placeholder="维保计划" style="width: 130px"><el-option v-for="item in deviceStatuses" :key="item" :label="item" :value="item" /></el-select>
       </div>
       <div class="toolbar-right">
-        <el-button size="small" icon="el-icon-collection" @click="openTypeDialog()">设备类型管理</el-button>
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="openDeviceDialog()">新增设备</el-button>
+        <el-button size="small" :disabled="saving" icon="el-icon-collection" @click="openTypeDialog">设备类型管理</el-button>
+        <el-button type="primary" size="small" :disabled="saving || blocked" icon="el-icon-plus" @click="openDeviceDialog()">新增设备</el-button>
       </div>
     </div>
     <div class="maintenance-table-area">
       <el-table ref="table" :data="pagedRows" size="small" stripe height="100%" @row-click="$emit('detail', $event)">
-        <el-table-column prop="id" label="设备编号" width="112"></el-table-column>
-        <el-table-column prop="name" label="设备名称" min-width="170" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="category" label="设备类型" width="112" show-overflow-tooltip></el-table-column>
-        <el-table-column label="安装位置" min-width="170" show-overflow-tooltip>
-          <template slot-scope="scope">{{ scope.row.building }} / {{ scope.row.floor }} / {{ scope.row.location }}</template>
-        </el-table-column>
-        <el-table-column label="品牌 / 型号" min-width="150" show-overflow-tooltip>
+        <el-table-column prop="deviceCode" label="设备编号" width="135" show-overflow-tooltip />
+        <el-table-column prop="name" label="设备名称" min-width="170" show-overflow-tooltip />
+        <el-table-column prop="category" label="设备类型" width="130" show-overflow-tooltip />
+        <el-table-column prop="installLocation" label="安装位置" min-width="190" show-overflow-tooltip />
+        <el-table-column label="品牌 / 型号" min-width="160" show-overflow-tooltip>
           <template slot-scope="scope">{{ scope.row.brand || '—' }} / {{ scope.row.model || '—' }}</template>
         </el-table-column>
-        <el-table-column label="下次维保日期" width="125">
+        <el-table-column label="下次维保日期" width="135">
           <template slot-scope="scope">
             <el-tooltip v-if="nextPlan(scope.row.id)" :content="nextPlan(scope.row.id).name" placement="top">
-              <span class="plan-date">{{ nextPlan(scope.row.id).plannedDate }}</span>
+              <span class="plan-date">{{ nextPlan(scope.row.id).plannedDate || '未设日期' }}</span>
             </el-tooltip>
             <span v-else class="muted-text">未安排计划</span>
           </template>
         </el-table-column>
-        <el-table-column prop="owner" label="责任人" width="75"></el-table-column>
-        <el-table-column label="维保状态" width="100">
+        <el-table-column label="维保计划" width="110">
           <template slot-scope="scope">
             <span :class="['status-pill', statusClass(deviceMaintenanceStatus(scope.row))]">{{ deviceMaintenanceStatus(scope.row) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="110" fixed="right">
+        <el-table-column label="操作" class-name="maintenance-actions-column" width="215" fixed="right">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click.stop="$emit('detail', scope.row)">详情</el-button>
-            <el-button type="text" size="mini" @click.stop="openDeviceDialog(scope.row)">编辑</el-button>
+            <el-button type="text" size="mini" :disabled="saving || blocked" @click.stop="openDeviceDialog(scope.row)">编辑</el-button>
+            <el-button v-if="nextPlan(scope.row.id)" type="text" size="mini" @click.stop="$emit('view-plan', nextPlan(scope.row.id).id)">查看计划</el-button>
+            <el-button v-else type="text" size="mini" :disabled="saving || blocked" @click.stop="$emit('schedule', scope.row)">安排计划</el-button>
+            <el-tooltip :disabled="!hasHistory(scope.row.id)" content="已关联计划或历史记录，需保留设备档案" placement="top">
+              <span class="action-wrapper" @click.stop>
+                <el-button type="text" size="mini" :disabled="saving || blocked || hasHistory(scope.row.id)" @click.stop="$emit('delete-device', scope.row)">删除</el-button>
+              </span>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -68,104 +70,96 @@
         @current-change="page = $event"
         @size-change="$emit('size-change', $event)" />
     </div>
-    <el-dialog append-to-body :title="deviceForm.editingId ? '编辑消防设备' : '新增消防设备'" :visible.sync="deviceDialog" width="720px" custom-class="maintenance-dialog fire-maintenance-dialog">
-      <div class="dialog-intro">
-        <i class="el-icon-info"></i>
-        台账维护设备基础信息；维保频次、执行日期与负责人统一在维保计划中安排。
+    <el-dialog
+      append-to-body
+      :title="deviceForm.id ? '编辑消防设备' : '新增消防设备'"
+      :visible.sync="deviceDialog"
+      width="650px"
+      custom-class="maintenance-dialog fire-maintenance-dialog"
+      :close-on-click-modal="false"
+      :before-close="closeWhenIdle">
+      <el-alert v-if="blocked" title="数据读取失败，可关闭弹窗或重新加载后继续填写" type="error" :closable="false" />
+      <el-button v-if="blocked" size="mini" :disabled="saving" @click="$emit('reload')">重新加载</el-button>
+      <div v-if="!deviceTypes.length && !blocked" class="dialog-intro">
+        <span>尚未添加设备类型，请先添加类型后继续填写设备。</span>
+        <el-button type="text" @click="openTypeDialog">添加设备类型</el-button>
       </div>
-      <el-form ref="deviceForm" :model="deviceForm" :rules="deviceRules" label-width="105px" size="small">
-        <div class="form-section-title">基础信息</div>
+      <el-form ref="deviceForm" :model="deviceForm" :rules="deviceRules" label-width="95px" size="small" :disabled="saving || blocked">
         <el-row :gutter="16">
           <el-col :span="12">
-            <el-form-item label="设备编号" prop="id"><el-input v-model.trim="deviceForm.id" :disabled="!!deviceForm.editingId"></el-input></el-form-item>
+            <el-form-item label="设备编号" prop="deviceCode"><el-input v-model.trim="deviceForm.deviceCode" /></el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备类型" prop="category">
-              <el-select v-model="deviceForm.category" style="width: 100%"><el-option v-for="item in categories" :key="item" :label="item" :value="item"></el-option></el-select>
+            <el-form-item label="设备类型" prop="typeId">
+              <el-select v-model="deviceForm.typeId" filterable style="width: 100%"><el-option v-for="item in deviceTypes" :key="item.id" :label="item.name" :value="item.id" /></el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="设备名称" prop="name"><el-input v-model.trim="deviceForm.name"></el-input></el-form-item>
+        <el-form-item label="设备名称" prop="name"><el-input v-model.trim="deviceForm.name" /></el-form-item>
         <el-row :gutter="16">
           <el-col :span="12">
-            <el-form-item label="品牌"><el-input v-model.trim="deviceForm.brand"></el-input></el-form-item>
+            <el-form-item label="品牌"><el-input v-model.trim="deviceForm.brand" /></el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="规格型号"><el-input v-model.trim="deviceForm.model"></el-input></el-form-item>
+            <el-form-item label="型号"><el-input v-model.trim="deviceForm.model" /></el-form-item>
           </el-col>
         </el-row>
-        <div class="form-section-title">安装与责任信息</div>
-        <el-row :gutter="16">
-          <el-col :span="8">
-            <el-form-item label="建筑" prop="building">
-              <el-select v-model="deviceForm.building" style="width: 100%"><el-option v-for="item in buildings" :key="item" :label="item" :value="item"></el-option></el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="楼层"><el-input v-model.trim="deviceForm.floor"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="具体位置" prop="location"><el-input v-model.trim="deviceForm.location"></el-input></el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="16">
-          <el-col :span="12">
-            <el-form-item label="责任部门"><el-input v-model.trim="deviceForm.department"></el-input></el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="责任人" prop="owner"><el-input v-model.trim="deviceForm.owner"></el-input></el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="安装日期"><el-date-picker v-model="deviceForm.installDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"></el-date-picker></el-form-item>
+        <el-form-item label="安装位置"><el-input v-model.trim="deviceForm.installLocation" placeholder="填写建筑、楼层及具体位置" /></el-form-item>
+        <el-form-item label="安装日期"><el-date-picker v-model="deviceForm.installDate" type="date" value-format="yyyy-MM-dd" style="width: 100%" /></el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button @click="deviceDialog = false">取消</el-button>
-        <el-button type="primary" @click="saveDevice">保存设备档案</el-button>
+        <el-button :disabled="saving" @click="deviceDialog = false">取消</el-button>
+        <el-button type="primary" :loading="saving" :disabled="blocked || !deviceTypes.length" @click="saveDevice">保存设备</el-button>
       </span>
     </el-dialog>
-    <el-dialog append-to-body title="设备类型管理" :visible.sync="typeDialog" width="620px" custom-class="maintenance-dialog fire-maintenance-dialog">
-      <div class="dialog-intro">
-        <i class="el-icon-info"></i>
-        类型用于台账分类和计划筛选，已被设备使用的类型不能删除。
-      </div>
+    <el-dialog append-to-body title="设备类型管理" :visible.sync="typeDialog" width="620px" custom-class="maintenance-dialog fire-maintenance-dialog" :before-close="closeWhenIdle">
+      <el-alert v-if="blocked" title="页面数据读取失败，可重新加载或关闭弹窗" type="error" :closable="false" />
+      <el-button v-if="blocked" size="mini" :disabled="saving" @click="$emit('reload')">重新加载页面数据</el-button>
+      <el-alert v-if="typeError" :title="typeError" type="error" :closable="false" show-icon />
+      <el-button v-if="typeError" size="mini" :disabled="typeLoading" @click="$emit('load-types')">重新加载类型</el-button>
       <div class="type-create">
-        <el-input v-model.trim="newTypeName" size="small" maxlength="30" placeholder="输入设备类型名称" @keyup.enter.native="addDeviceType" />
-        <el-button type="primary" size="small" @click="addDeviceType">添加类型</el-button>
+        <el-input
+          v-model.trim="newTypeName"
+          size="small"
+          maxlength="30"
+          :disabled="saving || blocked || typeLoading || !!typeError"
+          placeholder="输入设备类型名称"
+          @keyup.enter.native="addDeviceType" />
+        <el-button type="primary" size="small" :loading="saving" :disabled="blocked || typeLoading || !!typeError" @click="addDeviceType">添加类型</el-button>
       </div>
-      <el-table :data="categoryStats" size="small" max-height="320">
+      <el-table v-loading="typeLoading" :data="typeError ? [] : categoryStats" size="small" max-height="320">
         <el-table-column prop="name" label="类型名称" min-width="180" />
         <el-table-column prop="total" label="设备数量" width="95" />
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" class-name="maintenance-actions-column" width="150">
           <template slot-scope="scope">
-            <el-button type="text" size="mini" @click="$emit('rename-type', scope.row.name)">重命名</el-button>
+            <el-button type="text" size="mini" :disabled="saving || blocked || typeLoading" @click="$emit('rename-type', scope.row)">重命名</el-button>
             <el-tooltip :disabled="!scope.row.total" content="该类型下已有设备，无法删除" placement="top">
-              <span class="action-wrapper"><el-button type="text" size="mini" :disabled="!!scope.row.total" @click="$emit('remove-type', scope.row.name)">删除</el-button></span>
+              <span class="action-wrapper">
+                <el-button type="text" size="mini" :disabled="saving || blocked || typeLoading || !!scope.row.total" @click="$emit('remove-type', scope.row)">删除</el-button>
+              </span>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
-      <span slot="footer"><el-button @click="typeDialog = false">完成</el-button></span>
+      <span slot="footer"><el-button :disabled="saving" @click="typeDialog = false">完成</el-button></span>
     </el-dialog>
   </div>
 </template>
-
 <script>
-function localDateTime() {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(
-    2,
-    '0'
-  )}`
-}
+import { requestMaintenance, maintenanceToday } from '@/service/maintenance'
 export default {
   name: 'DeviceLedger',
   props: {
     pageSize: { type: Number, required: true },
     active: Boolean,
+    saving: Boolean,
+    blocked: Boolean,
+    hasHistory: { type: Function, default: () => false },
+    refreshOptions: { type: Function, default: () => Promise.resolve(true) },
+    typeLoading: Boolean,
+    typeError: { type: String, default: '' },
     devices: { type: Array, required: true },
-    plans: { type: Array, required: true },
-    categories: { type: Array, required: true },
-    buildings: { type: Array, required: true },
+    deviceTypes: { type: Array, required: true },
     categoryStats: { type: Array, required: true },
     devicePlans: { type: Function, required: true },
     deviceMaintenanceStatus: { type: Function, required: true }
@@ -173,39 +167,37 @@ export default {
   data() {
     return {
       page: 1,
-      deviceKeyword: '',
-      deviceCategory: '',
-      deviceStatus: '',
+      keyword: '',
+      typeId: '',
+      status: '',
       deviceDialog: false,
+      detailLoading: false,
       deviceForm: {},
-      deviceRules: {
-        id: [{ required: true, message: '请输入设备编号', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入设备名称', trigger: 'blur' }],
-        category: [{ required: true, message: '请选择设备类型', trigger: 'change' }],
-        building: [{ required: true, message: '请选择建筑', trigger: 'change' }],
-        location: [{ required: true, message: '请输入具体位置', trigger: 'blur' }],
-        owner: [{ required: true, message: '请输入责任人', trigger: 'blur' }]
-      },
       typeDialog: false,
-      newTypeName: ''
+      newTypeName: '',
+      deviceRules: {
+        deviceCode: [{ required: true, message: '请输入设备编号', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入设备名称', trigger: 'blur' }],
+        typeId: [{ required: true, message: '请选择设备类型', trigger: 'change' }]
+      }
     }
   },
   computed: {
-    pagedRows() {
-      const start = (this.page - 1) * this.pageSize
-      return this.filteredRows.slice(start, start + this.pageSize)
+    filteredRows() {
+      const keyword = this.keyword.toLowerCase()
+      return this.devices.filter(
+        (item) =>
+          (!keyword || [item.deviceCode, item.name, item.installLocation].join(' ').toLowerCase().includes(keyword)) &&
+          (!this.typeId || item.typeId === this.typeId) &&
+          (!this.status || this.deviceMaintenanceStatus(item) === this.status)
+      )
     },
     deviceStatuses() {
       return [...new Set(this.devices.map((item) => this.deviceMaintenanceStatus(item)))]
     },
-    filteredRows() {
-      const keyword = this.deviceKeyword.toLowerCase()
-      return this.devices.filter(
-        (item) =>
-          (!keyword || [item.id, item.name, item.building, item.floor, item.location].join(' ').toLowerCase().includes(keyword)) &&
-          (!this.deviceCategory || item.category === this.deviceCategory) &&
-          (!this.deviceStatus || this.deviceMaintenanceStatus(item) === this.deviceStatus)
-      )
+    pagedRows() {
+      const start = (this.page - 1) * this.pageSize
+      return this.filteredRows.slice(start, start + this.pageSize)
     },
     pageRange() {
       return this.filteredRows.length ? '当前显示 ' + ((this.page - 1) * this.pageSize + 1) + '–' + Math.min(this.page * this.pageSize, this.filteredRows.length) + ' 条' : '暂无数据'
@@ -221,18 +213,22 @@ export default {
     active(value) {
       if (value) this.refreshLayout()
     },
-    deviceKeyword() {
+    keyword() {
       this.page = 1
     },
-    deviceCategory() {
+    typeId() {
       this.page = 1
     },
-    deviceStatus() {
+    status() {
       this.page = 1
     },
-    categories() {
-      this.watchCategories()
+    deviceTypes() {
+      if (this.typeId && !this.deviceTypes.some((item) => item.id === this.typeId)) this.typeId = ''
+      if (this.deviceDialog && !this.deviceForm.typeId && this.deviceTypes.length === 1) this.deviceForm.typeId = this.deviceTypes[0].id
     }
+  },
+  mounted() {
+    if (this.active) this.refreshLayout()
   },
   methods: {
     refreshLayout() {
@@ -240,68 +236,55 @@ export default {
         if (this.$refs.table) this.$refs.table.doLayout()
       })
     },
-    watchCategories() {
-      if (this.deviceCategory && !this.categories.includes(this.deviceCategory)) this.deviceCategory = ''
-    },
     nextPlan(id) {
       return this.devicePlans(id)[0] || null
     },
     statusClass(status) {
-      if (/逾期|故障/.test(status)) return 'danger'
-      if (/即将|今日|执行中/.test(status)) return 'warning'
-      if (/完成|正常/.test(status)) return 'success'
-      return 'info'
+      return /逾期/.test(status) ? 'danger' : /即将|今日/.test(status) ? 'warning' : 'info'
+    },
+    closeWhenIdle(done) {
+      if (!this.saving) done()
     },
     closeDeviceDialog() {
       this.deviceDialog = false
     },
-    resetDeviceForm() {
-      this.deviceForm = {
-        editingId: '',
-        id: '',
-        name: '',
-        category: '',
-        building: '',
-        floor: '1F',
-        location: '',
-        brand: '',
-        model: '',
-        installDate: localDateTime().slice(0, 10),
-        lastDate: '-',
-        owner: '',
-        department: '园区工程部',
-        status: '正常',
-        qrCode: ''
+    async openDeviceDialog(row) {
+      if (this.detailLoading || this.saving || this.blocked) return
+      this.detailLoading = true
+      try {
+        if (!(await this.refreshOptions('device'))) return
+        this.deviceForm = { deviceCode: '', typeId: '', name: '', brand: '', model: '', installLocation: '', installDate: maintenanceToday() }
+        if (row) {
+          const value = await requestMaintenance(this.$api, 'device', 'queryById', { id: row.id })
+          if (!value || !value.id) throw new Error('设备详情不存在')
+          this.deviceForm = { ...value, id: String(value.id), typeId: String(value.typeId || ''), installDate: (value.installDate || '').slice(0, 10) || null }
+        }
+        this.deviceDialog = true
+        this.$nextTick(() => this.$refs.deviceForm && this.$refs.deviceForm.clearValidate())
+      } catch (error) {
+        this.$message.error(error.message || '设备信息加载失败')
+      } finally {
+        this.detailLoading = false
       }
     },
-    openDeviceDialog(row) {
-      this.resetDeviceForm()
-      if (row) this.deviceForm = { ...JSON.parse(JSON.stringify(row)), editingId: row.id }
-      this.deviceDialog = true
-      this.$nextTick(() => this.$refs.deviceForm && this.$refs.deviceForm.clearValidate())
-    },
     saveDevice() {
-      this.$refs.deviceForm.validate((valid) => {
-        if (valid) this.$emit('save-device', JSON.parse(JSON.stringify(this.deviceForm)))
-      })
+      if (!this.saving && !this.blocked)
+        this.$refs.deviceForm.validate((valid) => {
+          if (valid) this.$emit('save-device', { ...this.deviceForm })
+        })
     },
     openTypeDialog() {
       this.newTypeName = ''
       this.typeDialog = true
+      this.$emit('load-types')
     },
     addDeviceType() {
+      if (this.saving || this.blocked || this.typeLoading || this.typeError) return
       const name = this.newTypeName.trim()
       if (!name) return this.$message.warning('请输入设备类型名称')
-      if (this.categoryStats.some((item) => item.name === name)) return this.$message.warning('该设备类型已存在')
+      if (this.deviceTypes.some((item) => item.name === name)) return this.$message.warning('该设备类型已存在')
       this.$emit('add-type', name)
-      this.newTypeName = ''
     }
-  },
-  mounted() {
-    if (this.active) this.refreshLayout()
-  },
-  created() {
-    this.resetDeviceForm()
   }
 }
 </script>

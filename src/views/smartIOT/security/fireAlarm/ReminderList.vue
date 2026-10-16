@@ -2,13 +2,15 @@
   <div class="maintenance-list">
     <div class="toolbar">
       <div class="toolbar-left">
-        <el-input v-model.trim="reminderKeyword" size="small" clearable prefix-icon="el-icon-search" placeholder="设备编号 / 设备名称 / 类型 / 位置 / 责任人 / 计划" style="width: 300px"></el-input>
+        <el-input v-model.trim="keyword" size="small" clearable prefix-icon="el-icon-search" placeholder="设备编号 / 名称 / 类型 / 位置 / 负责人 / 计划" style="width: 340px" />
+        <el-select v-model="urgency" clearable size="small" placeholder="紧急程度" style="width: 130px">
+          <el-option v-for="item in ['已逾期', '今日到期', '即将到期']" :key="item" :label="item" :value="item" />
+        </el-select>
       </div>
-      <el-button size="small" @click="openReminderRuleDialog">提醒规则</el-button>
     </div>
     <div class="maintenance-table-area">
       <el-table ref="table" :data="pagedRows" size="small" stripe height="100%">
-        <el-table-column label="紧急程度" width="100">
+        <el-table-column label="紧急程度" width="115">
           <template slot-scope="scope">
             <span :class="['urgency-mark', scope.row.overdueDays > 0 ? 'danger' : scope.row.overdueDays === 0 ? 'today' : 'warning']">
               <i></i>
@@ -16,17 +18,15 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="deviceId" label="设备编号" width="118"></el-table-column>
-        <el-table-column prop="device" label="设备名称" min-width="180"></el-table-column>
-        <el-table-column prop="category" label="设备类型" width="120"></el-table-column>
-        <el-table-column prop="location" label="安装位置" min-width="220"></el-table-column>
-        <el-table-column prop="dueDate" label="到期日期" width="105"></el-table-column>
-        <el-table-column prop="owner" label="责任人" width="85"></el-table-column>
-        <el-table-column prop="plan" label="关联计划" min-width="190"></el-table-column>
-        <el-table-column label="操作" width="100" fixed="right">
-          <template slot-scope="scope">
-            <el-button type="text" size="mini" @click="$emit('view-plan', scope.row)">查看计划</el-button>
-          </template>
+        <el-table-column prop="deviceCode" label="设备编号" width="135" show-overflow-tooltip />
+        <el-table-column prop="device" label="设备名称" min-width="180" show-overflow-tooltip />
+        <el-table-column prop="category" label="设备类型" width="130" show-overflow-tooltip />
+        <el-table-column prop="location" label="安装位置" min-width="200" show-overflow-tooltip />
+        <el-table-column prop="dueDate" label="下次维保时间" width="145" />
+        <el-table-column prop="owner" label="计划负责人" width="110" />
+        <el-table-column prop="plan" label="关联计划" min-width="200" show-overflow-tooltip />
+        <el-table-column label="操作" class-name="maintenance-actions-column" width="95" fixed="right">
+          <template slot-scope="scope"><el-button type="text" size="mini" @click="$emit('view-plan', scope.row.planId)">查看计划</el-button></template>
         </el-table-column>
       </el-table>
     </div>
@@ -50,61 +50,23 @@
         @current-change="page = $event"
         @size-change="$emit('size-change', $event)" />
     </div>
-    <el-dialog append-to-body title="到期提醒规则" :visible.sync="ruleDialog" width="560px" custom-class="maintenance-dialog fire-maintenance-dialog">
-      <el-form :model="reminderRule" label-width="115px" size="small">
-        <el-form-item label="默认提前提醒">
-          <el-input-number v-model="reminderRule.advanceDays" :min="1" :max="30"></el-input-number>
-          <span class="form-unit">天</span>
-        </el-form-item>
-        <el-form-item label="提醒对象">
-          <el-checkbox-group v-model="reminderRule.receivers">
-            <el-checkbox label="设备责任人"></el-checkbox>
-            <el-checkbox label="部门负责人"></el-checkbox>
-            <el-checkbox label="消防管理员"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="提醒方式">
-          <el-checkbox-group v-model="reminderRule.channels">
-            <el-checkbox label="系统消息"></el-checkbox>
-            <el-checkbox label="移动端"></el-checkbox>
-            <el-checkbox label="短信"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="逾期升级">
-          <el-switch v-model="reminderRule.escalate"></el-switch>
-          <span class="form-help inline">逾期超过3天升级至园区工程负责人</span>
-        </el-form-item>
-      </el-form>
-      <span slot="footer">
-        <el-button @click="ruleDialog = false">取消</el-button>
-        <el-button type="primary" @click="saveReminderRule">保存规则</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
-
 <script>
 export default {
   name: 'ReminderList',
-  props: {
-    pageSize: { type: Number, required: true },
-    active: Boolean,
-    reminders: { type: Array, required: true },
-    initialRule: { type: Object, required: true }
-  },
+  props: { pageSize: { type: Number, required: true }, active: Boolean, reminders: { type: Array, required: true } },
   data() {
-    return {
-      page: 1,
-      reminderKeyword: '',
-      ruleDialog: false,
-      reminderRule: { advanceDays: 7, receivers: [], channels: [], escalate: true }
-    }
+    return { page: 1, keyword: '', urgency: '' }
   },
   computed: {
     filteredRows() {
-      const keyword = this.reminderKeyword.toLowerCase()
-      if (!keyword) return this.reminders
-      return this.reminders.filter((item) => [item.deviceId, item.device, item.category, item.location, item.owner, item.plan, item.status, item.dueDate].join(' ').toLowerCase().includes(keyword))
+      const keyword = this.keyword.toLowerCase()
+      return this.reminders.filter(
+        (item) =>
+          (!keyword || [item.deviceCode, item.device, item.category, item.location, item.owner, item.plan].join(' ').toLowerCase().includes(keyword)) &&
+          (!this.urgency || item.urgency === this.urgency)
+      )
     },
     pagedRows() {
       const start = (this.page - 1) * this.pageSize
@@ -124,7 +86,10 @@ export default {
     active(value) {
       if (value) this.refreshLayout()
     },
-    reminderKeyword() {
+    keyword() {
+      this.page = 1
+    },
+    urgency() {
       this.page = 1
     }
   },
@@ -136,14 +101,6 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.table) this.$refs.table.doLayout()
       })
-    },
-    openReminderRuleDialog() {
-      this.reminderRule = JSON.parse(JSON.stringify(this.initialRule))
-      this.ruleDialog = true
-    },
-    saveReminderRule() {
-      this.$emit('save-rule', JSON.parse(JSON.stringify(this.reminderRule)))
-      this.ruleDialog = false
     }
   }
 }
