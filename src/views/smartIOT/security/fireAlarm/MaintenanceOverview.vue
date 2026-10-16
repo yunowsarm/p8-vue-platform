@@ -41,9 +41,9 @@
         </el-button>
       </div>
       <div class="progress-layout">
-        <div class="progress-ring" :style="{ background: 'conic-gradient(#20a77a ' + monthProgress.percent + '%, #edf1f5 0)' }">
+        <div class="progress-ring" :style="{ background: 'conic-gradient(' + progressColor + ' ' + monthProgress.percent + '%, #edf1f5 0)' }">
           <div>
-            <strong>{{ monthProgress.percent }}%</strong>
+            <strong :style="{ color: progressColor }">{{ monthProgress.percent }}%</strong>
             <span>本月完成率</span>
           </div>
         </div>
@@ -137,6 +137,12 @@ export default {
     reminders: { type: Array, required: true },
     unplannedCount: { type: Number, required: true },
     recordCount: { type: Number, required: true }
+  },
+  computed: {
+    progressColor() {
+      const percent = Number(this.monthProgress.percent) || 0
+      return percent >= 100 ? '#20a77a' : percent >= 60 ? '#337dd5' : percent >= 30 ? '#e6a23c' : '#f05065'
+    }
   }
 }
 </script>
