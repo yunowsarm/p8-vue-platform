@@ -234,7 +234,8 @@ import {
   fetchMaintenanceAttachment,
   isMaintenanceDate,
   maintenanceIntervalMonths,
-  maintenanceMonthProgress
+  maintenanceMonthProgress,
+  buildMaintenanceReminders
 } from '@/service/maintenance'
 const COLORS = ['#3281f7', '#20ad85', '#13a6bd', '#f5a11a', '#8065d9', '#ef5365']
 export default {
@@ -297,29 +298,7 @@ export default {
       ]
     },
     reminders() {
-      const list = []
-      this.plans.forEach((plan) => {
-        const overdueDays = maintenanceDueDays(plan.plannedDate)
-        if (overdueDays == null || overdueDays < -plan.advanceDays) return
-        const device = this.devices.find((item) => item.id === plan.deviceId)
-        if (!device) return
-        list.push({
-          id: plan.id,
-          planId: plan.id,
-          deviceId: device.id,
-          deviceCode: device.deviceCode,
-          device: device.name,
-          category: device.category,
-          location: device.installLocation || '',
-          dueDate: plan.plannedDate,
-          owner: plan.responsiblePerson || '',
-          plan: plan.planName,
-          overdueDays,
-          urgency: overdueDays > 0 ? '已逾期' : overdueDays === 0 ? '今日到期' : '即将到期',
-          status: overdueDays > 0 ? '逾期' + overdueDays + '天' : overdueDays === 0 ? '今日到期' : -overdueDays + '天后到期'
-        })
-      })
-      return list.sort((a, b) => b.overdueDays - a.overdueDays || a.id.localeCompare(b.id))
+      return buildMaintenanceReminders(this.plans, this.devices)
     },
     workspaceNav() {
       return [
@@ -345,9 +324,25 @@ export default {
     }
   },
   created() {
-    this.loadData()
+    this.loadData().then((loaded) => {
+      if (loaded) this.openRoutePlan()
+    })
+  },
+  watch: {
+    '$route.query.planId'() {
+      if (this.ready) this.openRoutePlan()
+    }
+  },
+  activated() {
+    if (this.ready) this.openRoutePlan()
   },
   methods: {
+    async openRoutePlan() {
+      const id = this.$route && this.$route.query && this.$route.query.planId
+      if (typeof id !== 'string' || !id) return
+      await this.$nextTick()
+      await this.viewPlan(id)
+    },
     async refreshResources(resources) {
       // 类型弹窗、编辑候选和保存后刷新共用一个队列，避免较早的响应覆盖刚保存的数据。
       const previous = this._maintenanceRefresh || Promise.resolve()

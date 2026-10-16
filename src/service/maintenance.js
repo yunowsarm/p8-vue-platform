@@ -284,3 +284,30 @@ export function normalizeMaintenanceData(types, devices, plans, records) {
   })
   return { deviceTypes, devices: deviceRows, plans: planRows, records: recordRows }
 }
+
+// 首页预警和维保模块共用同一套到期判断。
+export function buildMaintenanceReminders(plans, devices) {
+  const list = []
+  plans.forEach((plan) => {
+    const overdueDays = maintenanceDueDays(plan.plannedDate)
+    if (overdueDays == null || overdueDays < -plan.advanceDays) return
+    const device = devices.find((item) => item.id === plan.deviceId)
+    if (!device) return
+    list.push({
+      id: plan.id,
+      planId: plan.id,
+      deviceId: device.id,
+      deviceCode: device.deviceCode,
+      device: device.name,
+      category: device.category,
+      location: device.installLocation || '',
+      dueDate: plan.plannedDate,
+      owner: plan.responsiblePerson || '',
+      plan: plan.planName,
+      overdueDays,
+      urgency: overdueDays > 0 ? '已逾期' : overdueDays === 0 ? '今日到期' : '即将到期',
+      status: overdueDays > 0 ? '逾期' + overdueDays + '天' : overdueDays === 0 ? '今日到期' : -overdueDays + '天后到期'
+    })
+  })
+  return list.sort((a, b) => b.overdueDays - a.overdueDays || a.id.localeCompare(b.id))
+}

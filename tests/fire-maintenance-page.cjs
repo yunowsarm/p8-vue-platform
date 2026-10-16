@@ -304,6 +304,29 @@ async function main() {
   assert.equal(uploadEditor.beforeRemove(selected), true)
   uploadEditor.removeFile(selected)
   assert.equal(uploadEditor.recordForm.uploadFiles.length, 0)
+  const warningOptions = load(path.join(root, 'src/views/product/HomeBoardOne/fireAlarmWarning.vue')).default
+  const warning = new Vue({ ...warningOptions, created: undefined })
+  warning.$api = api
+  await warning.loadWarnings()
+  await app.loadData()
+  assert.equal(warning.error, '')
+  assert.deepEqual(JSON.parse(JSON.stringify(warning.reminders)), JSON.parse(JSON.stringify(app.reminders)), 'home warnings must match the maintenance reminders')
+  assert.equal(warningOptions.components.ReminderList.name, 'ReminderList', 'reuse the actual reminder table and filters')
+  let targetRoute
+  warning.$router = { push: async (target) => { targetRoute = target } }
+  await warning.viewPlan('plan-1')
+  assert.deepEqual(targetRoute, { path: '/fireAlarm1', query: { planId: 'plan-1' } })
+  app.$route = { query: { planId: 'plan-1' } }
+  await app.openRoutePlan()
+  await Vue.nextTick()
+  assert.equal(app.activeTab, 'plans')
+  assert.equal(app.$refs.plans.focused, 'plan-1', 'route opens the matching plan after data is loaded')
+  const realWarningList = api['maintenancePlan.list']
+  api['maintenancePlan.list'] = async () => { throw new Error('首页计划读取失败') }
+  await warning.loadWarnings()
+  assert.match(warning.error, /首页计划读取失败/)
+  assert.equal(warning.loading, false)
+  api['maintenancePlan.list'] = realWarningList
   assert.equal(fs.readdirSync(path.join(root, 'src/views/smartIOT/security/fireAlarm')).filter((name) => name.endsWith('.vue')).length, 5)
   console.log('PASS: all component imports/templates/styles; API load/save/failure; single-device registration; both result completion; next-date/reminders; record detail attachments and back navigation; type deletion Query; exactly five workspaces')
 }
