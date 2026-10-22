@@ -22,6 +22,7 @@
             :scroll-y="{ enabled: true, gt: 20, oSize: 5 }"
             :scroll-x="{ enabled: true, gt: 8, oSize: 2 }"
             show-overflow="tooltip"
+            align="center"
             header-align="center"
             :data="filteredVehicles"
             stripe
