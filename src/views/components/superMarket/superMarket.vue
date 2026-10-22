@@ -52,7 +52,7 @@
     </div>
     <div class="filter-card">
       <el-input v-model="keyword" size="mini" clearable prefix-icon="el-icon-search" placeholder="搜索单号、商品名称或商品标识" />
-      <!-- <el-select v-model="device" size="mini" clearable placeholder="全部设备"><el-option v-for="item in devices" :key="item" :label="item" :value="item" /></el-select> -->
+      <!-- <el-select v-model="device" size="mini" clearable placeholder="全部设备"><el-option v-for="item in devices" :key="item" :label="deviceName(item)" :value="item" /></el-select> -->
       <el-select v-model="businessType" size="mini" clearable placeholder="全部业务类型">
         <el-option label="销售" value="A" />
         <el-option label="退货" value="B" />
@@ -105,7 +105,7 @@
 import SalesAnalysis from './components/SalesAnalysis.vue'
 import SalesDataView from './components/SalesDataView.vue'
 import { fetchSalesDetails } from '@/service/superMarket'
-import { TABLE_FIELDS, RESPONSE_FIELDS, isKnownType, typeInfo, numberText, numeric, summarize, saleDetails } from './fields.js'
+import { TABLE_FIELDS, RESPONSE_FIELDS, isKnownType, typeInfo, numberText, numeric, summarize, saleDetails, deviceName } from './fields.js'
 
 function dayRange(days = 0, week = false) {
   const end = new Date()
@@ -211,6 +211,7 @@ export default {
   },
   methods: {
     typeInfo,
+    deviceName,
     numberText,
     display(value) {
       return value === null || value === undefined || value === '' ? '—' : typeof value === 'object' ? JSON.stringify(value) : String(value)
@@ -272,6 +273,7 @@ export default {
           ...rows.map((row) =>
             columns.map((key) => {
               if (key === 'b01058') return typeInfo(row[key]).label
+              if (key === 'deviceId') return row[key] == null || row[key] === '' ? '' : deviceName(row[key])
               if (row[key] == null) return ''
               return decimalFields.has(key) && numeric(row[key]) !== null ? numeric(row[key]) : row[key]
             })
@@ -293,7 +295,7 @@ export default {
           ['开始时间', range[0]],
           ['结束时间', range[1]],
           ['搜索关键词', filters.keyword || '全部'],
-          ['设备编号', filters.device || '全部'],
+          ['设备名称', filters.device ? deviceName(filters.device) : '全部'],
           ['业务类型', filters.type === 'unknown' ? '未识别' : filters.type ? typeInfo(filters.type).label : '全部'],
           ['导出明细数', rows.length],
           ['统计口径', '金额按接口原值；业务类型 A 销售、B 退货；未识别类型不推算净额']

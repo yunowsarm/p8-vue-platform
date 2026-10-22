@@ -6,6 +6,7 @@
 - 数据视图和数据分析均由该入口通过页内图标切换，后台只配置一个菜单组件；实际访问地址以后台路由配置为准，沿用平台登录校验。
 - 页面布局参考 `electricitySummary/index.vue`：顶部查询栏右侧图标切换视图，`keep-alive` 保留子视图；数据视图为趋势、设备汇总和明细面板，分析视图为指标卡、结论与图表。
 - `fields.js` 维护表字段、接口字段和业务类型码值；无需后端提供中文列名。
+- `fields.js` 的 `DEVICE_NAMES` 统一维护设备显示名称：`POS_TEST_001` 映射为“津通大门超市”，详情、图表及导出使用该名称；筛选值、分组键和交易去重仍保留原始设备 ID，未配置的设备显示原 ID。
 - 请求定义位于 `src/service/api/modules/superMarket.js`，通过统一的 `$api['superMarket.salesDetails']` 调用 GET `/api/pos/sales-details/query`，沿用平台环境地址、登录凭证和响应拦截器。`src/service/superMarket.js` 负责完整分页加载及数据完整性检查。
 
 ## 数据口径

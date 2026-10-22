@@ -1,5 +1,12 @@
 import { decimalText } from '@/utils/numberFormat'
 
+export const DEVICE_NAMES = Object.freeze({ POS_TEST_001: '津通大门超市' })
+
+export function deviceName(id) {
+  if (id === null || id === undefined || id === '') return '未识别设备'
+  return Object.prototype.hasOwnProperty.call(DEVICE_NAMES, id) ? DEVICE_NAMES[id] : String(id)
+}
+
 // 字段含义以已确认的表结构为准；未知编码不推测业务含义。
 export const BUSINESS_TYPES = {
   A: { label: '销售', tag: 'success' },
@@ -21,7 +28,7 @@ export const RESPONSE_FIELDS = {
   ...TABLE_FIELDS.bbb077.fields,
   ...TABLE_FIELDS.ccc029.fields,
   id: '记录 ID',
-  deviceId: '设备编号',
+  deviceId: '设备名称',
   o01329: '单号',
   b00741: '数量',
   b00517: '金额',
@@ -71,6 +78,7 @@ export function saleDetails(row) {
     const empty = raw === null || raw === undefined || raw === ''
     let value = empty ? '未提供' : typeof raw === 'object' ? JSON.stringify(raw) : String(raw)
     if (!empty && key === 'b01058') value = typeInfo(raw).label
+    if (!empty && key === 'deviceId') value = deviceName(raw)
     if (!empty && key === 'b00517' && numeric(raw) !== null) value = `${numberText(raw)} 元`
     if (!empty && ['b00741', 'o00716', 'b00495'].includes(key) && numeric(raw) !== null) value = numberText(raw)
     if (!empty && key === 'b01253') value = `${raw}（支付方式名称待补充）`

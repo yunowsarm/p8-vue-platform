@@ -65,7 +65,7 @@
 <script>
 import * as echarts from 'echarts'
 import SalesMetrics from './SalesMetrics.vue'
-import { numberText, numeric, typeInfo, summarize } from '../fields'
+import { numberText, numeric, typeInfo, summarize, deviceName } from '../fields'
 
 function ranking(rows, getKey, getName) {
   const groups = new Map()
@@ -183,7 +183,7 @@ export default {
       const devices = ranking(
         this.rows,
         (row) => row.deviceId || 'unknown',
-        (row) => row.deviceId || '未识别设备'
+        (row) => deviceName(row.deviceId)
       ).reverse()
       draw('devices', {
         grid: { left: 120, right: 30, top: 20, bottom: 35 },
