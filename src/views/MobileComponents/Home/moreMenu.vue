@@ -1,6 +1,5 @@
 <script>
 import { mapGetters } from 'vuex'
-import { API_DEFAULT_CONFIG } from '@/config/settings'
 import draggable from 'vuedraggable'
 
 export default {
@@ -10,8 +9,7 @@ export default {
   },
   data() {
     return {
-      api_default_config: API_DEFAULT_CONFIG,
-      saveApi: '/framework/user/setting/save',
+      saveApi: 'user.setting.save',
       menu: [],
       edit: false,
       isDragging: false
@@ -84,10 +82,7 @@ export default {
           value: JSON.stringify({ menu: this.menu })
         }
       ]
-      const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config
-      const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`
-      this.$ajax
-        .post(urlPrefix + this.saveApi, params, { headers: { Authorization: this.$store.getters.token } })
+      this.$api[this.saveApi](params)
         .then((res) => {
           console.log(res)
           const payload = res && res.data ? res.data : res

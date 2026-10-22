@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { postConfiguredData } from '@/service/api/configured'
 import Vue from 'vue'
 import {P8Dialog as Dialog} from 'p8-components-ui'
 // import artTemplate from 'art-template'
@@ -63,13 +64,10 @@ export default {
       sqlIdOption: [],
       sqlid: '',
       customUrl: '',
-      urlPrefix: '',
       templateValue: null
     }
   },
   created () {
-    const { devBaseUrl, prodBaseUrl, isDevMode } = this.$sysConfig.API_DEFAULT_CONFIG
-    this.urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`
     const param = {
       page: {
         current: -1,
@@ -85,12 +83,8 @@ export default {
   methods: {
     getData () {
       if (this.customUrl) {
-        const url = `${this.urlPrefix}${this.customUrl}`
-        this.$ajax
-          .post(url, {}, {
-            headers: { Authorization: this.$store.getters.token }
-          })
-          .then(function (res) {
+        postConfiguredData(this.customUrl)
+          .then((res) => {
             this.templateValue = res
             this.renderTemplate()
           })

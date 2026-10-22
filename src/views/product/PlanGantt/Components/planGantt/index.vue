@@ -547,7 +547,6 @@ import Notice from '../notice'
 import GridSetting from '@/components/gantt/Components/CommandGridSetting/gridSetting'
 import CommandSearch from '@/components/gantt/Components/CommandSearch'
 import CommandStatistic from '@/components/gantt/Components/CommandStatistic'
-import { requestUrl } from '@/utils/common.js'
 import CommonButtonBarSetting from '@/components/gantt/Components/CommonButtonBarSetting'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import { getMonitorLimitColumns } from '@/assets/commonJS/ganttJS/ganttLockUnLock'
@@ -2090,10 +2089,7 @@ export default {
           })
         }
       ]
-      const url = requestUrl(requestOtherParams.saveApi)
-      /** 使用$ajax请求: 是因为 this.$api请求会将请求参数处理成对象, 而保存设置接口请求参数为数组 */
-      _this.$ajax
-        .post(url, params, { headers: { Authorization: this.$store.getters.token } })
+      _this.$api[requestOtherParams.saveApi](params)
         .then((res) => {
           // 更新vuex
           this.$store.commit('SET_SETTING_ALL', res)

@@ -47,11 +47,12 @@ class ApiCounstructor {
         value(outerParams, outerOptions) {
           // 如果没传入参数 则传递默认参数
           // const data = _isEmpty(outerParams) ? params : _assign(params, outerParams) // assign合并对象, 会修改源对象(params)的值, 页面同一个api多次请求(传递参数不同)可能导致参数混乱问题
-          // FormData 不能通过对象展开合并，否则二进制字段会丢失并变成空对象。
+          // FormData 和数组请求体直接保留，避免丢失文件或将配置数组转换成数字键对象。
           const isFormData = typeof FormData !== 'undefined' && outerParams instanceof FormData
-          const data = isFormData ? outerParams : _isEmpty(outerParams) ? params : { ...params, ...outerParams }
+          const isRawBody = isFormData || Array.isArray(outerParams)
+          const data = isRawBody ? outerParams : _isEmpty(outerParams) ? params : { ...params, ...outerParams }
           // 支持接口定义中的 /resource/{id} 路径参数，并避免将已替换的参数重复发送到 query/body 中。
-          const requestParams = data && typeof data === 'object' && !isFormData ? { ...data } : data
+          const requestParams = data && typeof data === 'object' && !isRawBody ? { ...data } : data
           const requestUrl = url.replace(/\{([^}]+)\}/g, (placeholder, key) => {
             if (requestParams && Object.prototype.hasOwnProperty.call(requestParams, key)) {
               const value = requestParams[key]
@@ -79,7 +80,7 @@ class ApiCounstructor {
 function axiosParamBuilder(options, data) {
   if (options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH') {
     options.data = data
-  } else if (options.method === 'GET') {
+  } else if (options.method === 'GET' || options.method === 'DELETE') {
     options.params = data
   }
   return options

@@ -2,6 +2,8 @@
 
 道闸入口：`components/barrierGate/barrierGate.vue`；独立车辆登记入口：`components/barrierGate/carOwnershipManage.vue`。沿用现有 Vue 2、Element UI、ECharts 及平台 axios 登录态。
 
+两个入口组件保留在模块外层；数据展示、数据分析子组件位于 `components/`，接口、统计方法、图表公共逻辑和图标仍由模块统一维护。
+
 - 数据展示：参考 `electricitySummary/index.vue` 的查询栏、图标切换与 keep-alive 子视图。`BarrierDataView.vue` 使用四宫格展示趋势、出入明细、停车时长及通道排行。
 - 数据分析：进出次数、去重车辆、平均停留、实收金额、企业关联率、每日趋势、小时分布、停车时长、通道排行及企业汇总。
 - 车辆登记：在独立的 `carOwnershipManage.vue` 中新增、查询详情、编辑、删除；企业从现有企业目录选择，也可输入全称。按 `companyName` 保存关联，不发送截图中未定义的企业 ID。车牌会去空格并转大写，同一车牌重复登记不会任意关联企业。
@@ -9,7 +11,7 @@
 
 ## 待后端联调确认的约定
 
-用户提供了路径和车辆实体，未提供 HTTP 方法、出入记录实体和响应样例。以下约定集中在 `api.js`、`data.js`，需按实际接口确认：
+用户提供了路径和车辆实体，未提供 HTTP 方法、出入记录实体和响应样例。请求定义统一位于 `src/service/api/modules/barrierGate.js`，使用 `parkingAccessRecord` 和 `parkingVehicleInfo` 命名空间，由平台自动注册到 `$api`。完整分页加载及业务响应检查位于 `src/service/barrierGate.js`；字段适配位于本模块 `data.js`。以下约定需按实际接口确认：
 
 | 接口 | 当前方法及参数 |
 | --- | --- |

@@ -51,7 +51,6 @@
 <script>
 import date from '@/assets/commonJS/originalComponents/utils/date';
 import Vue from 'vue'
-import axios from 'axios'
 
 export default {
   name: 'UserList',

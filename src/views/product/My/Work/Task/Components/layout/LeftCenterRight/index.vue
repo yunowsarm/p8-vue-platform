@@ -113,9 +113,7 @@ export default {
     }
   },
   data () {
-    const { API_DEFAULT_CONFIG } = this.$sysConfig
     return {
-      api_default_config: API_DEFAULT_CONFIG,
       constSettingParams: {
         type: 'layout',
         description: 'default-percent'
@@ -209,8 +207,7 @@ export default {
     },
     saveDefaultPercent () {
       const _this = this
-      const url = '/framework/user/setting/save'
-      let obj = _this.saveSettingOtherHandle(url)
+      let obj = _this.saveSettingOtherHandle()
       let params = [
         {
           id: obj.id,
@@ -220,9 +217,7 @@ export default {
           value: JSON.stringify(this.layoutSetting)
         }
       ]
-      /** 使用$ajax请求: 是因为 this.$api请求会将请求参数处理成对象, 而保存设置接口请求参数为数组 */
-      _this.$ajax
-        .post(obj.postUrl, params, { headers: { Authorization: this.$store.getters.token } })
+      _this.$api['user.setting.save'](params)
         .then((res) => {
           // 更新vuex || this.$store.dispatch('getSettingAll')[dispatch会触发请求获取设置信息]
           this.$store.commit('SET_SETTING_ALL', res)
@@ -231,10 +226,8 @@ export default {
           // console.error("user.setting.save--err", err);
         })
     },
-    saveSettingOtherHandle (url) {
+    saveSettingOtherHandle () {
       // console.log(url)
-      const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config
-      const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`
       const p = this.constSettingParams
       let key = ''
       if (this.layoutCode) {
@@ -252,7 +245,6 @@ export default {
         }
       }
       return {
-        postUrl: urlPrefix + url,
         id: id,
         key: key,
         description: p.description,

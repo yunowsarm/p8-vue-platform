@@ -49,7 +49,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import axios from 'axios'
 import { P8Form as FormList, Link, Notification } from 'p8-components-ui'
 export default {
   name: 'ImportExcel',
@@ -135,21 +134,12 @@ export default {
       let formData = new FormData();
       formData.append('excel', item.file);
       console.log(this.token,"this.token")
-      axios.post(CONFIG.devBaseUrl + '/jt/sun/importMeter',formData,{
-        headers: { 
-          Authorization: this.token 
-        }
-      }).then((res) => {
+      this.$api['baseData.importsunMeter'](formData).then((res) => {
         console.log(res,"res")
-        if(res.data.head.code==500){
-          this.$message.error(res.data.head.message)
-          console.log(res.data.head.message,"res.data.head.message")
-          return
-        }
         this.$message.success('导入成功')
         // this.$emit('save-success', 'output')
       }).catch((error) => {
-        this.$message.error('请求失败')
+        this.$message.error((error && error.head && error.head.message) || (error && error.message) || '请求失败')
       })
       // this.$api['baseData.gridimport'](formData).then((res) => {
       //   console.log(res,"res")

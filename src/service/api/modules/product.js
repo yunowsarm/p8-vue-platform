@@ -200,6 +200,13 @@ export const repositoryApi = {
       desc: '水表基础信息导入'
     },
     {
+      name: 'importWaterReadings',
+      method: 'POST',
+      path: '/jt/water/import',
+      mockPath: '/jt/water/import',
+      desc: '水表抄表数据导入'
+    },
+    {
       name: 'insertsunMeter',
       method: 'POST',
       path: '/jt/sun/insertMeter',

@@ -69,7 +69,7 @@
   </div>
 </template>
 <script>
-import { fetchAll, parkingRequest } from './api'
+import { fetchAll, parkingRequest } from '@/service/barrierGate'
 import { clean, plateKey, dateLabel } from './data'
 const blankVehicle = () => ({ plateNumber: '', companyName: '', ownerName: '', ownerPhone: '', plateColor: '', vehicleType: '', parkingSpaceNumber: '' })
 const vehicleFields = [
@@ -137,7 +137,7 @@ export default {
       this.loading = true
       this.loadError = ''
       try {
-        const rows = await fetchAll('/parking/vehicleInfo/list', () => id === this.requestId)
+        const rows = await fetchAll(this.$api, 'parkingVehicleInfo.list', () => id === this.requestId)
         if (id !== this.requestId) return
         this.vehicles = Object.freeze(rows)
         this.vehiclesReady = true
@@ -182,7 +182,7 @@ export default {
         let values = blankVehicle()
         if (row) {
           if (!row.id) throw new Error('车辆缺少 ID，无法编辑')
-          const detail = await parkingRequest('vehicleInfo', 'queryById', { id: row.id })
+          const detail = await parkingRequest(this.$api, 'parkingVehicleInfo.queryById', { id: row.id })
           if (!detail || typeof detail !== 'object' || !detail.id) throw new Error('车辆详情返回异常')
           values = { ...values, ...detail }
         }
@@ -218,7 +218,7 @@ export default {
       if (this.vehicleForm.id) payload.id = this.vehicleForm.id
       this.saving = true
       try {
-        await parkingRequest('vehicleInfo', payload.id ? 'edit' : 'add', payload)
+        await parkingRequest(this.$api, payload.id ? 'parkingVehicleInfo.edit' : 'parkingVehicleInfo.add', payload)
         this.vehicleVisible = false
         this.$message.success('车辆信息已保存')
         await this.loadData()
@@ -241,7 +241,7 @@ export default {
       }
       this.mutating = true
       try {
-        await parkingRequest('vehicleInfo', 'delete', { id: row.id })
+        await parkingRequest(this.$api, 'parkingVehicleInfo.delete', { id: row.id })
         this.$message.success('车辆登记已删除')
         await this.loadData()
       } catch (error) {

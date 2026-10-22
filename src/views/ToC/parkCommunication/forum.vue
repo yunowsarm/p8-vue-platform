@@ -155,6 +155,7 @@
 </template>
 
 <script>
+import { queryPublicIp } from '@/service/api/publicIp'
 import ForumNavigation from './components/ForumNavigation.vue'
 import ForumCategoryPanel from './components/ForumCategoryPanel.vue'
 import ForumTopicList from './components/ForumTopicList.vue'
@@ -556,19 +557,8 @@ export default {
     },
     async resolvePublicIp() {
       if (this.publicIpAddress) return this.publicIpAddress
-      const controller = window.AbortController ? new window.AbortController() : null
-      const timer = window.setTimeout(() => controller && controller.abort(), 5000)
-      try {
-        const response = await window.fetch('https://api.ipify.org?format=json', controller ? { signal: controller.signal } : {})
-        if (!response.ok) return ''
-        const result = await response.json()
-        this.publicIpAddress = String((result && result.ip) || '').trim()
-        return this.publicIpAddress
-      } catch (error) {
-        return ''
-      } finally {
-        window.clearTimeout(timer)
-      }
+      this.publicIpAddress = await queryPublicIp()
+      return this.publicIpAddress
     },
     async openTopic(topic) {
       this.detailVisible = true

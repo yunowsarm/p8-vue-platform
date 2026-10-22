@@ -145,7 +145,7 @@ export default {
       updataParams: {
         description: '计划编制: 操作按钮排版配置 / 右键按钮配置',
         type: 'PlanButton',
-        saveApi: '/framework/user/setting/save',
+        saveApi: 'user.setting.save',
         id: '',
         key: 'plan-btn-setting'
       }

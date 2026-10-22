@@ -3,8 +3,6 @@ import moment from 'moment'
 import { changeColor, changeGanttRemove, setNewTaskMap } from './changeGantt'
 import api from '@/plugins/api'
 import store from '@/plugins/store'
-import axios from '@/plugins/axios'
-import { requestUrl } from '@/utils/common.js'
 import isDisable, {
   isAllowAutoManual,
   isAllowChangeStyle,
@@ -2020,7 +2018,7 @@ export const CommandButtonData = [
       const updataParams = {
         description: '计划编制: 缩放/列设置 / 添加/取消网格配置',
         type: 'PlanStyleClass',
-        saveApi: '/framework/user/setting/save',
+        saveApi: 'user.setting.save',
         id: (updateData && updateData.id) || '',
         key: 'grid-cell-border',
         value: JSON.stringify({
@@ -2028,11 +2026,7 @@ export const CommandButtonData = [
           value: updateData && updateData.value.value === 'grid-cell-border-add' ? 'grid-cell-border-remove' : 'grid-cell-border-add'
         })
       }
-      const url = requestUrl(updataParams.saveApi)
-      axios
-        .post(url, [updataParams], {
-          headers: { Authorization: store.getters.token }
-        })
+      api[updataParams.saveApi]([updataParams])
         .then((res) => {
           const planGanttConfig =
             res.PlanStyleClass && res.PlanStyleClass.length

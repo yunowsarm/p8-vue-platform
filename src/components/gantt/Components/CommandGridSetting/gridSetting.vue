@@ -65,7 +65,6 @@ import { P8Dialog as CommonDialog, Checkbox } from 'p8-components-ui'
 import draggable from 'vuedraggable'
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 
-import { API_DEFAULT_CONFIG } from '@/config/settings'
 import { GanttObject } from '@/assets/commonJS/ganttJS/ganttObject'
 import _cloneDeep from 'lodash/cloneDeep'
 export default {
@@ -112,12 +111,11 @@ export default {
         'append-to-body': true
       },
       drag: false,
-      api_default_config: API_DEFAULT_CONFIG,
       initialColumns: [],
       tableSettings: [],
       description: 'grid-setting',
       type: 'Gantt',
-      saveApi: '/framework/user/setting/save',
+      saveApi: 'user.setting.save',
       lineHeight: this.$store.getters.baseConfig.tableRowHeight || 50
     }
   },
@@ -212,11 +210,7 @@ export default {
           value: JSON.stringify({ columns: _this.tableSettings, lineHeight: _this.lineHeight })
         }
       ]
-      const { devBaseUrl, prodBaseUrl, isDevMode } = _this.api_default_config
-      const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`
-      /** 使用$ajax请求: 是因为 this.$api请求会将请求参数处理成对象, 而保存设置接口请求参数为数组 */
-      _this.$ajax
-        .post(urlPrefix + _this.saveApi, params, { headers: { Authorization: this.$store.getters.token } })
+      _this.$api[_this.saveApi](params)
         .then((res) => {
           _this.tableSettingVisible = false
           _this.$nextTick(function () {

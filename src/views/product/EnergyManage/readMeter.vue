@@ -73,7 +73,6 @@
 <script>
 import date from '@/assets/commonJS/originalComponents/utils/date';
 import Vue from 'vue'
-import axios from 'axios'
 
 export default {
   name: 'readMeter',
@@ -308,12 +307,11 @@ export default {
     uploadFile(item) {
       let formData = new FormData();
       formData.append('excel', item.file);
-      axios.post(CONFIG.devBaseUrl + '/jt/electricity/import',formData,{
-      }).then((res) => {
+      this.$api['baseData.electricityimport'](formData).then((res) => {
         this.$message.success('导入成功')
         this.getTableData() 
       }).catch((error) => {
-        this.$message.error('请求失败')
+        this.$message.error((error && error.head && error.head.message) || (error && error.message) || '请求失败')
       })
     },
     ExportExcel() {

@@ -2,10 +2,11 @@
 
 - 路由与菜单由后台配置生成，不在 `constantRouterMap` 中注册。
 - 统一入口文件：`superMarket.vue`，后台菜单组件路径：`components/superMarket/superMarket`。
+- 入口组件保留在模块外层；`SalesDataView.vue`、`SalesAnalysis.vue`、`SalesMetrics.vue`、`SalesTrend.vue` 统一放在 `components/`，接口、字段和图标由模块统一维护。
 - 数据视图和数据分析均由该入口通过页内图标切换，后台只配置一个菜单组件；实际访问地址以后台路由配置为准，沿用平台登录校验。
 - 页面布局参考 `electricitySummary/index.vue`：顶部查询栏右侧图标切换视图，`keep-alive` 保留子视图；数据视图为趋势、设备汇总和明细面板，分析视图为指标卡、结论与图表。
 - `fields.js` 维护表字段、接口字段和业务类型码值；无需后端提供中文列名。
-- `api.js` 沿用平台环境地址、登录凭证和响应拦截器，调用 GET `/api/pos/sales-details/query`。
+- 请求定义位于 `src/service/api/modules/superMarket.js`，通过统一的 `$api['superMarket.salesDetails']` 调用 GET `/api/pos/sales-details/query`，沿用平台环境地址、登录凭证和响应拦截器。`src/service/superMarket.js` 负责完整分页加载及数据完整性检查。
 
 ## 数据口径
 

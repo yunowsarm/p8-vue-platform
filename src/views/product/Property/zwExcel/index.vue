@@ -49,7 +49,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import axios from 'axios'
 import { P8Form as FormList, Link, Notification } from 'p8-components-ui'
 export default {
   name: 'ImportExcel',
@@ -135,14 +134,10 @@ export default {
       let formData = new FormData();
       formData.append('excel', item.file);
       console.log(this.token,"this.token")
-      axios.post(CONFIG.devBaseUrl + '/jt/grid/import',formData,{
-        headers: { 
-          Authorization: this.token 
-        }
-      }).then((res) => {
+      this.$api['baseData.gridimport'](formData).then((res) => {
         console.log(res,"res")
       }).catch((error) => {
-        this.$message.error('请求失败')
+        this.$message.error((error && error.head && error.head.message) || (error && error.message) || '请求失败')
       })
       // this.$api['baseData.gridimport'](formData).then((res) => {
       //   console.log(res,"res")

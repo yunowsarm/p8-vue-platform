@@ -50,49 +50,76 @@
         <barrier-analysis v-else :rows="filteredRows" :stats="stats" :applied-query="filters" :loading="loading" />
       </keep-alive>
     </div>
-    <el-dialog title="导入出入记录" :visible.sync="importVisible" width="760px" append-to-body :close-on-click-modal="false" :before-close="closeImport">
-      <el-alert title="选择道闸导出的原始 Excel；上传成功后刷新记录和分析。" type="info" :closable="false" show-icon />
-      <el-upload
-        ref="upload"
-        drag
-        action="#"
-        accept=".xls,.xlsx"
-        :auto-upload="false"
-        :limit="1"
-        :file-list="fileList"
-        :disabled="readingFile || importing"
-        :on-change="selectFile"
-        :on-remove="removeFile"
-        :on-exceed="fileExceeded">
-        <i class="el-icon-upload" />
-        <div class="el-upload__text">
-          将文件拖到此处，或
-          <em>点击选择</em>
+    <el-dialog
+      title="导入出入记录"
+      custom-class="barrier-import-dialog"
+      :visible.sync="importVisible"
+      width="min(720px, calc(100vw - 32px))"
+      top="8vh"
+      append-to-body
+      :close-on-click-modal="false"
+      :before-close="closeImport">
+      <div class="import-body">
+        <div class="import-notice">
+          <i class="el-icon-info" />
+          <span>上传道闸导出的原始 Excel，导入成功后自动更新记录与分析。</span>
         </div>
-        <div slot="tip" class="el-upload__tip">支持 .xls、.xlsx，最大 20 MB。请保留原始表头。</div>
-      </el-upload>
-      <div v-loading="readingFile" class="import-preview">
-        <template v-if="importPreview.length">
-          <p>已识别 {{ importCount }} 条明细，以下预览前 5 条（汇总行不计入预览）：</p>
-          <el-table :data="importPreview" size="mini" border>
-            <el-table-column prop="plateNumber" label="车牌号" min-width="110" />
-            <el-table-column prop="entryTime" label="进入时间" min-width="160" />
-            <el-table-column prop="exitTime" label="离开时间" min-width="160" />
-          </el-table>
-        </template>
-        <p v-if="importResult" class="import-result">{{ importResult }}</p>
+        <el-upload
+          ref="upload"
+          class="import-uploader"
+          drag
+          action="#"
+          accept=".xls,.xlsx"
+          :auto-upload="false"
+          :limit="1"
+          :file-list="fileList"
+          :disabled="readingFile || importing"
+          :on-change="selectFile"
+          :on-remove="removeFile"
+          :on-exceed="fileExceeded">
+          <div class="import-upload-icon"><i :class="readingFile ? 'el-icon-loading' : 'el-icon-upload2'" /></div>
+          <div class="import-upload-title">{{ readingFile ? '正在读取文件…' : selectedFile ? '文件已就绪' : '点击选择 Excel 文件，或拖拽到此处' }}</div>
+          <div class="import-upload-subtitle">支持 .xls、.xlsx 格式，单个文件不超过 20 MB</div>
+          <div slot="tip" class="import-requirements">
+            <span>
+              <i class="el-icon-document" />
+              请保留原始表头
+            </span>
+            <span>必需列：车牌号、进入时间、离开时间</span>
+          </div>
+        </el-upload>
+        <div v-if="importPreview.length" class="import-preview">
+          <template v-if="importPreview.length">
+            <div class="import-preview-head">
+              <strong>
+                数据预览
+                <el-tag size="mini" type="success">{{ importCount }} 条明细</el-tag>
+              </strong>
+              <span>仅展示前 5 条 · 汇总行不计入</span>
+            </div>
+            <el-table :data="importPreview" size="mini" border>
+              <el-table-column prop="plateNumber" label="车牌号" min-width="110" />
+              <el-table-column prop="entryTime" label="进入时间" min-width="160" />
+              <el-table-column prop="exitTime" label="离开时间" min-width="160" />
+            </el-table>
+          </template>
+        </div>
+        <el-alert v-if="importResult" class="import-result" :title="importResult" :type="importStatus" :closable="false" show-icon />
       </div>
-      <div slot="footer">
-        <el-button :disabled="importing" @click="closeImport()">关闭</el-button>
-        <el-button type="primary" :loading="importing" :disabled="!selectedFile || readingFile" @click="uploadRecords">上传导入</el-button>
+      <div slot="footer" class="import-footer">
+        <span>{{ importing ? '正在导入，请稍候…' : selectedFile ? '文件校验通过，可以开始导入' : '选择文件后即可开始导入' }}</span>
+        <div>
+          <el-button size="small" :disabled="importing" @click="closeImport()">关闭</el-button>
+          <el-button size="small" type="primary" :loading="importing" :disabled="!selectedFile || readingFile" @click="uploadRecords">{{ importing ? '正在导入' : '开始导入' }}</el-button>
+        </div>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import BarrierDataView from './BarrierDataView.vue'
-import BarrierAnalysis from './BarrierAnalysis.vue'
-import { fetchAll, parkingRequest } from './api'
+import BarrierDataView from './components/BarrierDataView.vue'
+import BarrierAnalysis from './components/BarrierAnalysis.vue'
+import { fetchAll, parkingRequest } from '@/service/barrierGate'
 import { clean, dateLabel, normalizeRecord, filterRecords, summarizeRecords } from './data'
 const blankFilters = () => ({ dateRange: [], plateNumber: '', companyName: '', registration: '' })
 export default {
@@ -116,6 +143,7 @@ export default {
       importPreview: [],
       importCount: 0,
       importResult: '',
+      importStatus: 'success',
       fileVersion: 0
     }
   },
@@ -156,7 +184,10 @@ export default {
       this.loading = true
       this.loadError = ''
       try {
-        const [records, vehicles] = await Promise.all([fetchAll('/parking/access-record/list', () => id === this.requestId), fetchAll('/parking/vehicleInfo/list', () => id === this.requestId)])
+        const [records, vehicles] = await Promise.all([
+          fetchAll(this.$api, 'parkingAccessRecord.list', () => id === this.requestId),
+          fetchAll(this.$api, 'parkingVehicleInfo.list', () => id === this.requestId)
+        ])
         if (id !== this.requestId) return
         this.records = Object.freeze(records.map(normalizeRecord))
         this.vehicles = Object.freeze(vehicles)
@@ -231,13 +262,15 @@ export default {
       try {
         const form = new FormData()
         form.append('file', this.selectedFile)
-        const result = await parkingRequest('access-record', 'import', form)
+        const result = await parkingRequest(this.$api, 'parkingAccessRecord.import', form)
         this.importResult = typeof result === 'string' ? result : (result && (result.message || result.msg)) || '导入成功'
+        this.importStatus = 'success'
         this.$message.success('出入记录导入成功')
         this.removeFile()
         await this.loadData()
       } catch (error) {
         this.importResult = this.errorText(error, '导入失败，请检查文件后重试')
+        this.importStatus = 'error'
         this.$message.error(this.importResult)
       } finally {
         this.importing = false
@@ -328,18 +361,138 @@ export default {
   overflow: hidden;
   padding: 8px 10px 23px;
 }
-.el-alert {
+.barrier-gate > .el-alert {
   width: auto;
   margin: 8px 10px 0;
 }
 .import-preview {
-  color: #8895a7;
-  font-size: 12px;
-  line-height: 1.8;
+  border: 1px solid #e7ebf1;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
 }
 .import-result {
-  color: #364c78;
   white-space: pre-wrap;
+}
+.import-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.import-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 6px;
+  background: #f0f6ff;
+  color: #577399;
+  font-size: 12px;
+  line-height: 20px;
+}
+.import-notice i {
+  margin-top: 3px;
+  color: #409eff;
+}
+.import-uploader {
+  width: 100%;
+}
+.import-uploader ::v-deep .el-upload {
+  display: block;
+  width: 100%;
+}
+.import-uploader ::v-deep .el-upload-dragger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 200px;
+  box-sizing: border-box;
+  padding: 24px 16px;
+  border: 1px dashed #c7d5e7;
+  border-radius: 10px;
+  background: #fafcff;
+  transition: border-color 0.2s, background 0.2s;
+}
+.import-uploader ::v-deep .el-upload-dragger:hover,
+.import-uploader ::v-deep .el-upload-dragger.is-dragover {
+  border-color: #409eff;
+  background: #f0f7ff;
+}
+.import-upload-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  color: #409eff;
+  background: #eaf3ff;
+  font-size: 26px;
+}
+.import-upload-title {
+  color: #34465e;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+.import-upload-subtitle {
+  font-size: 12px;
+  color: #8b97a7;
+  line-height: 20px;
+}
+.import-requirements {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #8b97a7;
+  line-height: 20px;
+}
+.import-requirements i {
+  margin-right: 4px;
+}
+.import-uploader ::v-deep .el-upload-list__item {
+  margin-top: 10px;
+  background: #f5f8fc;
+  border-radius: 6px;
+}
+.import-preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+.import-preview-head strong {
+  color: #34465e;
+  font-size: 13px;
+}
+.import-preview-head .el-tag {
+  margin-left: 6px;
+}
+.import-preview-head > span {
+  color: #8b97a7;
+}
+.import-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.import-footer > span {
+  font-size: 12px;
+  color: #8b97a7;
+  text-align: left;
+}
+.import-footer > div {
+  flex-shrink: 0;
 }
 @media (max-width: 700px) {
   .view-actions {
@@ -347,6 +500,50 @@ export default {
   }
   .date-range {
     max-width: 100%;
+  }
+}
+</style>
+<style>
+/* 弹窗挂载到 body，外壳样式使用专属类名，避免影响其他页面。 */
+.barrier-import-dialog {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.barrier-import-dialog .el-dialog__header {
+  padding: 18px 24px;
+  border-bottom: 1px solid #edf0f5;
+}
+.barrier-import-dialog .el-dialog__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #27364a;
+}
+.barrier-import-dialog .el-dialog__headerbtn {
+  top: 21px;
+  right: 24px;
+}
+.barrier-import-dialog .el-dialog__body {
+  padding: 20px 24px;
+  max-height: calc(84vh - 140px);
+  overflow-y: auto;
+}
+.barrier-import-dialog .el-dialog__footer {
+  padding: 14px 24px;
+  border-top: 1px solid #edf0f5;
+  background: #fafbfc;
+}
+@media (max-width: 540px) {
+  .barrier-import-dialog .el-dialog__body {
+    padding: 16px;
+  }
+  .barrier-import-dialog .el-dialog__footer {
+    padding: 12px 16px;
+  }
+  .barrier-import-dialog .import-footer {
+    flex-wrap: wrap;
+  }
+  .barrier-import-dialog .import-footer > div {
+    margin-left: auto;
   }
 }
 </style>

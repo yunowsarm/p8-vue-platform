@@ -90,7 +90,6 @@ import TableTheme from './Components/TableTheme.vue'
 export default {
   name: 'PersonalSettings',
   data () {
-    const { API_DEFAULT_CONFIG } = this.$sysConfig
     return {
       maxHeight: document.documentElement.clientHeight - 130 + 'px',
       buttonConfigs: [
@@ -101,7 +100,6 @@ export default {
       imagePath: this.imageUrl || this.imageId,
       imgType: this.$store.getters.systemColor.imgType || 1, // 默认选中第一个按钮
       imgNum: this.$store.getters.systemColor.imgNum || 0.7,
-      api_default_config: API_DEFAULT_CONFIG,
     }
   },
   computed: {
@@ -178,17 +176,13 @@ export default {
     reSetSettingHandle () {
       const _this = this
       _this.resetTheme()
-      const url = '/framework/user/setting/del'
-      const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config;
-      const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`;
       if (this.$store.state.user.userSettingAll.theme) {
         let tableSetting = this.$store.state.user.userSettingAll.theme[0]
         let params = [{
           id: '',
           key: tableSetting.key
         }]
-        /** 使用$ajax请求: 是因为 this.$api请求会将请求参数处理成对象, 而保存设置接口请求参数为数组 */
-        _this.$ajax.post(urlPrefix + url, params, { headers: { 'Authorization': this.$store.getters.token } }).then(res => {
+        _this.$api['user.setting.delete'](params).then(res => {
           if (res) {
             _this.$message.success("操作成功")
           }
@@ -226,9 +220,6 @@ export default {
       let themeObg = this.$store.getters.systemColor
       themeObg.imageUrl = this.imageUrl || this.imageId
       themeObg.theme = this.$store.getters.theme
-      const url = '/framework/user/setting/save'
-      const { devBaseUrl, prodBaseUrl, isDevMode } = this.api_default_config;
-      const urlPrefix = isDevMode ? `${devBaseUrl}` : `${prodBaseUrl}`;
       let id = null
       if (this.$store.state.user.userSettingAll.theme?.length) {
         let tableSettingaAll = this.$store.state.user.userSettingAll.theme[0]
@@ -243,10 +234,7 @@ export default {
           value: JSON.stringify(themeObg)
         }
       ]
-      this.$ajax
-        .post(urlPrefix + url, params, {
-          headers: { Authorization: this.$store.getters.token },
-        })
+      this.$api['user.setting.save'](params)
         .then((res) => {
           this.$store.commit("SET_SETTING_ALL", res);
           this.$message.success("保存成功")

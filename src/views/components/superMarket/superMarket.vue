@@ -62,7 +62,7 @@
         {{ rows.length }} 条已加载
         <span v-if="updatedAt">· {{ updatedAt }} 更新</span>
       </span>
-      <el-button size="mini" @click="mappingVisible = true">字段映射</el-button>
+      <!-- <el-button size="mini" @click="mappingVisible = true">字段映射</el-button> -->
       <el-button type="primary" size="mini" :disabled="loading || !filteredRows.length" :loading="exporting" @click="exportRows">导出明细</el-button>
     </div>
     <el-alert v-if="error" class="status-alert" :title="error" type="error" :closable="false" show-icon />
@@ -86,19 +86,6 @@
               <dd>{{ item.value }}</dd>
             </div>
           </dl>
-          <el-collapse>
-            <el-collapse-item v-if="detail.unknown.length" :title="'未确认含义的字段（' + detail.unknown.length + ' 项）'" name="unknown">
-              <p class="dialog-note">以下字段尚无已确认的中文映射，保留原值便于核对；补充字段字典后会自动显示业务名称。</p>
-              <el-table :data="detail.unknown" size="small" stripe>
-                <el-table-column align="center" header-align="center" prop="key" label="字段编码" />
-                <el-table-column align="center" header-align="center" prop="label" label="说明" />
-                <el-table-column align="center" header-align="center" prop="value" label="字段值" />
-              </el-table>
-            </el-collapse-item>
-            <el-collapse-item title="查看接口原始数据" name="raw">
-              <pre class="sale-detail-raw">{{ JSON.stringify(selectedRow, null, 2) }}</pre>
-            </el-collapse-item>
-          </el-collapse>
         </div>
       </template>
     </el-dialog>
@@ -115,9 +102,9 @@
 </template>
 
 <script>
-import SalesAnalysis from './SalesAnalysis.vue'
-import SalesDataView from './SalesDataView.vue'
-import { fetchSalesDetails } from './api.js'
+import SalesAnalysis from './components/SalesAnalysis.vue'
+import SalesDataView from './components/SalesDataView.vue'
+import { fetchSalesDetails } from '@/service/superMarket'
 import { TABLE_FIELDS, RESPONSE_FIELDS, isKnownType, typeInfo, numberText, summarize, saleDetails } from './fields.js'
 
 function dayRange(days = 0, week = false) {
@@ -188,7 +175,8 @@ export default {
       return this.filteredRows.some((row) => isKnownType(row.b01058))
     },
     detail() {
-      return saleDetails(this.selectedRow)
+      const detail = saleDetails(this.selectedRow)
+      return { fields: detail.fields.filter((item) => !item.label.includes('待确认')) }
     },
     mappingRows() {
       return Object.entries(TABLE_FIELDS).flatMap(([key, table]) =>
@@ -246,7 +234,7 @@ export default {
       this.updatedAt = ''
       this.pageNo = 1
       try {
-        const rows = await fetchSalesDetails(range, () => requestId === this.requestId)
+        const rows = await fetchSalesDetails(this.$api, range, () => requestId === this.requestId)
         if (requestId !== this.requestId) return
         this.rows = rows
         this.appliedRange = range
@@ -468,13 +456,6 @@ export default {
   overflow-wrap: anywhere;
   line-height: 1.6;
   font-size: 14px;
-}
-.sale-detail-raw {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  background: #f5f7fa;
-  padding: 12px;
-  border-radius: 6px;
 }
 @media (max-width: 700px) {
   .sale-detail-grid {

@@ -59,6 +59,13 @@ export const UserApi = {
       desc: '1.13 保存用户配置'
     },
     {
+      name: 'setting.delete',
+      method: 'POST',
+      path: '/framework/user/setting/del',
+      mockPath: '/framework/user/setting/del',
+      desc: '删除用户配置'
+    },
+    {
       name: 'setting.getAll',
       method: 'GET',
       path: '/framework/user/setting/getAll',
