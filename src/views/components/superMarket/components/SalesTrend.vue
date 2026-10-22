@@ -7,7 +7,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import { numeric } from '../fields'
+import { numeric, numberText } from '../fields'
 
 export default {
   name: 'SuperMarketSalesTrend',
@@ -65,10 +65,10 @@ export default {
       this.chart = echarts.init(this.$refs.chart)
       this.chart.setOption({
         color: ['#5470c6'],
-        tooltip: { trigger: 'axis', renderMode: 'richText', confine: true },
+        tooltip: { trigger: 'axis', renderMode: 'richText', confine: true, valueFormatter: (value) => numberText(value) },
         grid: { left: 60, right: 20, top: 20, bottom: 38 },
         xAxis: { type: 'category', data: this.points.map(([day]) => day), axisTick: { show: false } },
-        yAxis: { type: 'value', splitLine: { lineStyle: { color: '#edf1f5' } } },
+        yAxis: { type: 'value', axisLabel: { formatter: (value) => numberText(value) }, splitLine: { lineStyle: { color: '#edf1f5' } } },
         series: [{ name: '金额合计', type: 'line', smooth: true, symbolSize: 7, data: this.points.map(([, amount]) => amount), areaStyle: { color: 'rgba(84,112,198,.08)' } }]
       })
     }

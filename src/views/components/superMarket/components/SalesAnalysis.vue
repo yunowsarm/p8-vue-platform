@@ -140,7 +140,7 @@ export default {
       const common = {
         color: ['#5470c6', '#91cc75', '#fac858'],
         textStyle: { fontFamily: 'Microsoft YaHei, sans-serif', color: '#69768b' },
-        tooltip: { trigger: 'axis', renderMode: 'richText', confine: true }
+        tooltip: { trigger: 'axis', renderMode: 'richText', confine: true, valueFormatter: (value) => numberText(value) }
       }
       const draw = (ref, option) => {
         if (!this.$refs[ref]) return
@@ -158,7 +158,7 @@ export default {
       draw('trend', {
         grid: { left: 65, right: 25, top: 30, bottom: 40 },
         xAxis: { type: 'category', data: dates, boundaryGap: true, axisTick: { show: false } },
-        yAxis: { type: 'value', splitLine: { lineStyle: { color: '#edf1f5' } } },
+        yAxis: { type: 'value', axisLabel: { formatter: (value) => numberText(value) }, splitLine: { lineStyle: { color: '#edf1f5' } } },
         series: [{ name: '金额合计', type: 'line', data: dates.map((date) => days.get(date)), smooth: true, symbolSize: 9, areaStyle: { color: 'rgba(84,112,198,.08)' } }]
       })
       const counts = { A: 0, B: 0, unknown: 0 }
@@ -187,7 +187,7 @@ export default {
       ).reverse()
       draw('devices', {
         grid: { left: 120, right: 30, top: 20, bottom: 35 },
-        xAxis: { type: 'value', splitLine: { lineStyle: { color: '#edf1f5' } } },
+        xAxis: { type: 'value', axisLabel: { formatter: (value) => numberText(value) }, splitLine: { lineStyle: { color: '#edf1f5' } } },
         yAxis: { type: 'category', data: devices.map((item) => item.name), axisLabel: { width: 100, overflow: 'truncate' }, axisTick: { show: false } },
         series: [{ name: '金额合计', type: 'bar', barMaxWidth: 22, itemStyle: { borderRadius: [0, 4, 4, 0] }, data: devices.map((item) => item.amount) }]
       })

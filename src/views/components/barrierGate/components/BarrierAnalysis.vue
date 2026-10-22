@@ -91,6 +91,7 @@
 </template>
 <script>
 import charts from '../charts'
+import { decimalText } from '@/utils/numberFormat'
 export default {
   name: 'BarrierAnalysis',
   mixins: [charts],
@@ -101,8 +102,8 @@ export default {
         { label: '进场次数', value: this.stats.entries, unit: '次' },
         { label: '出场次数', value: this.stats.exits, unit: '次' },
         { label: '去重车辆', value: this.stats.vehicles, unit: '辆' },
-        { label: '平均停留', value: this.stats.averageStay === null ? '—' : this.stats.averageStay.toFixed(1), unit: '分钟' },
-        { label: '实收金额（所选记录）', value: this.stats.amountCount ? this.stats.amount.toFixed(2) : '—', unit: '元' },
+        { label: '平均停留', value: decimalText(this.stats.averageStay), unit: '分钟' },
+        { label: '实收金额（所选记录）', value: this.stats.amountCount ? decimalText(this.stats.amount) : '—', unit: '元' },
         { label: '企业关联记录占比', value: this.percent(this.stats.linked, this.rows.length), unit: '%' }
       ]
     },
@@ -124,7 +125,7 @@ export default {
   },
   methods: {
     percent(value, total) {
-      return total ? ((value / total) * 100).toFixed(1) : '0.0'
+      return decimalText(total ? (value / total) * 100 : 0)
     }
   }
 }

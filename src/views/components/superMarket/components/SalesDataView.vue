@@ -1,14 +1,32 @@
 <template>
   <div class="data-view">
     <div class="dashboard-grid">
-      <section class="panel trend-panel">
-        <div class="panel-head">
-          <h3>明细金额趋势</h3>
-          <span>元 / 接收日期</span>
-        </div>
-        <sales-trend :rows="rows" />
-        <p class="data-note">按接收日期统计，接收时间可能晚于实际交易时间。</p>
-      </section>
+      <div class="overview-column">
+        <section class="panel overview-panel">
+          <div class="panel-head">
+            <h3>交易概览</h3>
+            <span>当前筛选范围</span>
+          </div>
+          <div class="overview-metrics">
+            <div v-for="item in overviewMetrics" :key="item.label" class="overview-metric">
+              <span>{{ item.label }}</span>
+              <strong>
+                {{ item.value }}
+                <small>{{ item.unit }}</small>
+              </strong>
+            </div>
+          </div>
+          <p class="data-note">金额按原值统计，销售与退货分别展示。</p>
+        </section>
+        <section class="panel trend-panel">
+          <div class="panel-head">
+            <h3>明细金额趋势</h3>
+            <span>元 / 接收日期</span>
+          </div>
+          <div class="trend-chart-wrap"><sales-trend :rows="rows" /></div>
+          <p class="data-note">按接收日期统计，接收时间可能晚于实际交易时间。</p>
+        </section>
+      </div>
       <section class="panel detail-panel">
         <div class="panel-head">
           <h3>当前选择明细</h3>
@@ -36,14 +54,13 @@
               </template>
             </el-table-column>
             <el-table-column align="center" header-align="center" label="数量">
-              <template slot-scope="scope">{{ numberText(scope.row.b00741, 4) }}</template>
+              <template slot-scope="scope">{{ numberText(scope.row.b00741) }}</template>
             </el-table-column>
             <el-table-column align="center" header-align="center" label="金额（元）">
               <template slot-scope="scope">
                 <span class="amount">{{ numberText(scope.row.b00517) }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" header-align="center" prop="deviceId" label="设备编号" show-overflow-tooltip />
             <el-table-column align="center" header-align="center" prop="receivedAt" label="接收时间" width="175" />
             <el-table-column align="center" header-align="center" label="操作">
               <template slot-scope="scope"><el-button type="text" size="small" @click="$emit('detail', scope.row)">详情</el-button></template>
@@ -55,25 +72,12 @@
           <el-pagination :current-page.sync="pageNo" :page-size.sync="pageSize" :page-sizes="[20, 50, 100]" :total="filteredRows.length" layout="sizes, prev, pager, next" @size-change="pageNo = 1" />
         </div>
       </section>
-      <section class="panel device-panel">
-        <div class="panel-head">
-          <h3>设备金额汇总</h3>
-          <span>按设备编号 · 金额原值</span>
-        </div>
-        <el-table :data="deviceRows" size="mini" stripe border height="100%" empty-text="暂无设备数据">
-          <el-table-column align="center" header-align="center" prop="name" label="设备编号" show-overflow-tooltip />
-          <el-table-column align="center" header-align="center" prop="count" label="明细数" />
-          <el-table-column align="center" header-align="center" label="金额（元）">
-            <template slot-scope="scope">{{ numberText(scope.row.amount) }}</template>
-          </el-table-column>
-        </el-table>
-      </section>
     </div>
   </div>
 </template>
 <script>
 import SalesTrend from './SalesTrend.vue'
-import { numberText, numeric, typeInfo } from '../fields'
+import { numberText, typeInfo, summarize, isKnownType } from '../fields'
 export default {
   name: 'SuperMarketSalesDataView',
   components: { SalesTrend },
@@ -82,23 +86,22 @@ export default {
     return { pageNo: 1, pageSize: 20 }
   },
   computed: {
+    overviewMetrics() {
+      const report = summarize(this.rows)
+      const hasAmount = this.rows.length > report.invalidAmount
+      const knownType = this.rows.some((row) => isKnownType(row.b01058))
+      return [
+        { label: '明细金额合计', value: hasAmount ? numberText(report.amount) : '—', unit: '元' },
+        { label: '交易单数', value: report.orders.size, unit: '单' },
+        { label: '销售金额', value: knownType ? numberText(report.sales) : '—', unit: '元' },
+        { label: '退货金额', value: knownType ? numberText(report.returns) : '—', unit: '元' }
+      ]
+    },
     filteredRows() {
       return this.rows
     },
     pageRows() {
       return this.rows.slice((this.pageNo - 1) * this.pageSize, this.pageNo * this.pageSize)
-    },
-    deviceRows() {
-      const groups = new Map()
-      this.rows.forEach((row) => {
-        const key = row.deviceId || '未识别设备'
-        if (!groups.has(key)) groups.set(key, { name: key, count: 0, amount: null })
-        const item = groups.get(key)
-        item.count++
-        const amount = numeric(row.b00517)
-        if (amount !== null) item.amount = (item.amount || 0) + amount
-      })
-      return [...groups.values()].sort((a, b) => (b.amount || 0) - (a.amount || 0))
     }
   },
   watch: {
@@ -123,8 +126,8 @@ export default {
 }
 .dashboard-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
-  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.5fr);
+  grid-template-rows: minmax(0, 1fr);
   height: 100%;
   gap: 8px;
 }
@@ -140,9 +143,61 @@ export default {
   flex-direction: column;
   box-shadow: 0 3px 14px rgba(34, 54, 82, 0.035);
 }
+.overview-column {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+.overview-panel {
+  flex: 0 0 auto;
+}
+.trend-panel {
+  flex: 1;
+  min-height: 240px;
+}
+.overview-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 4px 0 8px;
+}
+.overview-metric {
+  padding: 10px 12px;
+  background: #f7f9fd;
+  border: 1px solid #edf1f7;
+  border-radius: 8px;
+  min-width: 0;
+}
+.overview-metric > span {
+  color: #7b889a;
+  font-size: 12px;
+}
+.overview-metric strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #365c9f;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.overview-metric small {
+  margin-left: 5px;
+  font-size: 12px;
+  font-weight: normal;
+  color: #8b97a7;
+}
+.trend-chart-wrap {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
 .detail-panel {
   grid-column: 2;
-  grid-row: 1 / 3;
+  grid-row: 1;
 }
 .panel-head {
   display: flex;
@@ -196,16 +251,20 @@ h3 {
     grid-template-rows: none;
     height: auto;
   }
-  .panel {
-    min-height: 300px;
+  .overview-column {
+    overflow: visible;
+  }
+  .trend-panel {
+    flex: none;
+  }
+  .trend-chart-wrap {
+    flex: none;
+    height: 300px;
   }
   .detail-panel {
     grid-column: auto;
     grid-row: auto;
     height: 480px;
-  }
-  .device-panel {
-    height: 300px;
   }
 }
 </style>

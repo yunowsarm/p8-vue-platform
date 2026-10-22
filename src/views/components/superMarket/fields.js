@@ -1,3 +1,5 @@
+import { decimalText } from '@/utils/numberFormat'
+
 // 字段含义以已确认的表结构为准；未知编码不推测业务含义。
 export const BUSINESS_TYPES = {
   A: { label: '销售', tag: 'success' },
@@ -54,9 +56,8 @@ export function numeric(value) {
   return Number.isFinite(result) ? result : null
 }
 
-export function numberText(value, digits = 2) {
-  const result = numeric(value)
-  return result === null ? '—' : result.toLocaleString('zh-CN', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+export function numberText(value) {
+  return decimalText(value)
 }
 
 export function saleDetails(row) {
@@ -71,6 +72,7 @@ export function saleDetails(row) {
     let value = empty ? '未提供' : typeof raw === 'object' ? JSON.stringify(raw) : String(raw)
     if (!empty && key === 'b01058') value = typeInfo(raw).label
     if (!empty && key === 'b00517' && numeric(raw) !== null) value = `${numberText(raw)} 元`
+    if (!empty && ['b00741', 'o00716', 'b00495'].includes(key) && numeric(raw) !== null) value = numberText(raw)
     if (!empty && key === 'b01253') value = `${raw}（支付方式名称待补充）`
     const label = Object.prototype.hasOwnProperty.call(RESPONSE_FIELDS, key) ? RESPONSE_FIELDS[key] : ''
     const item = { key, label, value }

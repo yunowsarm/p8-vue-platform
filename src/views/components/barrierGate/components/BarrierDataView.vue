@@ -43,7 +43,14 @@
             <vxe-column title="离开时间" width="170">
               <template slot-scope="scope">{{ formatDate(scope.row.exitTime) }}</template>
             </vxe-column>
-            <vxe-column v-for="column in recordColumns" :key="column.key" :field="column.key" :title="column.label" :min-width="column.width || 110" show-overflow="tooltip" />
+            <vxe-column
+              v-for="column in recordColumns"
+              :key="column.key"
+              :field="column.key"
+              :title="column.label"
+              :min-width="column.width || 110"
+              :formatter="formatRecordCell"
+              show-overflow="tooltip" />
           </vxe-table>
         </div>
       </div>
@@ -67,6 +74,7 @@
 <script>
 import charts from '../charts'
 import { dateLabel } from '../data'
+import { decimalText } from '@/utils/numberFormat'
 export default {
   name: 'BarrierDataView',
   mixins: [charts],
@@ -98,6 +106,9 @@ export default {
   },
   methods: {
     formatDate: dateLabel,
+    formatRecordCell({ cellValue, column }) {
+      return ['receivableAmount', 'actualAmount', 'discountAmount', 'boothAmount', 'onlineAmount', 'centralAmount'].includes(column.field) ? decimalText(cellValue) : cellValue
+    },
     companyLabel(row) {
       return row.companyName || (row.conflicting ? '登记冲突' : '未关联企业')
     }

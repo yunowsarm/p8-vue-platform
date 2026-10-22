@@ -52,7 +52,7 @@
     </div>
     <div class="filter-card">
       <el-input v-model="keyword" size="mini" clearable prefix-icon="el-icon-search" placeholder="搜索单号、商品名称或商品标识" />
-      <el-select v-model="device" size="mini" clearable placeholder="全部设备"><el-option v-for="item in devices" :key="item" :label="item" :value="item" /></el-select>
+      <!-- <el-select v-model="device" size="mini" clearable placeholder="全部设备"><el-option v-for="item in devices" :key="item" :label="item" :value="item" /></el-select> -->
       <el-select v-model="businessType" size="mini" clearable placeholder="全部业务类型">
         <el-option label="销售" value="A" />
         <el-option label="退货" value="B" />
@@ -105,7 +105,7 @@
 import SalesAnalysis from './components/SalesAnalysis.vue'
 import SalesDataView from './components/SalesDataView.vue'
 import { fetchSalesDetails } from '@/service/superMarket'
-import { TABLE_FIELDS, RESPONSE_FIELDS, isKnownType, typeInfo, numberText, summarize, saleDetails } from './fields.js'
+import { TABLE_FIELDS, RESPONSE_FIELDS, isKnownType, typeInfo, numberText, numeric, summarize, saleDetails } from './fields.js'
 
 function dayRange(days = 0, week = false) {
   const end = new Date()
@@ -116,15 +116,21 @@ function dayRange(days = 0, week = false) {
   return [`${date(start)} 00:00:00`, `${date(end)} 23:59:59`]
 }
 
+function monthRange() {
+  const range = dayRange()
+  return [`${range[0].slice(0, 7)}-01 00:00:00`, range[1]]
+}
+
 export default {
   name: 'SuperMarket',
   components: { SalesAnalysis, SalesDataView },
   data() {
     return {
       activeView: 'details',
-      range: dayRange(),
+      range: monthRange(),
       appliedRange: null,
       quickRanges: [
+        { label: '本月', value: 'month' },
         { label: '今天', value: 'today' },
         { label: '昨天', value: 'yesterday' },
         { label: '近 7 天', value: 'week' }
@@ -210,14 +216,14 @@ export default {
       return value === null || value === undefined || value === '' ? '—' : typeof value === 'object' ? JSON.stringify(value) : String(value)
     },
     setRange(value) {
-      this.range = dayRange(value === 'yesterday' ? 1 : 0, value === 'week')
+      this.range = value === 'month' ? monthRange() : dayRange(value === 'yesterday' ? 1 : 0, value === 'week')
       this.search()
     },
     reset() {
       this.keyword = ''
       this.device = ''
       this.businessType = ''
-      this.range = dayRange()
+      this.range = monthRange()
       this.search()
     },
     async search() {
@@ -260,9 +266,26 @@ export default {
       try {
         const XLSX = await import('xlsx')
         const columns = ['o01329', 'productName', 'o01292', 'productSpec', 'productUnit', 'b01058', 'b00741', 'b00517', 'deviceId', 'receivedAt']
-        const data = [columns.map((key) => RESPONSE_FIELDS[key]), ...rows.map((row) => columns.map((key) => (key === 'b01058' ? typeInfo(row[key]).label : row[key] == null ? '' : row[key])))]
-        // aoa_to_sheet 将接口字符串写为文本单元格，保留前导零，不生成公式。
+        const decimalFields = new Set(['b00741', 'b00517'])
+        const data = [
+          columns.map((key) => RESPONSE_FIELDS[key]),
+          ...rows.map((row) =>
+            columns.map((key) => {
+              if (key === 'b01058') return typeInfo(row[key]).label
+              if (row[key] == null) return ''
+              return decimalFields.has(key) && numeric(row[key]) !== null ? numeric(row[key]) : row[key]
+            })
+          )
+        ]
+        // 数量、金额保留数值精度，以单元格格式显示两位小数；单号等仍为文本，保留前导零。
         const sheet = XLSX.utils.aoa_to_sheet(data)
+        rows.forEach((row, index) =>
+          columns.forEach((key, columnIndex) => {
+            if (!decimalFields.has(key)) return
+            const cell = sheet[XLSX.utils.encode_cell({ r: index + 1, c: columnIndex })]
+            if (cell && cell.t === 'n') cell.z = '#,##0.00'
+          })
+        )
         sheet['!cols'] = columns.map(() => ({ wch: 24 }))
         const book = XLSX.utils.book_new()
         XLSX.utils.book_append_sheet(book, sheet, '销售明细')
