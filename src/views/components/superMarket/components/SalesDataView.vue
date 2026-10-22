@@ -61,7 +61,7 @@
                 <span class="amount">{{ numberText(scope.row.b00517) }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" header-align="center" prop="receivedAt" label="接收时间" width="175" />
+            <el-table-column align="center" header-align="center" prop="o00781" label="交易时间" width="175" />
             <el-table-column align="center" header-align="center" label="操作">
               <template slot-scope="scope"><el-button type="text" size="small" @click="$emit('detail', scope.row)">详情</el-button></template>
             </el-table-column>

@@ -39,7 +39,7 @@ export const RESPONSE_FIELDS = {
   o01292: '商品标识',
   b00495: '成本',
   receivedAt: '接收时间',
-  o00781: '时间字段',
+  o00781: '交易时间',
   o01330: '待确认字段 o01330',
   o00935: '待确认字段 o00935',
   b00193: '待确认字段 b00193',
@@ -69,16 +69,16 @@ export function numberText(value) {
 
 export function saleDetails(row) {
   if (!row) return { fields: [], unknown: [] }
-  const primaryKeys = ['o01329', 'b01058', 'productName', 'productSpec', 'productUnit', 'o01292', 'b00741', 'b00517', 'deviceId', 'receivedAt']
+  const primaryKeys = ['o01329', 'b01058', 'productName', 'productSpec', 'productUnit', 'b00741', 'b00517', 'o00781']
   const keys = [...new Set([...primaryKeys, ...Object.keys(row)])]
   const fields = []
   const unknown = []
   keys.forEach((key) => {
+    if (['id', 'o01292', 'deviceId', 'receivedAt'].includes(key)) return
     const raw = row[key]
     const empty = raw === null || raw === undefined || raw === ''
     let value = empty ? '未提供' : typeof raw === 'object' ? JSON.stringify(raw) : String(raw)
     if (!empty && key === 'b01058') value = typeInfo(raw).label
-    if (!empty && key === 'deviceId') value = deviceName(raw)
     if (!empty && key === 'b00517' && numeric(raw) !== null) value = `${numberText(raw)} 元`
     if (!empty && ['b00741', 'o00716', 'b00495'].includes(key) && numeric(raw) !== null) value = numberText(raw)
     if (!empty && key === 'b01253') value = `${raw}（支付方式名称待补充）`

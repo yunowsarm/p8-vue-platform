@@ -5,6 +5,16 @@
       <div class="analysis-toolbar">
         <h3>道闸数据分析</h3>
         <span>{{ rows.length }} 条停车记录</span>
+        <el-dropdown trigger="click" @command="exportReport">
+          <el-button type="primary" size="mini" :disabled="loading || !rows.length" :loading="exporting">
+            导出报告
+            <i class="el-icon-arrow-down el-icon--right" />
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="html">导出 HTML 报告</el-dropdown-item>
+            <el-dropdown-item command="pdf">打印 / 保存 PDF</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
       <div class="metrics">
         <div v-for="metric in metrics" :key="metric.label" class="metric panel">
@@ -92,10 +102,14 @@
 <script>
 import charts from '../charts'
 import { decimalText } from '@/utils/numberFormat'
+import { buildBarrierReport } from '../report'
 export default {
   name: 'BarrierAnalysis',
   mixins: [charts],
   props: { rows: { type: Array, default: () => [] }, stats: { type: Object, required: true }, appliedQuery: { type: Object, required: true }, loading: Boolean },
+  data() {
+    return { exporting: false }
+  },
   computed: {
     metrics() {
       return [
@@ -124,6 +138,57 @@ export default {
     }
   },
   methods: {
+    exportReport(format) {
+      if (this.loading || this.exporting || !this.rows.length || !['html', 'pdf'].includes(format)) return
+      const popup = format === 'pdf' ? window.open('', '_blank') : null
+      if (format === 'pdf' && !popup) {
+        this.$message.warning('浏览器拦截了打印窗口，请允许弹出窗口后重试')
+        return
+      }
+      this.exporting = true
+      try {
+        this.renderCharts()
+        const titles = { dailyChart: '每日进出趋势', hourChart: '24 小时进出分布', durationChart: '停留时长分布', channelChart: '通道通行量 · 前 10 个通道' }
+        const charts = Object.entries(titles)
+          .filter(([key]) => this.charts[key])
+          .map(([key, title]) => {
+            const chart = this.charts[key]
+            chart.setOption({ animation: false })
+            return { title, image: chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' }) }
+          })
+        const html = buildBarrierReport({
+          stats: this.stats,
+          query: this.appliedQuery,
+          recordCount: this.rows.length,
+          metrics: this.metrics,
+          findings: this.findings,
+          scopeText: this.scopeText,
+          charts,
+          autoPrint: format === 'pdf'
+        })
+        if (popup) {
+          popup.opener = null
+          popup.document.open()
+          popup.document.write(html)
+          popup.document.close()
+        } else {
+          const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }))
+          const link = document.createElement('a')
+          link.href = url
+          const range = this.appliedQuery.dateRange || []
+          link.download = `道闸出入分析_${range.length === 2 ? range.join('_') : '全部日期'}.html`
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+          setTimeout(() => URL.revokeObjectURL(url), 1000)
+        }
+      } catch (error) {
+        if (popup) popup.close()
+        this.$message.error('报告导出失败，请稍后重试')
+      } finally {
+        this.exporting = false
+      }
+    },
     percent(value, total) {
       return decimalText(total ? (value / total) * 100 : 0)
     }
@@ -144,6 +209,7 @@ export default {
   margin: 0 0 10px;
 }
 .analysis-toolbar h3 {
+  flex: 1;
   margin: 0;
   font-size: 16px;
 }

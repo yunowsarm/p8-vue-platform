@@ -32,7 +32,7 @@
           </div>
           <div ref="types" class="chart" role="img" aria-label="销售、退货及未识别类型的明细条数分布图"></div>
         </section>
-        <section class="analysis-panel wide">
+        <section class="analysis-panel product-panel">
           <div class="panel-title">
             <h3>商品金额排行</h3>
             <span>前 10 名 · 金额原值合计</span>
@@ -46,13 +46,6 @@
             </el-table-column>
           </el-table>
         </section>
-        <section class="analysis-panel">
-          <div class="panel-title">
-            <h3>设备贡献</h3>
-            <span>前 10 台 · 金额原值合计</span>
-          </div>
-          <div ref="devices" class="chart" role="img" aria-label="设备金额排行柱状图"></div>
-        </section>
       </div>
       <div class="data-note">
         <i class="el-icon-info"></i>
@@ -65,19 +58,8 @@
 <script>
 import * as echarts from 'echarts'
 import SalesMetrics from './SalesMetrics.vue'
-import { numberText, numeric, typeInfo, summarize, deviceName } from '../fields'
-
-function ranking(rows, getKey, getName) {
-  const groups = new Map()
-  rows.forEach((row) => {
-    const key = getKey(row)
-    if (!groups.has(key)) groups.set(key, { name: getName(row), count: 0, amount: 0 })
-    const group = groups.get(key)
-    group.count++
-    group.amount += numeric(row.b00517) || 0
-  })
-  return [...groups.values()].sort((a, b) => b.amount - a.amount).slice(0, 10)
-}
+import { numberText, typeInfo, summarize } from '../fields'
+import { productRanking, amountTrend } from '../analysis'
 
 export default {
   name: 'SuperMarketSalesAnalysis',
@@ -88,11 +70,7 @@ export default {
       return summarize(this.rows)
     },
     products() {
-      return ranking(
-        this.rows,
-        (row) => row.o01292 || row.productName || 'unknown',
-        (row) => row.productName || (row.o01292 ? `标识 ${row.o01292}` : '未识别商品')
-      )
+      return productRanking(this.rows)
     }
   },
   watch: {
@@ -133,11 +111,21 @@ export default {
       ;(this.charts || []).forEach((chart) => chart.dispose())
       this.charts = []
     },
-    renderCharts() {
+    getReportCharts() {
+      this.renderCharts(false)
+      return ['trend', 'types']
+        .map((name, index) => {
+          const chart = this.$refs[name] && echarts.getInstanceByDom(this.$refs[name])
+          return chart ? { title: index ? '业务类型分布' : '金额趋势（按接收日期）', image: chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' }) } : null
+        })
+        .filter(Boolean)
+    },
+    renderCharts(animate = true) {
       if (!this.active) return
       this.disposeCharts()
       if (!this.rows.length) return
       const common = {
+        animation: animate,
         color: ['#5470c6', '#91cc75', '#fac858'],
         textStyle: { fontFamily: 'Microsoft YaHei, sans-serif', color: '#69768b' },
         tooltip: { trigger: 'axis', renderMode: 'richText', confine: true, valueFormatter: (value) => numberText(value) }
@@ -148,13 +136,8 @@ export default {
         chart.setOption({ ...common, ...option })
         this.charts.push(chart)
       }
-      const days = new Map()
-      this.rows.forEach((row) => {
-        const date = String(row.receivedAt || '').slice(0, 10)
-        const amount = numeric(row.b00517)
-        if (/^\d{4}-\d{2}-\d{2}$/.test(date) && amount !== null) days.set(date, (days.get(date) || 0) + amount)
-      })
-      const dates = [...days.keys()].sort()
+      const days = new Map(amountTrend(this.rows))
+      const dates = [...days.keys()]
       draw('trend', {
         grid: { left: 65, right: 25, top: 30, bottom: 40 },
         xAxis: { type: 'category', data: dates, boundaryGap: true, axisTick: { show: false } },
@@ -179,17 +162,6 @@ export default {
               .filter((item) => item.value)
           }
         ]
-      })
-      const devices = ranking(
-        this.rows,
-        (row) => row.deviceId || 'unknown',
-        (row) => deviceName(row.deviceId)
-      ).reverse()
-      draw('devices', {
-        grid: { left: 120, right: 30, top: 20, bottom: 35 },
-        xAxis: { type: 'value', axisLabel: { formatter: (value) => numberText(value) }, splitLine: { lineStyle: { color: '#edf1f5' } } },
-        yAxis: { type: 'category', data: devices.map((item) => item.name), axisLabel: { width: 100, overflow: 'truncate' }, axisTick: { show: false } },
-        series: [{ name: '金额合计', type: 'bar', barMaxWidth: 22, itemStyle: { borderRadius: [0, 4, 4, 0] }, data: devices.map((item) => item.amount) }]
       })
     }
   }
@@ -248,6 +220,9 @@ export default {
   border-radius: 10px;
   padding: 12px;
   min-width: 0;
+}
+.product-panel {
+  grid-column: 1 / -1;
 }
 .panel-title {
   display: flex;

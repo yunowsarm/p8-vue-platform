@@ -63,7 +63,17 @@
         <span v-if="updatedAt">· {{ updatedAt }} 更新</span>
       </span>
       <!-- <el-button size="mini" @click="mappingVisible = true">字段映射</el-button> -->
-      <el-button type="primary" size="mini" :disabled="loading || !filteredRows.length" :loading="exporting" @click="exportRows">导出明细</el-button>
+      <el-dropdown v-if="activeView === 'analysis'" trigger="click" :disabled="loading || exporting || !filteredRows.length" @command="exportReport">
+        <el-button type="primary" size="mini" :disabled="loading || !filteredRows.length" :loading="exporting">
+          导出报告
+          <i class="el-icon-arrow-down el-icon--right" />
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="pdf">PDF 格式</el-dropdown-item>
+          <el-dropdown-item command="html">HTML 格式</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <el-button v-else type="primary" size="mini" :disabled="loading || !filteredRows.length" :loading="exporting" @click="exportRows">导出明细</el-button>
     </div>
     <el-alert v-if="error" class="status-alert" :title="error" type="error" :closable="false" show-icon />
     <div v-if="hasData && (report.unknown || report.invalidAmount)" class="quality-note">
@@ -73,7 +83,7 @@
     <div class="content" v-loading="loading" element-loading-text="正在加载查询范围内的全部明细…">
       <keep-alive>
         <sales-data-view v-if="activeView === 'details'" :rows="filteredRows" :error="error" @detail="selectedRow = $event" />
-        <sales-analysis v-else :rows="filteredRows" />
+        <sales-analysis v-else ref="analysis" :rows="filteredRows" />
       </keep-alive>
     </div>
     <el-dialog title="销售明细详情" :visible="!!selectedRow" width="min(760px, 94vw)" @close="selectedRow = null">
@@ -96,7 +106,7 @@
         <el-table-column align="center" header-align="center" prop="key" label="字段编码" />
         <el-table-column align="center" header-align="center" prop="label" label="业务含义" />
       </el-table>
-      <p class="dialog-note">o01292 与商品条码 o80044 的关联尚待确认。o00781 的时间口径、销售接口 b00495 的成本口径尚待确认，不据此计算交易趋势或毛利。</p>
+      <p class="dialog-note">o01292 与商品条码 o80044 的关联尚待确认。交易时间取 o00781；销售接口 b00495 的成本口径尚待确认，不据此计算毛利。</p>
     </el-dialog>
   </div>
 </template>
@@ -105,6 +115,7 @@
 import SalesAnalysis from './components/SalesAnalysis.vue'
 import SalesDataView from './components/SalesDataView.vue'
 import { fetchSalesDetails } from '@/service/superMarket'
+import { buildReportHtml } from './report'
 import { TABLE_FIELDS, RESPONSE_FIELDS, isKnownType, typeInfo, numberText, numeric, summarize, saleDetails, deviceName } from './fields.js'
 
 function dayRange(days = 0, week = false) {
@@ -259,6 +270,44 @@ export default {
         if (requestId === this.requestId) this.loading = false
       }
     },
+    exportReport(format) {
+      if (!['pdf', 'html'].includes(format) || this.loading || this.exporting || !this.filteredRows.length || !this.appliedRange) return
+      const popup = format === 'pdf' ? window.open('', '_blank') : null
+      if (format === 'pdf' && !popup) {
+        this.$message.warning('浏览器拦截了报告窗口，请允许弹出窗口后重试')
+        return
+      }
+      this.exporting = true
+      try {
+        const html = buildReportHtml({
+          rows: this.filteredRows,
+          range: this.appliedRange,
+          filters: { keyword: this.keyword, device: this.device, type: this.businessType },
+          charts: this.$refs.analysis ? this.$refs.analysis.getReportCharts() : [],
+          autoPrint: format === 'pdf'
+        })
+        if (popup) {
+          popup.opener = null
+          popup.document.open()
+          popup.document.write(html)
+          popup.document.close()
+          return
+        }
+        const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }))
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `超市分析报告_${this.appliedRange[0].slice(0, 10)}_${this.appliedRange[1].slice(0, 10)}.html`
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        setTimeout(() => URL.revokeObjectURL(url), 1000)
+      } catch (error) {
+        if (popup) popup.close()
+        this.$message.error('报告导出失败，请重试')
+      } finally {
+        this.exporting = false
+      }
+    },
     async exportRows() {
       this.exporting = true
       const rows = this.filteredRows.slice()
@@ -266,7 +315,7 @@ export default {
       const filters = { keyword: this.keyword, device: this.device, type: this.businessType }
       try {
         const XLSX = await import('xlsx')
-        const columns = ['o01329', 'productName', 'o01292', 'productSpec', 'productUnit', 'b01058', 'b00741', 'b00517', 'deviceId', 'receivedAt']
+        const columns = ['o01329', 'productName', 'o01292', 'productSpec', 'productUnit', 'b01058', 'b00741', 'b00517', 'deviceId', 'o00781', 'receivedAt']
         const decimalFields = new Set(['b00741', 'b00517'])
         const data = [
           columns.map((key) => RESPONSE_FIELDS[key]),
