@@ -1,26 +1,21 @@
 <template>
   <div class="trend-wrap">
-    <div v-if="points.length" ref="chart" class="trend-chart" role="img" aria-label="按接收日期汇总的金额趋势图"></div>
-    <div v-else class="chart-empty">暂无有效接收日期和金额数据</div>
+    <div v-if="points.length" ref="chart" class="trend-chart" role="img" aria-label="按交易日期汇总全部筛选明细的金额趋势图"></div>
+    <div v-else class="chart-empty">暂无有效交易日期和金额数据</div>
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
-import { numeric, numberText } from '../fields'
+import { numberText } from '../fields'
+import { amountTrend } from '../analysis'
 
 export default {
   name: 'SuperMarketSalesTrend',
   props: { rows: { type: Array, default: () => [] } },
   computed: {
     points() {
-      const days = new Map()
-      this.rows.forEach((row) => {
-        const day = String(row.receivedAt || '').slice(0, 10)
-        const amount = numeric(row.b00517)
-        if (/^\d{4}-\d{2}-\d{2}$/.test(day) && amount !== null) days.set(day, (days.get(day) || 0) + amount)
-      })
-      return [...days.entries()].sort(([a], [b]) => a.localeCompare(b))
+      return amountTrend(this.rows)
     }
   },
   watch: {

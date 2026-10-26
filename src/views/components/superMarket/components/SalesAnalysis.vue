@@ -20,10 +20,10 @@
         <section class="analysis-panel wide">
           <div class="panel-title">
             <h3>金额趋势</h3>
-            <span>按接收日期 · receivedAt</span>
+            <span>按交易日期 · 全部筛选明细</span>
           </div>
-          <div ref="trend" class="chart" role="img" aria-label="按接收日期汇总金额的趋势图"></div>
-          <p class="chart-note">接收时间可能晚于实际交易时间；缺少有效接收日期或金额的记录不计入趋势。</p>
+          <div ref="trend" class="chart" role="img" aria-label="按交易日期汇总金额的趋势图"></div>
+          <p class="chart-note">交易日期与明细表一致，汇总全部筛选结果；缺少有效交易日期或金额的记录不计入趋势。</p>
         </section>
         <section class="analysis-panel">
           <div class="panel-title">
@@ -116,7 +116,7 @@ export default {
       return ['trend', 'types']
         .map((name, index) => {
           const chart = this.$refs[name] && echarts.getInstanceByDom(this.$refs[name])
-          return chart ? { title: index ? '业务类型分布' : '金额趋势（按接收日期）', image: chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' }) } : null
+          return chart ? { title: index ? '业务类型分布' : '金额趋势（按交易日期）', image: chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' }) } : null
         })
         .filter(Boolean)
     },

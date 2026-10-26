@@ -19,9 +19,16 @@ export function productRanking(rows) {
 export function amountTrend(rows) {
   const days = new Map()
   rows.forEach((row) => {
-    const day = String(row.receivedAt || '').slice(0, 10)
+    // 与明细表统一使用交易时间；延迟上报不能改变交易归属日期。
+    const day = String(row.o00781 || '')
+      .trim()
+      .slice(0, 10)
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day)
+    if (!match) return
+    const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])))
+    if (date.getUTCFullYear() !== Number(match[1]) || date.getUTCMonth() !== Number(match[2]) - 1 || date.getUTCDate() !== Number(match[3])) return
     const amount = numeric(row.b00517)
-    if (/^\d{4}-\d{2}-\d{2}$/.test(day) && amount !== null) days.set(day, (days.get(day) || 0) + amount)
+    if (amount !== null) days.set(day, (days.get(day) || 0) + amount)
   })
   return [...days.entries()].sort(([a], [b]) => a.localeCompare(b))
 }

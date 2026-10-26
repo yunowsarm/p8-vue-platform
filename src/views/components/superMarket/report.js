@@ -46,10 +46,10 @@ ${charts
   )}
 <h2>业务类型统计</h2>${table(['业务类型', '明细数', '金额合计（元）'], types)}
 <h2>每日金额统计</h2>${table(
-    ['接收日期', '金额合计（元）'],
+    ['交易日期', '金额合计（元）'],
     amountTrend(rows).map(([day, amount]) => [day, numberText(amount)])
   )}
-<p class="muted">统计口径：金额按接口原值汇总，销售与退货分别统计，不推算净销售额或毛利。交易单按设备与单号去重。趋势按接收日期汇总，接收时间可能晚于交易时间；无有效接收日期或金额的记录不计入趋势。缺失金额不按零处理。设备名称使用当前前端映射。</p></main>${
+<p class="muted">统计口径：金额按接口原值汇总，销售与退货分别统计，不推算净销售额或毛利。交易单按设备与单号去重。趋势按交易日期汇总全部筛选明细，与明细表交易时间一致，不随表格分页改变；无有效交易日期或金额的记录不计入趋势，不使用接收日期替代。缺失金额不按零处理。设备名称使用当前前端映射。</p></main>${
     autoPrint
       ? '<script>window.addEventListener("load",function(){var ready=document.fonts?document.fonts.ready:Promise.resolve();ready.catch(function(){}).then(function(){setTimeout(function(){window.focus();window.print()},150)})},{once:true})</script>'
       : ''

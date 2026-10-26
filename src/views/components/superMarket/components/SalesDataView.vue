@@ -21,10 +21,10 @@
         <section class="panel trend-panel">
           <div class="panel-head">
             <h3>明细金额趋势</h3>
-            <span>元 / 接收日期</span>
+            <span>元 / 交易日期</span>
           </div>
           <div class="trend-chart-wrap"><sales-trend :rows="rows" /></div>
-          <p class="data-note">按接收日期统计，接收时间可能晚于实际交易时间。</p>
+          <p class="data-note">按交易日期汇总全部 {{ rows.length }} 条筛选明细，非表格当前页；缺少有效交易日期或金额的记录不计入趋势。</p>
         </section>
       </div>
       <section class="panel detail-panel">

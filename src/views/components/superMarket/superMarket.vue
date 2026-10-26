@@ -89,7 +89,7 @@
     <el-dialog title="销售明细详情" :visible="!!selectedRow" width="min(760px, 94vw)" @close="selectedRow = null">
       <template v-if="selectedRow">
         <div class="sale-detail-body">
-          <p class="dialog-note">以下信息按前端字段字典展示，缺少的数据标记为“未提供”。</p>
+          <!-- <p class="dialog-note">以下信息按前端字段字典展示，缺少的数据标记为“未提供”。</p> -->
           <dl class="sale-detail-grid">
             <div v-for="item in detail.fields" :key="item.key" class="sale-detail-item">
               <dt>{{ item.label }}</dt>
