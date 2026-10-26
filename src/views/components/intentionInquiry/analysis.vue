@@ -525,22 +525,13 @@ export default {
   background: white;
   border: 1px solid #e8edf5;
   border-radius: 10px;
-  padding: 20px;
+  padding: 12px 20px;
   position: relative;
   overflow: hidden;
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 3px;
-    background: #3578f6;
-  }
   strong {
     display: block;
-    margin: 15px 0 12px;
-    font-size: 34px;
+    margin: 8px 0 6px;
+    font-size: 30px;
     line-height: 1;
     font-weight: 650;
     font-variant-numeric: tabular-nums;
@@ -549,15 +540,6 @@ export default {
     color: #8b97aa;
     font-size: 11px;
     line-height: 1.6;
-  }
-  &.green::before {
-    background: #22b7a0;
-  }
-  &.purple::before {
-    background: #8c6de9;
-  }
-  &.orange::before {
-    background: #f3b44c;
   }
 }
 .metric-label {
@@ -675,7 +657,7 @@ export default {
     gap: 12px;
   }
   .metric-card {
-    padding: 16px;
+    padding: 12px 16px;
   }
 }
 @media (max-width: 850px) {
