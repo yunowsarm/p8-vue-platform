@@ -132,6 +132,11 @@ function monthRange() {
   return [`${range[0].slice(0, 7)}-01 00:00:00`, range[1]]
 }
 
+function yearRange() {
+  const range = dayRange()
+  return [`${range[0].slice(0, 4)}-01-01 00:00:00`, range[1]]
+}
+
 export default {
   name: 'SuperMarket',
   components: { SalesAnalysis, SalesDataView },
@@ -141,6 +146,7 @@ export default {
       range: monthRange(),
       appliedRange: null,
       quickRanges: [
+        { label: '今年', value: 'year' },
         { label: '本月', value: 'month' },
         { label: '今天', value: 'today' },
         { label: '昨天', value: 'yesterday' },
@@ -228,7 +234,7 @@ export default {
       return value === null || value === undefined || value === '' ? '—' : typeof value === 'object' ? JSON.stringify(value) : String(value)
     },
     setRange(value) {
-      this.range = value === 'month' ? monthRange() : dayRange(value === 'yesterday' ? 1 : 0, value === 'week')
+      this.range = value === 'year' ? yearRange() : value === 'month' ? monthRange() : dayRange(value === 'yesterday' ? 1 : 0, value === 'week')
       this.search()
     },
     reset() {
