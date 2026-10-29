@@ -73,7 +73,7 @@
           <el-dropdown-item command="html">HTML 格式</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-button v-else type="primary" size="mini" :disabled="loading || !filteredRows.length" :loading="exporting" @click="exportRows">导出明细</el-button>
+      <el-button v-else type="primary" size="mini" :disabled="loading || !filteredRows.length" :loading="exporting" @click="exportRows">按单号导出明细</el-button>
     </div>
     <el-alert v-if="error" class="status-alert" :title="error" type="error" :closable="false" show-icon />
     <div v-if="hasData && (report.unknown || report.invalidAmount)" class="quality-note">

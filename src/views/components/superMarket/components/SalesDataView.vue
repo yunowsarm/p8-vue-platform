@@ -21,7 +21,7 @@
         <section class="panel trend-panel">
           <div class="panel-head">
             <h3>明细金额趋势</h3>
-            <el-button size="mini" :loading="exportingDaily" :disabled="loading || !!error || !appliedRange || !rows.length" @click="exportDaily">导出明细</el-button>
+            <el-button size="mini" :loading="exportingDaily" :disabled="loading || !!error || !appliedRange || !rows.length" @click="exportDaily">按天导出明细</el-button>
             <span>元 / 交易日期</span>
           </div>
           <div class="trend-chart-wrap"><sales-trend :rows="rows" /></div>
