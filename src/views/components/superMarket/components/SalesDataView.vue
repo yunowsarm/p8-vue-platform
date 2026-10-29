@@ -21,6 +21,7 @@
         <section class="panel trend-panel">
           <div class="panel-head">
             <h3>明细金额趋势</h3>
+            <el-button size="mini" :loading="exportingDaily" :disabled="loading || !!error || !appliedRange || !rows.length" @click="exportDaily">导出明细</el-button>
             <span>元 / 交易日期</span>
           </div>
           <div class="trend-chart-wrap"><sales-trend :rows="rows" /></div>
@@ -78,12 +79,13 @@
 <script>
 import SalesTrend from './SalesTrend.vue'
 import { numberText, typeInfo, summarize, isKnownType } from '../fields'
+import { dailyAmountWorkbook } from '../dailyExport'
 export default {
   name: 'SuperMarketSalesDataView',
   components: { SalesTrend },
-  props: { rows: { type: Array, default: () => [] }, error: { type: String, default: '' } },
+  props: { rows: { type: Array, default: () => [] }, error: { type: String, default: '' }, appliedRange: { type: Array, default: null }, loading: Boolean },
   data() {
-    return { pageNo: 1, pageSize: 20 }
+    return { pageNo: 1, pageSize: 20, exportingDaily: false }
   },
   computed: {
     overviewMetrics() {
@@ -110,6 +112,21 @@ export default {
     }
   },
   methods: {
+    async exportDaily() {
+      if (this.loading || this.error || this.exportingDaily || !this.appliedRange || !this.rows.length) return
+      const rows = this.rows.slice()
+      const range = this.appliedRange.slice()
+      this.exportingDaily = true
+      try {
+        const XLSX = await import('xlsx')
+        const workbook = dailyAmountWorkbook(XLSX, rows, range)
+        XLSX.writeFile(workbook, `每日金额明细_${range[0].slice(0, 10)}_${range[1].slice(0, 10)}.xlsx`)
+      } catch (error) {
+        this.$message.error(error.message || '导出失败，请重试')
+      } finally {
+        this.exportingDaily = false
+      }
+    },
     numberText,
     typeInfo,
     display(value) {
@@ -119,6 +136,9 @@ export default {
 }
 </script>
 <style scoped>
+.trend-panel .panel-head .el-button {
+  margin-right: auto;
+}
 .data-view {
   height: 100%;
   min-height: 0;

@@ -32,3 +32,22 @@ export function amountTrend(rows) {
   })
   return [...days.entries()].sort(([a], [b]) => a.localeCompare(b))
 }
+
+export function dailyAmountRows(rows, range) {
+  if (!range || range.length !== 2 || range[0] > range[1]) throw new Error('请先查询有效的时间范围')
+  const parseDay = (value) => {
+    const day = String(value).slice(0, 10)
+    const date = new Date(`${day}T00:00:00Z`)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== day) throw new Error('查询日期无效')
+    return date
+  }
+  const start = parseDay(range[0])
+  const end = parseDay(range[1])
+  const amounts = new Map(amountTrend(rows))
+  const result = []
+  for (let time = start.getTime(); time <= end.getTime(); time += 86400000) {
+    const date = new Date(time).toISOString().slice(0, 10)
+    result.push([result.length + 1, date, amounts.get(date) || 0])
+  }
+  return result
+}

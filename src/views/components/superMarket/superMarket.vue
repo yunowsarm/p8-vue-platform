@@ -82,7 +82,7 @@
     </div>
     <div class="content" v-loading="loading" element-loading-text="正在加载查询范围内的全部明细…">
       <keep-alive>
-        <sales-data-view v-if="activeView === 'details'" :rows="filteredRows" :error="error" @detail="selectedRow = $event" />
+        <sales-data-view v-if="activeView === 'details'" :rows="filteredRows" :error="error" :applied-range="appliedRange" :loading="loading" @detail="selectedRow = $event" />
         <sales-analysis v-else ref="analysis" :rows="filteredRows" />
       </keep-alive>
     </div>
