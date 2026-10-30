@@ -90,7 +90,42 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-empty v-else-if="!loading" description="暂无符合条件的帖子" :image-size="88" />
+        <div v-if="topics.length" class="mobile-topic-list">
+          <article v-for="topic in topics" :key="topic.id" class="mobile-topic-card">
+            <div class="mobile-topic-tags">
+              <el-tag size="mini" :style="categoryTagStyle(topic.categoryId)">{{ categoryName(topic.categoryId) }}</el-tag>
+              <el-tag size="mini" :type="reviewStatusType(topic.status)">{{ reviewStatusText(topic.status) }}</el-tag>
+            </div>
+            <button type="button" class="mobile-topic-title" @click="openDetail(topic)">{{ topicTitle(topic) }}</button>
+            <p class="topic-content">{{ topic.content || '暂无正文' }}</p>
+            <div class="mobile-topic-meta">
+              <span>{{ authorName(topic) }}</span>
+              <time>{{ formatDateTime(topic.createdAt) }}</time>
+            </div>
+            <div class="mobile-topic-footer">
+              <span class="topic-metrics">
+                <span>
+                  <i class="el-icon-view"></i>
+                  {{ numberValue(topic.viewCount) }}
+                </span>
+                <span>
+                  <i class="el-icon-chat-dot-round"></i>
+                  {{ numberValue(topic.replyCount) }}
+                </span>
+                <span>
+                  <i class="el-icon-star-off"></i>
+                  {{ numberValue(topic.likeCount) }}
+                </span>
+              </span>
+              <div>
+                <el-button type="text" size="mini" @click="openDetail(topic)">详情</el-button>
+                <el-button v-if="isPendingReview(topic)" type="text" size="mini" @click="openAudit(topic)">审核</el-button>
+                <el-button type="text" size="mini" class="delete-action" @click="deleteTopic(topic)">删除</el-button>
+              </div>
+            </div>
+          </article>
+        </div>
+        <el-empty v-if="!topics.length && !loading" description="暂无符合条件的帖子" :image-size="88" />
       </div>
       <div v-if="total" class="pagination-bar">
         <span>共 {{ total }} 条</span>
@@ -535,6 +570,9 @@ export default {
 .filter-actions .el-button {
   margin: 0;
 }
+.mobile-topic-list {
+  display: none;
+}
 .topic-table-stage {
   flex: 1 1 0;
   min-height: 0;
@@ -738,6 +776,67 @@ export default {
   }
 }
 @media (max-width: 760px) {
+  .topic-table {
+    display: none;
+  }
+  .topic-table-stage {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .mobile-topic-list {
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+  }
+  .mobile-topic-card {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #edf1f5;
+    border-radius: 8px;
+  }
+  .mobile-topic-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .mobile-topic-title {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #303133;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+  }
+  .mobile-topic-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 10px;
+    color: #909399;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  .mobile-topic-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    border-top: 1px solid #edf1f5;
+  }
+  .mobile-topic-footer .el-button {
+    min-height: 36px;
+  }
+
   .park-topic-manage {
     padding: 10px;
   }
@@ -745,7 +844,7 @@ export default {
     gap: 10px;
   }
   .metric-card {
-    min-height: 82px;
+    min-height: 64px;
     padding: 12px;
   }
   .metric-icon {

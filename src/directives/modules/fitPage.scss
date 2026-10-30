@@ -113,3 +113,136 @@ main.viewport-business-page {
     }
   }
 }
+
+@media (max-width: 760px) {
+  main.viewport-business-page {
+    min-width: 0;
+    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain;
+
+    > section:last-of-type {
+      flex: 1 0 auto;
+      overflow: visible;
+    }
+
+    .record-feature-toolbar,
+    .list-toolbar,
+    .repair-toolbar,
+    .toolbar {
+      min-width: 0;
+      gap: 8px;
+      > .el-input {
+        flex: 1 1 100%;
+        width: 100%;
+        min-width: 0;
+      }
+      > .el-select {
+        flex: 1 1 130px;
+        width: auto;
+        min-width: 0;
+      }
+      > .record-feature-toolbar__actions,
+      > .toolbar-actions {
+        flex: 1 1 100%;
+        justify-content: flex-end;
+        margin-left: 0;
+      }
+    }
+
+    .record-feature-grid,
+    .payment-grid,
+    .government-grid,
+    .communication-grid,
+    .bus-grid,
+    .repair-grid,
+    .policy-card-grid,
+    .service-card-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .record-feature-card {
+      min-height: 0;
+      padding: 12px;
+    }
+    .record-feature-card__head {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .record-feature-card__id {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .record-feature-pagination,
+    .pagination-row,
+    .pagination-bar {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .el-pagination {
+      max-width: 100%;
+      white-space: normal;
+    }
+  }
+
+  main.viewport-business-page.park-topic-manage {
+    > .topic-surface {
+      flex: 1 0 auto;
+      min-height: 280px;
+    }
+    .topic-table-stage {
+      flex: 1 0 auto;
+      overflow: visible;
+    }
+  }
+}
+
+// Mobile lists size rows from their contents instead of the desktop flex budget.
+@media (max-width: 760px) {
+  main.viewport-business-page > .record-feature-surface {
+    flex: 0 0 auto;
+    height: auto !important;
+    overflow: visible;
+
+    > .record-feature-grid {
+      flex: 0 0 auto;
+      height: auto;
+      min-height: auto;
+      grid-auto-rows: max-content;
+      overflow: visible;
+      align-items: start;
+    }
+
+    .record-feature-card {
+      height: auto;
+      min-height: auto;
+      box-sizing: border-box;
+      > * {
+        flex-shrink: 0;
+      }
+    }
+
+    .record-feature-card h3 {
+      min-height: 0;
+      margin: 12px 0;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .record-feature-card__description {
+      min-height: 0;
+      margin-bottom: 12px;
+    }
+
+    .record-feature-card dl {
+      margin-bottom: 12px;
+    }
+    .record-feature-card__actions {
+      margin-top: 0;
+    }
+    > .record-feature-pagination {
+      margin-top: 12px;
+    }
+  }
+}
