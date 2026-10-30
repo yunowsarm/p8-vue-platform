@@ -1,6 +1,6 @@
 <!-- 政策服务业务组件：负责政策申请、详情展示、状态推进与项目转报。 -->
 <template>
-  <main class="policy-service-board">
+  <main v-fit-page class="policy-service-board">
     <section class="metric-grid" aria-label="当前业务统计">
       <article v-for="metric in metrics" :key="metric.label" class="metric-card" :class="metric.tone">
         <i :class="metric.icon"></i>

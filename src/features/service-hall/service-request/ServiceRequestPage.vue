@@ -1,17 +1,6 @@
 <!-- 服务需求业务组件：独立维护企业服务需求的页面、字段、状态流转和操作权限。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i :class="resource.icon"></i></span>
-        <div>
-          <h2>服务需求</h2>
-          <p>{{ resource.description }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增服务需求</el-button>
-    </header>
-
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索需求编号、联系人或内容" @input="resetPage" @clear="resetPage" />
@@ -21,6 +10,7 @@
         <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增服务需求</el-button></div>
       </div>
 
       <div v-if="pagedRecords.length" class="record-feature-grid">

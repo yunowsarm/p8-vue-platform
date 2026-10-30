@@ -1,16 +1,6 @@
 <!-- ToC 园区活动业务组件：独立维护活动场景、时间地点、发布信息和报名状态。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-calendar"></i></span>
-        <div>
-          <h2>园区活动</h2>
-          <p>查看和维护企业、公益、文体及培训沙龙活动。</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增活动</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索活动标题、地点或内容" @input="resetPage" @clear="resetPage" />
@@ -20,6 +10,7 @@
         <el-select v-model="statusFilter" clearable placeholder="全部报名状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增活动</el-button></div>
       </div>
       <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
         <el-table-column prop="title" label="活动标题" min-width="240" show-overflow-tooltip />

@@ -1,16 +1,6 @@
 <!-- 园区活动业务组件：独立维护活动场景、时间地点、发布信息和活动内容。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-date"></i></span>
-        <div>
-          <h2>园区活动</h2>
-          <p>集中维护园区活动安排、时间地点、报名说明与活动回顾。</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增园区活动</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索活动标题、地点或内容" @input="resetPage" @clear="resetPage" />
@@ -20,6 +10,7 @@
         <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增园区活动</el-button></div>
       </div>
       <div v-if="pagedRecords.length" class="record-feature-grid">
         <article

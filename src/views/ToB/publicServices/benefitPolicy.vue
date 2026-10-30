@@ -1,6 +1,6 @@
 <!-- ToB 惠企政策独立业务页面：展示政策与解读列表，接口地址统一由 API 模块声明。 -->
 <template>
-  <main class="benefit-policy-page">
+  <main v-fit-page class="benefit-policy-page">
     <section class="policy-panel">
       <div class="panel-tabs" role="tablist" aria-label="惠企政策内容类型">
         <button

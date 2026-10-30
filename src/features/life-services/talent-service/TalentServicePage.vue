@@ -1,22 +1,13 @@
 <!-- 人才服务业务组件：独立维护招聘职位、企业、薪资、联系方式和招聘状态。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-user"></i></span>
-        <div>
-          <h2>人才服务</h2>
-          <p>{{ mode === 'admin' ? '维护园区企业招聘岗位和招聘状态。' : '发布和查看园区企业招聘岗位。' }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">发布职位</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索职位、公司或职位描述" @input="resetPage" @clear="resetPage" />
         <el-select v-model="statusFilter" clearable placeholder="全部招聘状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">发布职位</el-button></div>
       </div>
       <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
         <el-table-column prop="jobTitle" label="职位名称" min-width="190" show-overflow-tooltip />

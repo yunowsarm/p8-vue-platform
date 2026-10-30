@@ -1,22 +1,13 @@
 <!-- 在线咨询业务组件：独立维护用户提问、管理端回复以及咨询详情展示。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-service"></i></span>
-        <div>
-          <h2>在线咨询</h2>
-          <p>{{ mode === 'admin' ? '查看并回复用户提交的园区服务咨询。' : '提交园区服务问题，并随时查看专员回复。' }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">发起咨询</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索咨询编号、咨询人或内容" @input="resetPage" @clear="resetPage" />
         <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">发起咨询</el-button></div>
       </div>
       <div v-if="pagedRecords.length" class="record-feature-grid">
         <article

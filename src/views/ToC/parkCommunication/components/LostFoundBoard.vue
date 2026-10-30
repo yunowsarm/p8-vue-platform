@@ -1,6 +1,6 @@
 <!-- 园区失物招领业务组件：负责信息发布、列表筛选、详情查看与附件下载。 -->
 <template>
-  <main class="communication-board">
+  <main v-fit-page class="communication-board">
     <section class="board-statistics board-statistics--compact" aria-label="信息统计">
       <article class="stat-card stat-card--primary">
         <span class="stat-icon"><i class="el-icon-document"></i></span>

@@ -1,16 +1,6 @@
 <!-- 安全专栏业务组件：独立维护安全法规、风险提示、演练通知和安全知识。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-warning-outline"></i></span>
-        <div>
-          <h2>安全专栏</h2>
-          <p>发布安全法规、风险提示、应急演练通知和园区安全知识。</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增安全文章</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索文章标题或内容" @input="resetPage" @clear="resetPage" />
@@ -20,6 +10,7 @@
         <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增安全文章</el-button></div>
       </div>
       <div v-if="pagedRecords.length" class="record-feature-grid">
         <article

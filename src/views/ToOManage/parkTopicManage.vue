@@ -1,6 +1,6 @@
 <!-- 园区话题管理页面：负责帖子筛选、详情审核、统计与删除管理。 -->
 <template>
-  <main class="park-topic-manage">
+  <main v-fit-page class="park-topic-manage">
     <section class="metric-grid" aria-label="帖子统计">
       <article v-for="card in summaryCards" :key="card.title" class="metric-card">
         <span :class="['metric-icon', card.tone]"><i :class="card.icon"></i></span>
@@ -35,62 +35,63 @@
         </div>
       </div>
 
-      <el-table v-if="topics.length" :data="topics" class="topic-table" row-key="id">
-        <el-table-column label="帖子内容" min-width="360">
-          <template slot-scope="{ row }">
-            <button type="button" class="topic-title" :aria-label="'查看帖子 ' + topicTitle(row)" @click="openDetail(row)">{{ topicTitle(row) }}</button>
-            <p class="topic-content">{{ row.content || '暂无正文' }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column label="版块" min-width="120">
-          <template slot-scope="{ row }">
-            <el-tag size="small" :style="categoryTagStyle(row.categoryId)">{{ categoryName(row.categoryId) }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="审核状态" min-width="118">
-          <template slot-scope="{ row }">
-            <el-tag size="small" :type="reviewStatusType(row.status)">{{ reviewStatusText(row.status) }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="发布人" min-width="130">
-          <template slot-scope="{ row }">
-            <span class="publisher">
-              <i class="el-icon-user"></i>
-              {{ authorName(row) }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="互动数据" min-width="156">
-          <template slot-scope="{ row }">
-            <span class="topic-metrics">
-              <span>
-                <i class="el-icon-view"></i>
-                {{ numberValue(row.viewCount) }}
+      <div class="topic-table-stage">
+        <el-table v-if="topics.length" :data="topics" height="100%" class="topic-table" row-key="id">
+          <el-table-column label="帖子内容" min-width="360">
+            <template slot-scope="{ row }">
+              <button type="button" class="topic-title" :aria-label="'查看帖子 ' + topicTitle(row)" @click="openDetail(row)">{{ topicTitle(row) }}</button>
+              <p class="topic-content">{{ row.content || '暂无正文' }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="版块" min-width="120">
+            <template slot-scope="{ row }">
+              <el-tag size="small" :style="categoryTagStyle(row.categoryId)">{{ categoryName(row.categoryId) }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="审核状态" min-width="118">
+            <template slot-scope="{ row }">
+              <el-tag size="small" :type="reviewStatusType(row.status)">{{ reviewStatusText(row.status) }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="发布人" min-width="130">
+            <template slot-scope="{ row }">
+              <span class="publisher">
+                <i class="el-icon-user"></i>
+                {{ authorName(row) }}
               </span>
-              <span>
-                <i class="el-icon-chat-dot-round"></i>
-                {{ numberValue(row.replyCount) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="互动数据" min-width="156">
+            <template slot-scope="{ row }">
+              <span class="topic-metrics">
+                <span>
+                  <i class="el-icon-view"></i>
+                  {{ numberValue(row.viewCount) }}
+                </span>
+                <span>
+                  <i class="el-icon-chat-dot-round"></i>
+                  {{ numberValue(row.replyCount) }}
+                </span>
+                <span>
+                  <i class="el-icon-star-off"></i>
+                  {{ numberValue(row.likeCount) }}
+                </span>
               </span>
-              <span>
-                <i class="el-icon-star-off"></i>
-                {{ numberValue(row.likeCount) }}
-              </span>
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column label="发布时间" min-width="160">
-          <template slot-scope="{ row }">{{ formatDateTime(row.createdAt) }}</template>
-        </el-table-column>
-        <el-table-column label="操作" width="184" fixed="right">
-          <template slot-scope="{ row }">
-            <el-button type="text" size="mini" @click="openDetail(row)">详情</el-button>
-            <el-button v-if="isPendingReview(row)" type="text" size="mini" @click="openAudit(row)">审核</el-button>
-            <el-button type="text" size="mini" class="delete-action" @click="deleteTopic(row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-empty v-else-if="!loading" description="暂无符合条件的帖子" :image-size="88" />
-
+            </template>
+          </el-table-column>
+          <el-table-column label="发布时间" min-width="160">
+            <template slot-scope="{ row }">{{ formatDateTime(row.createdAt) }}</template>
+          </el-table-column>
+          <el-table-column label="操作" width="184" fixed="right">
+            <template slot-scope="{ row }">
+              <el-button type="text" size="mini" @click="openDetail(row)">详情</el-button>
+              <el-button v-if="isPendingReview(row)" type="text" size="mini" @click="openAudit(row)">审核</el-button>
+              <el-button type="text" size="mini" class="delete-action" @click="deleteTopic(row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-empty v-else-if="!loading" description="暂无符合条件的帖子" :image-size="88" />
+      </div>
       <div v-if="total" class="pagination-bar">
         <span>共 {{ total }} 条</span>
         <el-pagination background :current-page.sync="currentPage" :page-size="pageSize" :total="total" layout="prev, pager, next" @current-change="loadTopics" />
@@ -412,7 +413,10 @@ export default {
 
 <style scoped>
 .park-topic-manage {
-  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
   padding: 12px;
   box-sizing: border-box;
   background: #f6f8fb;
@@ -425,11 +429,11 @@ export default {
   margin-bottom: 12px;
 }
 .metric-card {
-  min-height: 96px;
+  min-height: 80px;
   display: flex;
   align-items: center;
   gap: 13px;
-  padding: 15px 17px;
+  padding: 10px 16px;
   border: 1px solid #e5ebf2;
   border-radius: 10px;
   box-sizing: border-box;
@@ -480,8 +484,11 @@ export default {
 .metric-card p {
   margin: 0;
 }
-.topic-surface {
-  min-height: calc(100vh - 170px);
+.park-topic-manage.viewport-business-page > .topic-surface {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
   border: 1px solid #e5ebf2;
   border-radius: 10px;
   overflow: hidden;
@@ -505,7 +512,9 @@ export default {
   font-size: 12px;
 }
 .filter-bar {
+  flex: 0 0 auto;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   padding: 12px 20px;
@@ -525,6 +534,16 @@ export default {
 }
 .filter-actions .el-button {
   margin: 0;
+}
+.topic-table-stage {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.topic-table-stage > .el-empty {
+  height: 100%;
+  padding: 0;
+  box-sizing: border-box;
 }
 .topic-table {
   width: 100%;
@@ -584,7 +603,9 @@ export default {
   color: #f56c6c;
 }
 .pagination-bar {
-  min-height: 56px;
+  flex: 0 0 auto;
+  min-height: 48px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -712,11 +733,8 @@ export default {
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .topic-surface {
-    overflow-x: auto;
-  }
-  .topic-table {
-    min-width: 900px;
+  .filter-bar .el-input {
+    width: 240px;
   }
 }
 @media (max-width: 760px) {

@@ -1,6 +1,6 @@
 <!-- 园区交流业务组件：负责交流信息发布、筛选、详情展示和状态管理。 -->
 <template>
-  <main class="communication-board">
+  <main v-fit-page class="communication-board">
     <section class="board-statistics" :class="{ 'board-statistics--compact': config.hasStatus === false }" aria-label="信息统计">
       <article class="stat-card stat-card--primary">
         <span class="stat-icon"><i class="el-icon-document"></i></span>

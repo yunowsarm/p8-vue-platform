@@ -1,6 +1,6 @@
 <!-- 园区话题页面：维护板块浏览、帖子发布、详情互动及当前板块的发布默认值。 -->
 <template>
-  <main class="park-forum">
+  <main v-fit-page class="park-forum">
     <forum-navigation
       :active-sort="activeSort"
       :keyword.sync="keyword"

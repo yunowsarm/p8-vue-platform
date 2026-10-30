@@ -1,22 +1,13 @@
 <!-- 创业导师业务组件：独立维护导师档案、头衔、专长和联系方式。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-user-solid"></i></span>
-        <div>
-          <h2>创业导师</h2>
-          <p>{{ mode === 'admin' ? '维护园区创业导师档案与辅导专长。' : '查看园区创业导师档案与辅导专长。' }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增导师</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索导师姓名、头衔或专长" @input="resetPage" @clear="resetPage" />
         <el-select v-model="typeFilter" clearable placeholder="全部专长" @change="resetPage" @clear="resetPage">
           <el-option v-for="option in primaryOptions" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增导师</el-button></div>
       </div>
       <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
         <el-table-column prop="name" label="导师姓名" min-width="150" />

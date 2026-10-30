@@ -1,6 +1,6 @@
 <!-- 园区班车共享业务组件：同时供个人端查看和管理端维护班车线路。 -->
 <template>
-  <main class="shuttle-bus-board">
+  <main v-fit-page class="shuttle-bus-board">
     <section class="bus-statistics" aria-label="班车运营统计">
       <article class="stat-card primary">
         <i class="el-icon-truck"></i>

@@ -1,22 +1,13 @@
 <!-- 资料下载业务组件：独立维护资料分类、附件下载和管理端内容操作。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-folder-opened"></i></span>
-        <div>
-          <h2>资料下载</h2>
-          <p>{{ mode === 'admin' ? '上传和维护企业办事指南、模板及园区资料。' : '查阅并下载办事指南、表单模板和园区资料。' }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增资料</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索资料标题或描述" @input="resetPage" @clear="resetPage" />
         <el-select v-model="typeFilter" clearable placeholder="全部资料分类" @change="resetPage" @clear="resetPage">
           <el-option v-for="option in primaryOptions" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增资料</el-button></div>
       </div>
       <div v-if="pagedRecords.length" class="record-feature-grid">
         <article

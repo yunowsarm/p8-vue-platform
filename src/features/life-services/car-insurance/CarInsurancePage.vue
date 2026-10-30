@@ -1,16 +1,6 @@
 <!-- 汽车保险业务组件：独立维护保险产品、险种、价格、说明和销售状态。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-umbrella"></i></span>
-        <div>
-          <h2>汽车保险</h2>
-          <p>查看和维护交强险、商业险及车辆保障产品。</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增保险产品</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索保险名称或说明" @input="resetPage" @clear="resetPage" />
@@ -20,6 +10,7 @@
         <el-select v-model="statusFilter" clearable placeholder="全部销售状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增保险产品</el-button></div>
       </div>
       <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
         <el-table-column prop="insuranceName" label="保险名称" min-width="230" show-overflow-tooltip />

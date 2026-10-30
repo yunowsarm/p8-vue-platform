@@ -1,22 +1,13 @@
 <!-- 租车申请业务组件：独立维护用户选车、租赁日期、总租金和申请状态。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-tickets"></i></span>
-        <div>
-          <h2>租车申请</h2>
-          <p>提交并查看个人车辆租赁申请和确认状态。</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增租车申请</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索车辆编号或用户编号" @input="resetPage" @clear="resetPage" />
         <el-select v-model="statusFilter" clearable placeholder="全部申请状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增租车申请</el-button></div>
       </div>
       <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
         <el-table-column prop="carId" label="车辆编号" min-width="140" />

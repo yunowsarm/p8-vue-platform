@@ -1,6 +1,6 @@
 <!-- 在线缴费订单业务组件：负责订单查询、支付状态、详情展示与支付操作。 -->
 <template>
-  <main class="payment-order-board">
+  <main v-fit-page class="payment-order-board">
     <section class="board-statistics" aria-label="订单统计">
       <article class="stat-card stat-card--primary">
         <span class="stat-icon"><i class="el-icon-document"></i></span>

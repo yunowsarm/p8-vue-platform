@@ -1,6 +1,6 @@
 <!-- 政务服务业务组件：负责事项申请、详情展示与流程推进。 -->
 <template>
-  <main class="government-service-board">
+  <main v-fit-page class="government-service-board">
     <section class="government-statistics" aria-label="政务服务统计">
       <article class="stat-card stat-card--primary">
         <span><i class="el-icon-document"></i></span>

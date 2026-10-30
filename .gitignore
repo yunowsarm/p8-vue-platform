@@ -25,3 +25,6 @@ package-lock.json
 node_modules
 dist.zip
 /.codex-temp/
+
+# Browser layout verification artifacts
+/.tmp/park-topic-height/

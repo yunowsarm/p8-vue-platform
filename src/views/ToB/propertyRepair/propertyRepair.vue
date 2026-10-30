@@ -1,6 +1,6 @@
 <!-- 物业报修业务页面：负责报修申请、进度查询、详情展示与附件下载。 -->
 <template>
-  <main class="property-repair-page">
+  <main v-fit-page class="property-repair-page">
     <section class="repair-summary">
       <article v-for="item in summaryCards" :key="item.title" class="summary-card">
         <span class="summary-icon" :class="item.color"><i :class="item.icon"></i></span>

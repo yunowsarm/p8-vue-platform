@@ -1,6 +1,6 @@
 <!-- 物业报修处理页面：负责工单受理、派单、处理记录与附件下载。 -->
 <template>
-  <main class="repair-handle-page">
+  <main v-fit-page class="repair-handle-page">
     <section class="handle-summary">
       <article v-for="card in summaryCards" :key="card.status" class="summary-card">
         <span :class="['summary-icon', card.tone]"><i :class="card.icon"></i></span>

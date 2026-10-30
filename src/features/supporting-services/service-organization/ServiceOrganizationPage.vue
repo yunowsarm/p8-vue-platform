@@ -1,22 +1,13 @@
 <!-- 服务机构业务组件：独立维护园区服务机构类型、地址、联系人和机构介绍。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-office-building"></i></span>
-        <div>
-          <h2>服务机构</h2>
-          <p>{{ mode === 'admin' ? '维护法律、财税、知识产权、人力和金融服务机构。' : '查看园区法律、财税、知识产权、人力和金融服务机构。' }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增机构</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索机构名称、类型或地址" @input="resetPage" @clear="resetPage" />
         <el-select v-model="typeFilter" clearable placeholder="全部机构类型" @change="resetPage" @clear="resetPage">
           <el-option v-for="option in primaryOptions" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增机构</el-button></div>
       </div>
       <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
         <el-table-column prop="name" label="机构名称" min-width="200" show-overflow-tooltip />

@@ -1,16 +1,6 @@
 <!-- 资源对接业务组件：独立维护资源需求、对接目标、办理进度和终端操作规则。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i :class="resource.icon"></i></span>
-        <div>
-          <h2>资源对接</h2>
-          <p>{{ resource.description }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增对接申请</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索申请编号、对接目标或内容" @input="resetPage" @clear="resetPage" />
@@ -20,6 +10,7 @@
         <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增对接申请</el-button></div>
       </div>
       <div v-if="pagedRecords.length" class="record-feature-grid">
         <article

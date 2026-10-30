@@ -1,22 +1,13 @@
 <!-- 通知公告业务组件：根据入口配置加载指定范围公告，并维护展示、附件、发布表单和管理权限。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-bell"></i></span>
-        <div>
-          <h2>通知公告</h2>
-          <p>{{ mode === 'admin' ? '发布和维护园区通知公告。' : '查看园区最新公告、活动通知和安全提醒。' }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">发布公告</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索公告标题或内容" @input="resetPage" @clear="resetPage" />
         <el-select v-model="typeFilter" clearable placeholder="全部公告场景" @change="resetPage" @clear="resetPage">
           <el-option v-for="option in primaryOptions" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">发布公告</el-button></div>
       </div>
       <div v-if="pagedRecords.length" class="record-feature-grid">
         <article

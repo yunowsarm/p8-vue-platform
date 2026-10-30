@@ -1,6 +1,6 @@
 <!-- 企业关怀服务业务组件：负责服务申请、详情流转与办理操作。 -->
 <template>
-  <main class="enterprise-care-board">
+  <main v-fit-page class="enterprise-care-board">
     <section class="metric-grid" aria-label="惠企服务状态统计">
       <article v-for="metric in metrics" :key="metric.label" class="metric-card" :class="metric.tone">
         <i :class="metric.icon"></i>

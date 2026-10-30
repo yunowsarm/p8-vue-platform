@@ -1,22 +1,13 @@
 <!-- 保险投保记录业务组件：独立维护保险编号、车辆、购买数量、总价和生效状态。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i class="el-icon-document-checked"></i></span>
-        <div>
-          <h2>保险投保记录</h2>
-          <p>提交并查看车辆保险购买与生效记录。</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增投保记录</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索保险编号、用户或车牌号" @input="resetPage" @clear="resetPage" />
         <el-select v-model="statusFilter" clearable placeholder="全部投保状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增投保记录</el-button></div>
       </div>
       <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
         <el-table-column prop="insuranceId" label="保险编号" min-width="140" />

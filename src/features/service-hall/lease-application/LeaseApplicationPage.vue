@@ -1,18 +1,9 @@
 <!-- 租赁申请业务组件：独立呈现续租、退租和扩租流程，并按终端模式控制处理操作。 -->
 <template>
-  <main class="record-feature-page">
-    <header class="record-feature-hero">
-      <div class="record-feature-hero__title">
-        <span class="record-feature-hero__icon"><i :class="resource.icon"></i></span>
-        <div>
-          <h2>租赁申请</h2>
-          <p>{{ mode === 'admin' ? '处理企业续租、退租和扩租申请。' : '发起续租、退租或扩租申请并查看进度。' }}</p>
-        </div>
-      </div>
-      <el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增租赁申请</el-button>
-    </header>
+  <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增租赁申请</el-button></div>
         <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索申请编号、企业或合同" @input="resetPage" @clear="resetPage" />
         <el-select v-model="typeFilter" clearable placeholder="全部申请类型" @change="resetPage" @clear="resetPage">
           <el-option v-for="option in primaryOptions" :key="optionValue(option)" :label="optionLabel(option)" :value="optionValue(option)" />
@@ -20,6 +11,7 @@
         <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="resetPage" @clear="resetPage">
           <el-option v-for="status in statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增租赁申请</el-button></div>
       </div>
       <div v-if="pagedRecords.length" class="record-feature-grid">
         <article
