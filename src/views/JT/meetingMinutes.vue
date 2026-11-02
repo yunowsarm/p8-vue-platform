@@ -30,11 +30,20 @@
             <template slot-scope="scope">
               <el-button type="text" size="mini" @click="viewMinute(scope.row)">查看</el-button>
               <span class="action-divider">|</span>
-              <el-button type="text" size="mini" @click="openApprovalDialog(scope.row)">提交审批</el-button>
-              <span class="action-divider">|</span>
               <el-button type="text" size="mini" @click="editMinute(scope.row)">修改</el-button>
               <span class="action-divider">|</span>
               <el-button type="text" size="mini" @click="deleteMinute(scope.row)">删除</el-button>
+              <span class="action-divider">|</span>
+              <el-dropdown trigger="click" @command="handleMoreCommand($event, scope.row)">
+                <el-button type="text" size="mini">
+                  更多
+                  <i class="el-icon-arrow-down el-icon--right" />
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="approve">提交审批</el-dropdown-item>
+                  <el-dropdown-item command="process" :disabled="!hasSubmittedApproval(scope.row)">查看流程图</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -192,6 +201,21 @@
         @success="handleApprovalSuccess" />
     </el-dialog>
 
+    <el-dialog
+      :visible.sync="processViewVisible"
+      custom-class="meeting-process-view-dialog"
+      fullscreen
+      append-to-body
+      :show-close="false"
+      :close-on-click-modal="false"
+      @closed="processViewMinute = null">
+      <process-dialog-view
+        v-if="processViewVisible && processViewMinute"
+        :business-id="String(processViewMinute.id || '')"
+        process-definition-key="meetingMinutesProcess"
+        @close="processViewVisible = false" />
+    </el-dialog>
+
     <meeting-minutes-detail :visible.sync="detailDialogVisible" :minute="detailMinute" :embedded="false" />
   </div>
 </template>
@@ -199,6 +223,7 @@
 <script>
 import MeetingProcess from '@/views/components/processDialog/meetingProcess'
 import MeetingMinutesDetail from '@/views/components/meetingMinutes/meetingMinutesDetail'
+import ProcessDialogView from '@/views/components/processDialogView'
 
 const createEmptyForm = () => ({
   code: '',
@@ -219,7 +244,7 @@ const createEmptyForm = () => ({
 
 export default {
   name: 'MeetingMinutes',
-  components: { MeetingProcess, MeetingMinutesDetail },
+  components: { MeetingProcess, MeetingMinutesDetail, ProcessDialogView },
   data() {
     return {
       minutes: [],
@@ -239,6 +264,8 @@ export default {
       createDialogVisible: false,
       approvalDialogVisible: false,
       approvalMinute: null,
+      processViewVisible: false,
+      processViewMinute: null,
       departmentPickerVisible: false,
       recorderPickerVisible: false,
       chairpersonPickerVisible: false,
@@ -358,6 +385,17 @@ export default {
     openApprovalDialog(minute) {
       this.approvalMinute = { ...minute, ID: minute.id }
       this.approvalDialogVisible = true
+    },
+    hasSubmittedApproval(minute) {
+      return Boolean(minute && ['1', '2', '3'].includes(String(minute.approveStatus)))
+    },
+    handleMoreCommand(command, minute) {
+      if (command === 'approve') this.openApprovalDialog(minute)
+      if (command === 'process' && this.hasSubmittedApproval(minute)) this.openProcessView(minute)
+    },
+    openProcessView(minute) {
+      this.processViewMinute = minute
+      this.processViewVisible = true
     },
     handleApprovalSuccess() {
       this.approvalDialogVisible = false
@@ -1003,6 +1041,21 @@ export default {
 </style>
 
 <style lang="scss">
+.meeting-process-view-dialog.el-dialog {
+  margin: 0;
+  overflow: hidden;
+
+  .el-dialog__header {
+    display: none;
+  }
+
+  .el-dialog__body {
+    height: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
 .meeting-minutes-dialog.el-dialog.is-fullscreen {
   display: flex;
   flex-direction: column;
