@@ -968,6 +968,10 @@ export default {
     ::v-deep .el-radio__label {
       display: none;
     }
+
+    ::v-deep .el-table__fixed-right::before {
+      display: none;
+    }
   }
 }
 
