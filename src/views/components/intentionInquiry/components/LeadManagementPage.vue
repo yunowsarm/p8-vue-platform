@@ -125,7 +125,7 @@
         </el-table-column>
         <el-table-column v-if="isUser" prop="referrerName" label="分配人" min-width="120" show-overflow-tooltip />
         <el-table-column v-if="isAdmin" prop="responsiblePersonName" label="负责人" min-width="120" show-overflow-tooltip />
-        <el-table-column label="操作" :width="isAdmin ? 250 : enableInvalidLeadApplication ? 260 : 160">
+        <el-table-column label="操作" :width="isAdmin ? 250 : enableInvalidLeadApplication ? 390 : 160">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
               <el-button type="text" size="mini" @click.stop="openDetail(scope.row)">查看</el-button>
@@ -148,6 +148,14 @@
                   <el-button type="text" size="mini" :disabled="isInvalidLeadApplicationDisabled(scope.row)" @click.stop="$emit('invalid-lead-application', scope.row)">无效线索申请</el-button>
                 </span>
               </el-tooltip>
+              <el-button
+                v-if="isUser && enableInvalidLeadApplication && hasInvalidLeadApplication(scope.row)"
+                class="lead-invalid-progress-action"
+                type="text"
+                size="mini"
+                @click.stop="$emit('invalid-lead-progress', scope.row)">
+                无效审批申请进度
+              </el-button>
             </div>
           </template>
         </el-table-column>
@@ -1176,7 +1184,11 @@ export default {
     },
     isInvalidLeadApplicationDisabled(record) {
       const approveStatus = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
-      return ['1', '2'].includes(String(approveStatus))
+      return approveStatus !== null && approveStatus !== undefined && ['0', '2'].includes(String(approveStatus))
+    },
+    hasInvalidLeadApplication(record) {
+      const status = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
+      return status !== undefined && status !== null && ['0', '2', '3'].includes(String(status))
     },
     isInvalidLead(record) {
       const approveStatus = record && (record.approveStatus !== undefined ? record.approveStatus : record.approve_status)
@@ -1192,7 +1204,7 @@ export default {
     },
     invalidLeadApplicationDisabledMessage(record) {
       const approveStatus = record && (record.approve_status !== undefined ? record.approve_status : record.approveStatus)
-      if (String(approveStatus) === '1') return '无效线索申请正在审批中'
+      if (String(approveStatus) === '0') return '无效线索申请正在审批中'
       if (String(approveStatus) === '2') return '无效线索申请已通过，不可重复提交'
       return ''
     },
@@ -1855,6 +1867,10 @@ export default {
 
 .lead-invalid-application-action {
   display: inline-block;
+  margin-left: 12px;
+}
+
+.lead-invalid-progress-action {
   margin-left: 12px;
 }
 
