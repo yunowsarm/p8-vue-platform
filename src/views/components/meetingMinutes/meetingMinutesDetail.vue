@@ -94,7 +94,7 @@ export default {
     // 平台审批页 / 数据视图内嵌挂载时为 true：不渲染弹窗，直接平铺展示详情
     embedded: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
@@ -132,13 +132,10 @@ export default {
     }
   },
   mounted() {
+    console.log(111111111111)
     // 页面加载时即按业务主键拉取会议详情与附件。
     if (!this.resolvedMinuteId) return
     if (this.embedded) {
-      this.loadDetail()
-    } else if (this.dataViewId || this.businessKey) {
-      // 平台直接挂载（带业务主键）时自动打开弹窗展示
-      this.dialogVisible = true
       this.loadDetail()
     } else {
       this.loadDetail()
@@ -228,10 +225,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.meeting-minutes-detail {
-  width: 100%;
-}
-
 .embedded-body {
   min-height: 120px;
   padding: 12px;

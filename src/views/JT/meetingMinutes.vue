@@ -192,7 +192,7 @@
         @success="handleApprovalSuccess" />
     </el-dialog>
 
-    <meeting-minutes-detail :visible.sync="detailDialogVisible" :minute="detailMinute" />
+    <meeting-minutes-detail :visible.sync="detailDialogVisible" :minute="detailMinute" :embedded="false" />
   </div>
 </template>
 
@@ -855,6 +855,7 @@ export default {
 
 <style lang="scss" scoped>
 .meeting-minutes-page {
+  box-sizing: border-box;
   height: 100%;
   display: flex;
   overflow: hidden;
