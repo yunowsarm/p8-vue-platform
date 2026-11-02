@@ -132,7 +132,6 @@ export default {
     }
   },
   mounted() {
-    console.log(111111111111)
     // 页面加载时即按业务主键拉取会议详情与附件。
     if (!this.resolvedMinuteId) return
     if (this.embedded) {
