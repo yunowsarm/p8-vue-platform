@@ -158,5 +158,12 @@ export const yqRequestApi = {
       mockPath: '/jt/meeting/queryById',
       desc: '查询会议附件'
     },
+    {
+      name: 'exportInventoryApi',
+      method: 'POST',
+      path: '/jt/asset/storehouse/export',
+      mockPath: '/jt/asset/storehouse/export',
+      desc: '库存导出'
+    },
   ]
 }
