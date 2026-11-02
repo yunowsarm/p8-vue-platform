@@ -125,7 +125,7 @@
         </el-table-column>
         <el-table-column v-if="isUser" prop="referrerName" label="分配人" min-width="120" show-overflow-tooltip />
         <el-table-column v-if="isAdmin" prop="responsiblePersonName" label="负责人" min-width="120" show-overflow-tooltip />
-        <el-table-column label="操作" :width="isAdmin ? 250 : enableInvalidLeadApplication ? 390 : 160">
+        <el-table-column label="操作" :width="isAdmin ? 250 : enableInvalidLeadApplication ? 200 : 160">
           <template slot-scope="scope">
             <div class="record-feature-table__actions">
               <el-button type="text" size="mini" @click.stop="openDetail(scope.row)">查看</el-button>
@@ -139,23 +139,18 @@
                   <el-button type="text" size="mini" :disabled="isFollowUpDisabled(scope.row)" @click.stop="openFollowUp(scope.row)">跟进</el-button>
                 </span>
               </el-tooltip>
-              <el-tooltip
-                v-if="isUser && enableInvalidLeadApplication"
-                :disabled="!isInvalidLeadApplicationDisabled(scope.row)"
-                :content="invalidLeadApplicationDisabledMessage(scope.row)"
-                placement="top">
-                <span class="lead-invalid-application-action">
-                  <el-button type="text" size="mini" :disabled="isInvalidLeadApplicationDisabled(scope.row)" @click.stop="$emit('invalid-lead-application', scope.row)">无效线索申请</el-button>
-                </span>
-              </el-tooltip>
-              <el-button
-                v-if="isUser && enableInvalidLeadApplication && hasInvalidLeadApplication(scope.row)"
-                class="lead-invalid-progress-action"
-                type="text"
-                size="mini"
-                @click.stop="$emit('invalid-lead-progress', scope.row)">
-                无效审批申请进度
-              </el-button>
+              <el-dropdown v-if="isUser && enableInvalidLeadApplication" class="lead-invalid-dropdown" trigger="click" @command="$emit($event, scope.row)">
+                <el-button type="text" size="mini" @click.stop>
+                  更多
+                  <i class="el-icon-arrow-down el-icon--right" />
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="invalid-lead-application" :disabled="isInvalidLeadApplicationDisabled(scope.row)" :title="invalidLeadApplicationDisabledMessage(scope.row)">
+                    无效线索申请
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="hasInvalidLeadApplication(scope.row)" command="invalid-lead-progress">无效审批申请进度</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </div>
           </template>
         </el-table-column>
@@ -1865,12 +1860,7 @@ export default {
   }
 }
 
-.lead-invalid-application-action {
-  display: inline-block;
-  margin-left: 12px;
-}
-
-.lead-invalid-progress-action {
+.lead-invalid-dropdown {
   margin-left: 12px;
 }
 
