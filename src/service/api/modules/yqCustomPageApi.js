@@ -122,6 +122,41 @@ export const yqRequestApi = {
       path: '/jt/contract/queryById',
       mockPath: '/jt/contract/queryById',
       desc: '查询合同详情'
-    }
+    },
+    {
+      name: 'getMeetingListApi',
+      method: 'GET',
+      path: '/jt/meeting/list',
+      mockPath: '/jt/meeting/list',
+      desc: '查询会议列表'
+    },
+    {
+      name: 'addMeetingApi',
+      method: 'POST',
+      path: '/jt/meeting/add',
+      mockPath: '/jt/meeting/add',
+      desc: '新增会议'
+    },
+    {
+      name: 'editMeetingApi',
+      method: 'POST',
+      path: '/jt/meeting/edit',
+      mockPath: '/jt/meeting/edit',
+      desc: '编辑会议'
+    },
+    {
+      name: 'deleteMeetingApi',
+      method: 'POST',
+      path: '/jt/meeting/delete?id={id}',
+      mockPath: '/jt/meeting/delete?id={id}',
+      desc: '删除会议'
+    },
+    {
+      name: 'queryMeetingAttachmentsApi',
+      method: 'GET',
+      path: '/jt/meeting/queryById',
+      mockPath: '/jt/meeting/queryById',
+      desc: '查询会议附件'
+    },
   ]
 }
