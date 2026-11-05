@@ -46,7 +46,7 @@
           <el-descriptions-item label="记录人" :label-style="{ width: '90px' }">{{ detail.recorder || '-' }}</el-descriptions-item>
           <el-descriptions-item label="主持人" :label-style="{ width: '90px' }">{{ detail.chairperson || '-' }}</el-descriptions-item>
           <el-descriptions-item label="参会人员" :span="3" :label-style="{ width: '90px' }">{{ detail.participants || '-' }}</el-descriptions-item>
-          <el-descriptions-item label="会议内容" :span="3" :label-style="{ width: '90px' }">{{ detail.content || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="会议内容 " :span="3" :label-style="{ width: '90px' }">{{ detail.content || '-' }}</el-descriptions-item>
         </el-descriptions>
         <div class="detail-attachments">
           <strong>附件</strong>
