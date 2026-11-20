@@ -138,7 +138,9 @@ export function axiosResponseSucessFunc(response) {
       }
     }
   }
-  switch (response.status) {
+  // 明确接受创建响应的接口可以复用 P8 现有的成功响应处理。
+  const responseStatus = response.status === 201 && response.config?.acceptCreated ? 200 : response.status
+  switch (responseStatus) {
     case 200:
     case 304:
       const contentType = response.headers['content-type']

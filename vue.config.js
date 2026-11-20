@@ -4,16 +4,26 @@
 const webpack = require('webpack')
 const { defineConfig } = require('@vue/cli-service')
 const SplitChunksPlugin = require('webpack').optimize.SplitChunksPlugin
-let version = require('./package.json')['version']
+let version = require('./package.json').version
 version = 'V' + version
 const TerserPlugin = require('terser-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
+const parkAgentEnvFile = process.env.NODE_ENV === 'development' && process.env.PARK_AGENT_LOCAL_ENV_FILE
 module.exports = defineConfig({
   runtimeCompiler: true,
   lintOnSave: false,
   productionSourceMap: false,
   // 取消接口报错后的webpack弹框
   devServer: {
+    ...(parkAgentEnvFile && {
+      host: '127.0.0.1',
+      setupMiddlewares(middlewares) {
+        const createParkAgentDevProxy = require('./server/parkAgentDevProxy')
+        const identityUrl = process.env.PARK_AGENT_P8_USER_INFO_URL
+        middlewares.unshift({ name: 'parkAgentDevProxy', middleware: createParkAgentDevProxy(parkAgentEnvFile, identityUrl) })
+        return middlewares
+      }
+    }),
     client: {
       overlay: false
     },

@@ -1,5 +1,8 @@
 <template>
-  <router-view />
+  <div class="p8-app-shell">
+    <router-view />
+    <park-agent-widget v-if="showParkAgent" :key="userInfo.id" :mobile="isMobile" />
+  </div>
 </template>
 
 <script>
@@ -9,6 +12,9 @@ import { io } from 'socket.io-client'
 
 export default {
   name: 'App',
+  components: {
+    ParkAgentWidget: () => import('@/features/public-services/park-agent/ParkAgentWidget.vue')
+  },
   data () {
     return {
       user: this.$store.state.user,
@@ -16,7 +22,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['token', 'userId', 'userInfo'])
+    ...mapGetters(['token', 'userId', 'userInfo', 'isMobile']),
+    showParkAgent() {
+      const path = this.$route.path.toLowerCase()
+      return Boolean(this.token && this.userInfo?.id && !['/login', '/loginnew', '/loginhome', '/maintain', '/qrcodescanner', '/modify-password'].includes(path))
+    }
   },
   watch: {
     token: {
@@ -243,3 +253,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.p8-app-shell {
+  width: 100%;
+  height: 100%;
+}
+</style>

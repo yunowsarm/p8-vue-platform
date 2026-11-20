@@ -51,9 +51,13 @@ class ApiCounstructor {
           const isFormData = typeof FormData !== 'undefined' && outerParams instanceof FormData
           const isRawBody = isFormData || Array.isArray(outerParams)
           const data = isRawBody ? outerParams : _isEmpty(outerParams) ? params : { ...params, ...outerParams }
+          const { pathParams, ...requestOptions } = outerOptions || {}
           // 支持接口定义中的 /resource/{id} 路径参数，并避免将已替换的参数重复发送到 query/body 中。
           const requestParams = data && typeof data === 'object' && !isRawBody ? { ...data } : data
           const requestUrl = url.replace(/\{([^}]+)\}/g, (placeholder, key) => {
+            if (pathParams && Object.prototype.hasOwnProperty.call(pathParams, key)) {
+              return encodeURIComponent(pathParams[key])
+            }
             if (requestParams && Object.prototype.hasOwnProperty.call(requestParams, key)) {
               const value = requestParams[key]
               delete requestParams[key]
@@ -64,7 +68,7 @@ class ApiCounstructor {
           // 开启debug时打印一些提示信息
           // isDebug && console.info(`调用业务接口名称:${apiNamespace}, 类型:${method}, 地址:${url}, 描述:${desc}`)
           //
-          return axios(axiosParamBuilder(_assign({ url: requestUrl, method, desc }, outerOptions), requestParams)).catch((error) => {
+          return axios(axiosParamBuilder(_assign({ url: requestUrl, method, desc }, requestOptions), requestParams)).catch((error) => {
             if (error.code === 'ECONNABORTED') {
               console.error('请求超时，数据未保存或同步，请稍后重试')
               Message.warning('请求超时，数据未保存或同步，请稍后重试')
