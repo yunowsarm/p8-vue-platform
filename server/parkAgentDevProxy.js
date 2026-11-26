@@ -1,6 +1,7 @@
 const fs = require('node:fs')
 const http = require('node:http')
 const https = require('node:https')
+const { isIPv4 } = require('node:net')
 const dotenv = require('dotenv')
 const { version } = require('../package.json')
 
@@ -10,6 +11,21 @@ const CARE_MESSAGES = /^\/v1\/care\/messages(?:\/[\da-f-]{36}\/(open|dismiss))?$
 const CARE_PAUSE = /^\/v1\/care\/plans\/[\da-f-]{36}\/pause$/i
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1'])
 const P8_USER_ID = /^[A-Za-z0-9_.:-]{1,120}$/
+
+function isLocalSameOrigin(req, verifyIdentity) {
+  const host = req.headers.host || ''
+  const origin = req.headers.origin
+  if (origin && origin !== `http://${host}`) return false
+
+  const { remoteAddress, localAddress } = req.socket
+  if (LOOPBACK.has(remoteAddress) && /^(127\.0\.0\.1|localhost)(:\d+)?$/i.test(host)) return true
+
+  // 支持本机浏览器通过自己的局域网地址联调，连接的两端必须是同一个本机地址。
+  const localIp = (localAddress || '').replace(/^::ffff:/, '')
+  const peerIp = (remoteAddress || '').replace(/^::ffff:/, '')
+  const hostIp = host.replace(/:\d+$/, '')
+  return Boolean(verifyIdentity && isIPv4(localIp) && peerIp === localIp && hostIp === localIp)
+}
 
 async function p8UserInfo(url, authorization) {
   const transport = url.protocol === 'https:' ? https : http
@@ -70,9 +86,7 @@ function createParkAgentDevProxy(envFile, p8UserInfoUrl) {
       res.end(JSON.stringify({ detail }))
     }
 
-    const host = req.headers.host || ''
-    const origin = req.headers.origin
-    if (!LOOPBACK.has(req.socket.remoteAddress) || !/^(127\.0\.0\.1|localhost)(:\d+)?$/i.test(host) || (origin && origin !== `http://${host}`)) {
+    if (!isLocalSameOrigin(req, identityUrl)) {
       return reject(403, '此联调入口仅限本机同源访问')
     }
 

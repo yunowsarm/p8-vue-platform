@@ -4,7 +4,7 @@
 
 ## 本机联调
 
-智能体独立运行在 `127.0.0.1:8000`。在 P8 项目的 `.env.development.local` 中填入 `PARK_AGENT_LOCAL_ENV_FILE=D:/wujie/agent/.env`，重启 `npm run dev`。P8 页面可以通过 `http://127.0.0.1:3001` 或局域网 IP 打开。园区 AI 助手的开发代理只接受回环地址的请求，并在服务端读取智能体调用 Token。使用助手时请通过 `http://127.0.0.1:3001` 打开 P8。
+智能体独立运行在 `127.0.0.1:8000`。在 P8 项目的 `.env.development.local` 中填入 `PARK_AGENT_LOCAL_ENV_FILE=D:/wujie/agent/.env`，重启 `npm run dev`。在本机通过 `http://127.0.0.1:3001` 打开 P8 即可联调。配置 P8 登录核验后，本机浏览器也可通过本机的局域网 IPv4 地址使用助手。开发代理仅接受本机同源的智能体请求，并在服务端读取智能体调用 Token。
 
 联调企业关怀时，再设置 `PARK_AGENT_P8_USER_INFO_URL` 为当前 P8 开发环境后端的完整 `/user/info` 地址。代理用 P8 登录 Token 请求这个地址，只有通过验证的账号才能领取关怀消息。请使用和 P8 `devBaseUrl` 对应的可信后端。启用此项后，当前聊天和历史也使用验证后的 P8 用户 ID。从前使用共享测试账号创建的历史归属共享测试账号。
 
