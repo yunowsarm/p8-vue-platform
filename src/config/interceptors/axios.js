@@ -5,8 +5,62 @@
  * Date: 2018.06.22
  */
 import store from '@/plugins/store'
+import { getToken } from '@/service/expands/auth'
 import { MessageBox, Notification } from 'p8-components-ui'
 let version = require('../../../package.json')['version']
+const invalidAuthorizationMessage = '授权信息无效，请重新授权!'
+
+function clearMobileToken() {
+  if (!window.plus) return
+
+  try {
+    const storage = window.plus.storage
+    const service = JSON.parse(storage.getItem('current_app_service') || 'null')
+    if (service) {
+      service.token = null
+      storage.setItem('current_app_service', JSON.stringify(service))
+    }
+  } catch {
+    // 原生存储读取失败时仍可返回登录页。
+  }
+}
+
+function reloadAfterSessionExpiry() {
+  const loginUrl = new URL(location.href)
+  loginUrl.search = ''
+  loginUrl.hash = getToken() ? '/' : '/login'
+  // 移除 URL 中的旧授权参数，并重新初始化动态路由。
+  history.replaceState(null, '', loginUrl.href)
+  location.reload()
+}
+
+function handleUnauthorized(message, config) {
+  if (message === '用户名或密码错误') {
+    Notification.error({ title: '提示', message })
+    return
+  }
+
+  const token = store.getters.token
+  // 只处理当前会话的请求。清理令牌后，其他并发失败的响应也会被跳过。
+  if (!token || config?.headers?.Authorization !== token) return
+
+  store.dispatch('clearUserSession', token)
+  clearMobileToken()
+  if (message !== invalidAuthorizationMessage) {
+    reloadAfterSessionExpiry()
+    return
+  }
+
+  const loadingElement = document.getElementById('app-loading')
+  if (loadingElement) {
+    loadingElement.style.display = 'none'
+  }
+  MessageBox.alert(message, '提示', {
+    confirmButtonText: '确定',
+    type: 'warning',
+    callback: reloadAfterSessionExpiry
+  })
+}
 /**
  *
  *
@@ -64,48 +118,10 @@ export function axiosResponseSucessFunc(response) {
         message: message
       })
     },
-    reload: function () {
-      store.dispatch('userLogout').then(() => {
-        location.reload()
-      })
-    },
     400: {
       // 参数有误
       do: function (message, data) {
         statusManage.NotificationMessage(message)
-        return Promise.reject(data).catch(() => {})
-      }
-    },
-    401: {
-      do: function (message, data) {
-        // 权限不够,重新登录
-        // 如果是登录时用户名或密码错误，则给出提示
-        // 如果同一个账号，不同电脑登录，被踢掉时，给出提示
-        if (message === '用户名或密码错误') {
-          statusManage.NotificationMessage(message)
-        } else if (message === '授权信息无效，请重新授权!') {
-          const loadingElement = document.getElementById('app-loading')
-          if (loadingElement) {
-            loadingElement.style.display = 'none'
-          }
-          MessageBox.alert(message, '提示', {
-            confirmButtonText: '确定',
-            type: 'warning',
-            callback: (action) => {
-              if(window.plus){
-                const currentAppService = plus.storage.getItem('current_app_service')
-                if(currentAppService){
-                  const service = JSON.parse(currentAppService)
-                  service.token = null
-                  plus.storage.setItem('current_app_service',JSON.stringify(service))
-                }
-              }
-              statusManage.reload()
-            }
-          })
-        } else {
-          statusManage.reload()
-        }
         return Promise.reject(data).catch(() => {})
       }
     },
@@ -157,8 +173,10 @@ export function axiosResponseSucessFunc(response) {
         } else {
           // case response data error code
           //  获取code
-          let status = responseHead.code
-          if (statusManage[status]) {
+          const status = responseHead.code
+          if (String(status) === '401') {
+            handleUnauthorized(responseHead.message, response.config)
+          } else if (statusManage[status]) {
             // 执行
             statusManage[status].do(responseHead.message, response.data)
           }
@@ -175,6 +193,11 @@ export function axiosResponseSucessFunc(response) {
 }
 
 export function axiosResponseFailFunc(error) {
+  const response = error.response
+  const head = response?.data?.head
+  if (response?.status === 401 && String(head?.code) === '401') {
+    handleUnauthorized(head.message, response.config)
+  }
   // 捕获请求超时异常，并给出提示
   // const errorStr = error.message
   // if (errorStr.indexOf('timeout' > -1)) {

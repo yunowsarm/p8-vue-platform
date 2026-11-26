@@ -1,5 +1,6 @@
 import { Notification } from 'p8-components-ui'
 import { getToken, setToken, removeToken } from '@/service/expands/auth'
+import { removeSession } from '@/service/expands/session'
 import api from '@/plugins/api'
 import moment from 'moment'
 /**
@@ -59,9 +60,9 @@ const user = {
         setToken(token)
       }
     },
-    REMOVE_TOKEN(state, data) {
+    REMOVE_TOKEN(state, expiredToken) {
       state.token = null
-      removeToken()
+      removeToken(expiredToken)
     },
     SET_USERINFO(state, data) {
       state.userInfo = data
@@ -206,26 +207,16 @@ const user = {
      * @param {any} {commit}
      * @returns
      */
-    userLogout({ commit }) {
-      return new Promise((resolve, reject) => {
-        api['user.logout']()
-          .then(() => {
-            // 重置用户相关信息
-            commit('REMOVE_TOKEN')
-            // 重置用户信息
-            commit('RESET_USERINFO')
-            // 重置浏览记录以及tab页面记录等,该mutation访问 store/views.js
-            commit('REMOVE_ALL_VISITED')
-            // 重置权限路由表, 该mutation 访问 store/asyncRouter.js
-            commit('RESET_ROUTERS')
-            commit('RESET_BUTTON_AUTH')
-            //
-            resolve()
-          })
-          .catch((err) => {
-            reject(err)
-          })
-      })
+    userLogout({ dispatch }) {
+      return api['user.logout']().then(() => dispatch('clearUserSession'))
+    },
+    clearUserSession({ commit }, expiredToken) {
+      commit('REMOVE_TOKEN', expiredToken)
+      commit('RESET_USERINFO')
+      removeSession('userInfo')
+      commit('REMOVE_ALL_VISITED')
+      commit('RESET_ROUTERS')
+      commit('RESET_BUTTON_AUTH')
     },
     /**
      * 获取用户信息

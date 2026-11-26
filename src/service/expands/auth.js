@@ -17,8 +17,12 @@ function setToken(token) {
   }
 }
 
-function removeToken() {
-  Cookie.get(TOKEN_KEY) ? Cookie.delete(TOKEN_KEY) : removeSession(TOKEN_KEY)
+function removeToken(expiredToken) {
+  // 其他标签页可能已重新登录，保留它写入的令牌。
+  if (!expiredToken || Cookie.get(TOKEN_KEY) === expiredToken) {
+    Cookie.delete(TOKEN_KEY)
+  }
+  removeSession(TOKEN_KEY)
 }
 
 export { getToken, setToken, removeToken }
