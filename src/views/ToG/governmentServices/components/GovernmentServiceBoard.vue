@@ -490,7 +490,7 @@ export default {
 .government-grid {
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: repeat(3, minmax(270px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-content: start;
   gap: 16px;
   padding: 18px 22px 28px;
@@ -771,7 +771,7 @@ export default {
 }
 @media (max-width: 1100px) {
   .government-grid {
-    grid-template-columns: repeat(2, minmax(270px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 760px) {

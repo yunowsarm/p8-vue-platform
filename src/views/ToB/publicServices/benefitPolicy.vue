@@ -17,15 +17,15 @@
       </div>
 
       <div class="policy-toolbar">
+        <form class="policy-search" role="search" aria-label="政策搜索" @submit.prevent="search">
+          <el-input v-model.trim="searchWord" clearable size="small" label="搜索政策标题" placeholder="搜索政策标题" prefix-icon="el-icon-search" @clear="search" />
+          <el-button type="primary" native-type="submit" size="small">搜索</el-button>
+        </form>
         <span class="result-count">
           共
           <b>{{ total }}</b>
           条{{ activeTab === 'policy' ? '政策' : '解读' }}
         </span>
-        <label class="sr-only" for="benefit-policy-search">搜索政策标题</label>
-        <el-input id="benefit-policy-search" v-model.trim="searchWord" clearable size="small" placeholder="搜索政策标题" prefix-icon="el-icon-search" @keyup.enter.native="search" @clear="search">
-          <el-button type="primary" :disabled="!searchWord" @click="search">搜索</el-button>
-        </el-input>
       </div>
 
       <div v-loading="loading" v-if="records.length" class="policy-grid" role="tabpanel">
@@ -55,7 +55,7 @@
 
       <div v-if="total > pageSize" class="pagination-row">
         <span>每页 {{ pageSize }} 条</span>
-        <el-pagination background :current-page="currentPage" :page-size="pageSize" :total="total" layout="prev, pager, next" @current-change="changePage" />
+        <el-pagination background :current-page="currentPage" :page-size="pageSize" :pager-count="5" :total="total" layout="prev, pager, next" @current-change="changePage" />
       </div>
     </section>
   </main>
@@ -361,7 +361,6 @@ export default {
 }
 .policy-panel {
   min-height: 570px;
-  margin-top: 16px;
   padding: 20px 24px 24px;
   border-radius: 8px;
   background: #fff;
@@ -369,7 +368,8 @@ export default {
 }
 .panel-tabs {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  column-gap: 24px;
   border-bottom: 1px solid #e8eef5;
 }
 .panel-tab {
@@ -402,8 +402,20 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 20px 0 18px;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  padding: 16px 0;
+}
+.policy-search {
+  display: flex;
+  flex: 1 1 240px;
+  gap: 8px;
+  min-width: 0;
+  max-width: 440px;
+}
+.policy-search .el-input {
+  flex: 1 1 0;
+  min-width: 0;
 }
 .result-count {
   color: #7d8fa3;
@@ -412,9 +424,6 @@ export default {
 .result-count b {
   color: #3387ee;
   font-weight: 600;
-}
-.policy-toolbar .el-input {
-  width: min(100%, 380px);
 }
 .policy-grid {
   display: grid;
@@ -524,16 +533,6 @@ export default {
   color: #8b9aad;
   font-size: 13px;
 }
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
 @media (max-width: 900px) {
   .policy-grid {
     grid-template-columns: 1fr;
@@ -557,23 +556,40 @@ export default {
   }
   .policy-panel {
     min-height: 0;
-    margin-top: 10px;
-    padding: 14px 16px 18px;
+    padding: 12px;
+  }
+  .panel-tabs {
+    column-gap: 16px;
   }
   .policy-toolbar {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 12px;
+    padding: 12px 0;
   }
-  .policy-toolbar .el-input {
-    width: 100%;
+  .policy-search {
+    flex-basis: 100%;
+    max-width: none;
+  }
+  .policy-search ::v-deep .el-input__inner,
+  .policy-search .el-button {
+    min-height: 44px;
+  }
+  .policy-search ::v-deep .el-input__inner {
+    font-size: 16px;
   }
   .card-footer {
     flex-wrap: wrap;
   }
   .pagination-row {
-    align-items: flex-start;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .pagination-row ::v-deep .el-pagination {
+    padding-inline: 0;
+  }
+  .pagination-row ::v-deep .el-pagination.is-background button,
+  .pagination-row ::v-deep .el-pagination.is-background .el-pager li {
+    min-width: 26px;
+    margin-inline: 1px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

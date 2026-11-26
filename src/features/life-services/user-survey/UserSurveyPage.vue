@@ -3,7 +3,8 @@
   <main v-fit-page class="record-feature-page">
     <section v-loading="loading" class="record-feature-surface">
       <div class="record-feature-toolbar">
-        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增问卷</el-button></div><el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索问卷标题或说明" @input="resetPage" @clear="resetPage" /><div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增问卷</el-button></div>
+        <el-input v-model.trim="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索问卷标题或说明" @input="resetPage" @clear="resetPage" />
+        <div class="record-feature-toolbar__actions"><el-button v-if="canCreate" type="primary" icon="el-icon-plus" @click="openCreate">新增问卷</el-button></div>
       </div>
       <el-table v-if="pagedRecords.length" :data="pagedRecords" stripe class="record-feature-table" @row-click="openDetail">
         <el-table-column prop="title" label="问卷标题" min-width="250" show-overflow-tooltip />

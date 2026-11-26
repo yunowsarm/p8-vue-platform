@@ -1,9 +1,12 @@
 main.viewport-business-page {
   display: flex !important;
   flex-direction: column;
+  height: 100%;
   min-height: 0 !important;
+  padding: 12px !important;
   box-sizing: border-box;
-  overflow: hidden !important;
+  overflow: hidden auto !important;
+  overscroll-behavior-y: contain;
   > * {
     flex-shrink: 0;
   }
@@ -13,22 +16,13 @@ main.viewport-business-page {
     min-height: 0 !important;
     overflow: auto;
   }
-  > .record-feature-surface {
-    overflow: hidden;
-  }
-  .record-feature-toolbar__actions {
-    order: 10;
-  }
-}
-main.viewport-business-page {
-  padding: 12px !important;
-
   > .record-feature-surface,
   > .payment-surface,
   > .government-surface,
   > .communication-surface,
   > .bus-surface,
   > .repair-surface,
+  > .handle-surface,
   > .policy-list-surface,
   > .service-list-surface {
     display: flex;
@@ -60,9 +54,22 @@ main.viewport-business-page {
     }
   }
 
+  > :is(.payment-surface, .communication-surface, .bus-surface) > .empty-state {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    justify-content: safe center;
+
+    @media (max-width: 768px), (max-height: 600px) {
+      flex: 1 0 auto;
+      overflow: visible;
+    }
+  }
+
   .record-feature-toolbar,
   .list-toolbar,
   .repair-toolbar,
+  .handle-toolbar,
   .toolbar {
     display: flex;
     flex: 0 0 auto;
@@ -71,21 +78,41 @@ main.viewport-business-page {
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
+    min-width: 0;
+
+    > .el-input {
+      flex: 0 1 280px;
+      min-width: min(100%, 200px);
+    }
+
+    > .el-select {
+      flex: 0 1 150px;
+      min-width: min(100%, 130px);
+    }
 
     > .record-feature-toolbar__actions,
     > .toolbar-actions {
-      order: 10;
       width: auto;
-      margin-left: auto;
+      min-width: 0;
+      margin-inline-start: auto;
       display: flex;
       justify-content: flex-end;
       flex-wrap: wrap;
       gap: 8px;
+
+      &:empty {
+        display: none;
+      }
+
+      > .el-button {
+        margin: 0;
+      }
     }
   }
 
-  .record-feature-surface {
+  > .record-feature-surface {
     padding: 16px;
+    overflow-y: auto;
   }
   .record-feature-toolbar {
     margin-bottom: 14px;
@@ -99,38 +126,40 @@ main.viewport-business-page {
   }
 }
 
-@media (max-width: 720px) {
+// Short or narrow viewports use a single scroll area for the page content.
+@media (max-width: 768px), (max-height: 600px) {
   main.viewport-business-page {
-    padding: 8px !important;
-    .record-feature-surface {
-      padding: 12px;
-    }
-    .record-feature-toolbar > .el-input,
-    .record-feature-toolbar > .el-select {
-      width: auto;
-      flex: 1 1 160px;
-      min-width: 0;
-    }
-  }
-}
-
-@media (max-width: 760px) {
-  main.viewport-business-page {
-    min-width: 0;
-    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
-    overflow-y: auto !important;
-    overscroll-behavior-y: contain;
-
     > section:last-of-type {
       flex: 1 0 auto;
       overflow: visible;
     }
 
+    > section:last-of-type > :is(.record-feature-grid, .payment-grid, .government-grid, .communication-grid, .bus-grid, .repair-grid, .cards-stage) {
+      flex: 1 0 auto;
+      overflow: visible;
+    }
+
+    > .handle-surface > .handle-table {
+      height: auto !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  main.viewport-business-page {
+    min-width: 0;
+    padding: 8px !important;
+    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+
+    .record-feature-surface {
+      padding: 12px;
+    }
+
     .record-feature-toolbar,
     .list-toolbar,
     .repair-toolbar,
+    .handle-toolbar,
     .toolbar {
-      min-width: 0;
       gap: 8px;
       > .el-input {
         flex: 1 1 100%;
@@ -138,7 +167,7 @@ main.viewport-business-page {
         min-width: 0;
       }
       > .el-select {
-        flex: 1 1 130px;
+        flex: 1 1 min(100%, 130px);
         width: auto;
         min-width: 0;
       }
@@ -146,7 +175,14 @@ main.viewport-business-page {
       > .toolbar-actions {
         flex: 1 1 100%;
         justify-content: flex-end;
-        margin-left: 0;
+        margin-inline-start: 0;
+      }
+      > .el-input .el-input__inner,
+      > .el-select .el-input__inner,
+      > .el-button,
+      > .record-feature-toolbar__actions > .el-button,
+      > .toolbar-actions > .el-button {
+        min-height: 40px;
       }
     }
 
@@ -184,6 +220,11 @@ main.viewport-business-page {
       max-width: 100%;
       white-space: normal;
     }
+
+    .el-pagination.is-background :is(.el-pager li, .btn-prev, .btn-next) {
+      min-width: 24px;
+      margin-inline: 2px;
+    }
   }
 
   main.viewport-business-page.park-topic-manage {
@@ -198,19 +239,10 @@ main.viewport-business-page {
   }
 }
 
-// Mobile lists size rows from their contents instead of the desktop flex budget.
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   main.viewport-business-page > .record-feature-surface {
-    flex: 0 0 auto;
-    height: auto !important;
-    overflow: visible;
-
     > .record-feature-grid {
-      flex: 0 0 auto;
-      height: auto;
-      min-height: auto;
       grid-auto-rows: max-content;
-      overflow: visible;
       align-items: start;
     }
 

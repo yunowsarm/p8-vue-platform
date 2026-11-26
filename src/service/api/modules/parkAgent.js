@@ -27,7 +27,7 @@ export async function requestParkAgentCare(path, { token, controller, body }) {
 // XHR 无法逐段读取响应，这两种会话轮次使用 Fetch 读取 NDJSON 流。
 export async function streamParkAgentTurn({ sessionId, kind, input, token, signal, onEvent, speak = false }) {
   const isVoice = kind === 'voice'
-  const headers = { Accept: 'application/x-ndjson', 'X-Park-Reply-Audio': speak ? 'on' : 'off' }
+  const headers = { Accept: 'application/x-ndjson', 'X-Park-Reply-Audio': speak ? 'final' : 'off' }
   if (token) headers.Authorization = token
   let body
   if (isVoice) {

@@ -1,6 +1,6 @@
 <!-- 园区失物招领业务组件：负责信息发布、列表筛选、详情查看与附件下载。 -->
 <template>
-  <main v-fit-page class="communication-board">
+  <main v-fit-page class="communication-board viewport-business-page">
     <section class="board-statistics board-statistics--compact" aria-label="信息统计">
       <article class="stat-card stat-card--primary">
         <span class="stat-icon"><i class="el-icon-document"></i></span>
@@ -704,9 +704,6 @@ export default {
 
 <style scoped>
 .communication-board {
-  min-height: 100%;
-  padding: 12px;
-  box-sizing: border-box;
   background: #f6f8fb;
 }
 .board-statistics {
@@ -786,7 +783,6 @@ export default {
   background: #e6f7fc;
 }
 .communication-surface {
-  min-height: clamp(650px, calc(100vh - 256px), 780px);
   display: flex;
   flex-direction: column;
   background: #fff;
@@ -814,7 +810,7 @@ export default {
 .communication-grid {
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   align-content: start;
   padding: 18px 22px 28px;
@@ -950,11 +946,9 @@ export default {
   color: #f56c6c;
 }
 .empty-state {
-  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 280px;
   padding-bottom: 48px;
 }
 .pagination-row {
@@ -1184,18 +1178,12 @@ export default {
 }
 @media (max-width: 1100px) {
   .communication-grid {
-    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 760px) {
   .attachment-download-link {
     min-height: 44px;
-  }
-  .communication-board {
-    min-height: 100dvh;
-    height: auto;
-    padding: 8px 8px calc(84px + env(safe-area-inset-bottom));
-    overflow: visible;
   }
   .board-statistics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1215,9 +1203,6 @@ export default {
   }
   .stat-card b {
     font-size: 20px;
-  }
-  .communication-surface {
-    min-height: calc(100dvh - 24px);
   }
   .list-toolbar {
     display: grid;
@@ -1331,27 +1316,9 @@ export default {
     grid-column: 1 / -1;
   }
 }
-/* 仅本看板在移动端承载页面滚动，避免改动后台配置页的全局路由高度。 */
-@media (max-width: 760px) {
-  .communication-board {
-    height: 100% !important;
-    min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
-    touch-action: pan-y;
-  }
-}
 </style>
 <style scoped>
 /* 与办事大厅看板保持一致的列表基线 */
-.communication-board {
-  min-height: 100%;
-  padding: 12px;
-  box-sizing: border-box;
-  background: #f6f8fb;
-}
 .communication-board .board-statistics {
   gap: 12px;
   margin-bottom: 12px;
@@ -1364,7 +1331,6 @@ export default {
   box-shadow: none;
 }
 .communication-surface {
-  min-height: clamp(660px, calc(100vh - 250px), 760px);
   border-color: #e5ebf2;
   border-radius: 10px;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
@@ -1394,7 +1360,6 @@ export default {
   border-color: #a9caf7;
 }
 .communication-board .empty-state {
-  min-height: 260px;
   padding: 24px 20px 48px;
   box-sizing: border-box;
 }
@@ -1404,16 +1369,6 @@ export default {
   padding: 12px 20px 16px;
 }
 @media (max-width: 760px) {
-  .communication-board {
-    height: 100% !important;
-    min-height: 0;
-    padding: 14px 12px calc(24px + env(safe-area-inset-bottom));
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
-    touch-action: pan-y;
-  }
   .communication-board .board-statistics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
@@ -1421,9 +1376,6 @@ export default {
   .communication-board .stat-card {
     min-height: 82px;
     padding: 12px;
-  }
-  .communication-surface {
-    min-height: 440px;
   }
   .communication-board .list-toolbar {
     padding: 12px;

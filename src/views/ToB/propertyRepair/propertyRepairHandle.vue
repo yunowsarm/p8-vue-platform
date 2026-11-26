@@ -27,6 +27,7 @@
         <el-button size="small" icon="el-icon-refresh" @click="loadRecords">刷新</el-button>
       </div>
 
+      <p v-if="records.length && narrowTable" class="handle-table-hint">左右滑动查看完整工单和操作</p>
       <el-table v-if="records.length" :data="records" height="100%" class="handle-table">
         <el-table-column label="工单编号" min-width="170">
           <template slot-scope="{ row }">
@@ -59,7 +60,7 @@
         <el-table-column label="提交时间" min-width="160">
           <template slot-scope="{ row }">{{ row.itemCreateTime || '-' }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column label="操作" width="260" :fixed="narrowTable ? false : 'right'">
           <template slot-scope="{ row }">
             <el-button type="text" size="mini" @click.stop="openDetail(row)">详情</el-button>
             <el-button v-if="statusValue(row.status) === 0" type="text" size="mini" @click.stop="openAssign(row)">指派并开始处理</el-button>
@@ -249,6 +250,7 @@ export default {
       completeVisible: false,
       personnelLoading: false,
       personnelOptions: [],
+      narrowTable: window.innerWidth <= 768,
       assignForm: { id: '', handlerId: '', handlerName: '' },
       completeForm: { id: '', handleResult: '', uploadFiles: [], editing: false },
       repairTypes: ['水电维修', '门窗维修', '空调维修', '网络维修', '设备维修', '公共设施', '其他'],
@@ -308,8 +310,17 @@ export default {
   created() {
     this.loadRecords()
   },
+  mounted() {
+    window.addEventListener('resize', this.updateNarrowTable)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateNarrowTable)
+  },
   methods: {
     repairTypeIcon,
+    updateNarrowTable() {
+      this.narrowTable = window.innerWidth <= 768
+    },
     fileIcon(file) {
       return getFileTypeIcon(file)
     },
@@ -693,6 +704,12 @@ export default {
   min-height: 0;
   flex: 1;
 }
+.handle-table-hint {
+  margin: 0;
+  padding: 8px 12px;
+  color: #5d7473;
+  font-size: 12px;
+}
 .order-code {
   color: #137b74;
   font-family: monospace;
@@ -1025,6 +1042,30 @@ export default {
     width: 100%;
   }
 }
+@media (max-width: 768px) {
+  .handle-summary {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 126px), 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .summary-card {
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 68px;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .summary-icon {
+    flex: 0 0 28px;
+    height: 28px;
+  }
+  .handle-toolbar {
+    padding: 12px;
+  }
+  .handle-toolbar > .el-button {
+    margin-inline-start: auto;
+  }
+}
 @media (max-width: 600px) {
   .attachment-download-link {
     min-height: 44px;
@@ -1032,17 +1073,6 @@ export default {
   .repair-handle-page {
     height: 100%;
     padding: 14px 12px 24px;
-  }
-  .handle-summary {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .handle-toolbar {
-    padding: 12px;
-  }
-  .handle-toolbar .el-select,
-  .handle-toolbar .el-button {
-    width: 100%;
   }
   .pagination-row {
     justify-content: center;

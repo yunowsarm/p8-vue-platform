@@ -1,6 +1,6 @@
 <!-- 园区班车共享业务组件：同时供个人端查看和管理端维护班车线路。 -->
 <template>
-  <main v-fit-page class="shuttle-bus-board">
+  <main v-fit-page class="shuttle-bus-board viewport-business-page">
     <section class="bus-statistics" aria-label="班车运营统计">
       <article class="stat-card primary">
         <i class="el-icon-truck"></i>
@@ -393,9 +393,6 @@ export default {
 
 <style scoped>
 .shuttle-bus-board {
-  min-height: 100%;
-  padding: 12px;
-  box-sizing: border-box;
   background: #f6f8fb;
 }
 .bus-statistics {
@@ -463,7 +460,6 @@ export default {
   background: #e6f7fc;
 }
 .bus-surface {
-  min-height: clamp(660px, calc(100vh - 218px), 760px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -489,7 +485,7 @@ export default {
 .bus-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   align-content: start;
   padding: 2px 20px 18px;
@@ -609,11 +605,9 @@ export default {
   color: #f56c6c;
 }
 .empty-state {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 260px;
 }
 .pagination-row {
   display: flex;
@@ -714,16 +708,10 @@ export default {
 }
 @media (max-width: 1100px) {
   .bus-grid {
-    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 760px) {
-  .shuttle-bus-board {
-    min-height: 0;
-    height: 100%;
-    padding: 12px;
-    overflow-y: auto;
-  }
   .bus-statistics {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -731,9 +719,6 @@ export default {
   .stat-card {
     min-height: 76px;
     padding: 12px;
-  }
-  .bus-surface {
-    min-height: 440px;
   }
   .list-toolbar {
     display: grid;

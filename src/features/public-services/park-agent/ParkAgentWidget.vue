@@ -87,16 +87,17 @@
           <button type="button" :disabled="busy || recordingState !== 'idle'" @click="useSuggestion('续租需要哪些材料？')">续租需要哪些材料？</button>
         </div>
         <div v-for="message in displayedMessages" :key="message.id" class="park-agent-message" :class="{ 'is-user': message.role === 'user' }">
-          <p>{{ message.text }}</p>
-          <audio v-if="message.audioUrl" :src="message.audioUrl" controls preload="none" aria-label="播放语音回复"></audio>
+          <p v-if="message.previewText === ''" class="park-agent-progress" role="status">正在准备播放…</p>
+          <p v-else>{{ message.previewText == null ? message.text : message.previewText }}</p>
+          <audio v-if="message.audioUrl && message.previewText == null" :src="message.audioUrl" controls preload="none" aria-label="播放语音回复"></audio>
         </div>
         <div v-if="!historyView && streamUser" class="park-agent-message is-user">
           <p>{{ streamUser }}</p>
         </div>
-        <div v-if="!historyView && streamReply" class="park-agent-message">
+        <div v-if="!historyView && streamReply && !bufferingSpeech" class="park-agent-message">
           <p>{{ streamReply }}</p>
         </div>
-        <div v-if="!historyView && busy && !streamReply" class="park-agent-progress" role="status">{{ progressText }}</div>
+        <div v-if="!historyView && busy && (!streamReply || bufferingSpeech)" class="park-agent-progress" role="status">{{ progressText }}</div>
         <div v-if="!historyView && ended" class="park-agent-receipt">
           <strong>
             <i class="el-icon-circle-check" aria-hidden="true"></i>
@@ -190,6 +191,7 @@ const DRAG_THRESHOLD = 5
 const VIEWPORT_MARGIN = 12
 const PANEL_GAP = 8
 const CARE_POLL_INTERVAL = 60000
+const SPEECH_TEXT_SPEED = 1.12
 const ACTION_LABELS = {
   archive: '已记录',
   department_task: '待部门处理',
@@ -218,6 +220,7 @@ export default {
       panelGap: PANEL_GAP,
       streamUser: '',
       streamReply: '',
+      bufferingSpeech: false,
       sessionId: '',
       sessionUnavailable: false,
       messages: [],
@@ -263,10 +266,14 @@ export default {
     displayedMessages() {
       return this.historyView === 'entry' ? this.historyMessages : this.messages
     },
+    replyUpdating() {
+      return this.busy === 'text' || this.busy === 'voice' || this.messages[this.messages.length - 1]?.previewText != null
+    },
     canSendText() {
       return Boolean(this.draft.trim() && !this.busy && this.recordingState === 'idle' && !this.ended)
     },
     progressText() {
+      if (this.bufferingSpeech && (this.busy === 'text' || this.streamUser)) return '正在准备回复和语音…'
       return PROGRESS_LABELS[this.busy]
     },
     recordingLabel() {
@@ -320,6 +327,7 @@ export default {
   methods: {
     stopSpeech() {
       this._speechVersion++
+      this.bufferingSpeech = false
       this._speech.stop()
     },
     toggleSpeech() {
@@ -657,11 +665,11 @@ export default {
       this._lastScrollTop = transcript.scrollTop
     },
     onTranscriptWheel(event) {
-      if (this.busy && this.busy !== 'finish' && event.deltaY < 0) this.autoScroll = false
+      if (this.replyUpdating && event.deltaY < 0) this.autoScroll = false
     },
     onTranscriptScroll(event) {
       const top = event.target.scrollTop
-      if (this.busy && this.busy !== 'finish' && top < this._lastScrollTop - 1) this.autoScroll = false
+      if (this.replyUpdating && top < this._lastScrollTop - 1) this.autoScroll = false
       this._lastScrollTop = top
     },
     sessionProfile() {
@@ -687,6 +695,7 @@ export default {
       this.stopSpeech()
       const speechVersion = this._speechVersion
       const speak = this.speechEnabled
+      this.bufferingSpeech = speak
       this.busy = kind
       this.errorText = ''
       this.autoScroll = true
@@ -710,18 +719,19 @@ export default {
           onEvent: (event) => {
             if (event.type === 'input') this.streamUser = event.text
             if (event.type === 'delta') this.streamReply += event.text
-            if (speak && this.speechEnabled && speechVersion === this._speechVersion) {
-              if (event.type === 'audio') this._speech.play(event.audio_base64)
-              if (event.type === 'audio_error') this.errorText = event.detail
-            }
             this.$nextTick(this.scrollTranscript)
           }
         })
         if (this._parkDisposed) return
         if (typeof turn?.text !== 'string' || typeof turn.reply !== 'string') throw new Error('invalid-turn')
         const firstId = this.messages.length
-        this.messages.push({ id: firstId, role: 'user', text: turn.text }, { id: firstId + 1, role: 'assistant', text: turn.reply, audioUrl: this.replyAudioUrl(turn) })
-        if (turn.audio_error) this.errorText = '语音播放暂不可用，可以查看文字回复。'
+        const audioUrl = this.replyAudioUrl(turn)
+        const shouldSpeak = speak && this.speechEnabled && speechVersion === this._speechVersion
+        const readTogether = shouldSpeak && Boolean(audioUrl)
+        const assistant = { id: firstId + 1, role: 'assistant', text: turn.reply, audioUrl, previewText: readTogether ? '' : null }
+        this.messages.push({ id: firstId, role: 'user', text: turn.text }, assistant)
+        if (readTogether) this.playReply(assistant, turn.audio_base64)
+        if (shouldSpeak && turn.audio_error) this.errorText = '语音播放暂不可用，可以查看文字回复。'
       } catch (error) {
         if (!this._parkDisposed) {
           if (kind === 'text') this.draft = input
@@ -732,13 +742,33 @@ export default {
         if (!this._parkDisposed) {
           this.streamUser = ''
           this.streamReply = ''
+          this.bufferingSpeech = false
           this.busy = ''
           this.$nextTick(this.scrollTranscript)
         }
       }
     },
+    playReply(message, audioBase64) {
+      const characters = Array.from(message.text)
+      let revealed = 0
+      this._speech
+        .play(audioBase64, (progress) => {
+          const textProgress = Math.min(1, progress * SPEECH_TEXT_SPEED)
+          const count = Math.max(1, Math.floor(characters.length * textProgress))
+          if (revealed === count) return
+          revealed = count
+          message.previewText = characters.slice(0, count).join('')
+          this.$nextTick(this.scrollTranscript)
+        })
+        .then(() => {
+          if (this._parkDisposed) return
+          message.previewText = null
+          this.$nextTick(this.scrollTranscript)
+        })
+    },
     async confirmEnd(closeAfter) {
       if (this._endConfirmation || this.busy || this.ended || !this.hasUserTurn) return
+      this.stopSpeech()
       this.cancelRecording()
       this._endConfirmation = true
       let mode = 'notify'

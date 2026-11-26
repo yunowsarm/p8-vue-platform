@@ -1,14 +1,19 @@
 // 独立业务组件共用的基础视觉样式；仅定义布局和交互外观，不包含业务规则。
 .record-feature-page {
-  min-height: 100%;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 12px;
   box-sizing: border-box;
+  overflow: hidden auto;
   color: #27364b;
   background: #f5f7fa;
 }
 
 .record-feature-hero {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -55,10 +60,10 @@
 .record-feature-surface {
   display: flex;
   flex-direction: column;
-  height: clamp(760px, 80vh, 820px);
+  flex: 1 1 0;
   min-height: 0;
-  padding: 18px;
-  overflow: hidden;
+  padding: 16px;
+  overflow: hidden auto;
   border: 1px solid #e4ebf3;
   border-radius: 12px;
   box-sizing: border-box;
@@ -339,9 +344,15 @@
 }
 
 .record-feature-table {
-  flex: 1;
+  flex: 1 0 auto;
   min-height: 0;
   width: 100%;
+
+  // 固定列的伪边框会在表格底部留下孤立的短线。
+  > .el-table__fixed::before,
+  > .el-table__fixed-right::before {
+    display: none;
+  }
 }
 
 .record-feature-table__actions {
@@ -548,9 +559,21 @@
   }
 }
 
+@media (max-width: 768px), (max-height: 600px) {
+  .record-feature-surface {
+    flex: 1 0 auto;
+    overflow: visible;
+  }
+
+  .record-feature-grid {
+    flex: 1 0 auto;
+    overflow: visible;
+  }
+}
+
 @media (max-width: 720px) {
   .record-feature-page {
-    padding: 10px;
+    padding: 8px;
   }
 
   .record-feature-hero,
@@ -560,9 +583,7 @@
   }
 
   .record-feature-surface {
-    height: auto;
-    min-height: 440px;
-    overflow: visible;
+    padding: 12px;
   }
 
   .record-feature-toolbar > .el-input,
@@ -584,10 +605,6 @@
 
   .record-audit-summary__item--wide {
     grid-column: auto;
-  }
-
-  .record-feature-grid {
-    overflow: visible;
   }
 
   .record-feature-file-link {

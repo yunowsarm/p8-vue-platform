@@ -13,21 +13,22 @@
         {{ item.label }}
       </button>
     </div>
-    <div class="forum-toolbar">
+    <form class="forum-search" role="search" aria-label="论坛搜索" @submit.prevent="$emit('search')">
       <el-input
         :value="keyword"
         clearable
         size="small"
         prefix-icon="el-icon-search"
         placeholder="搜索帖子、版块或关键词"
-        aria-label="搜索园区论坛"
+        label="搜索园区论坛"
         @input="$emit('update:keyword', $event.trim())"
-        @clear="$emit('search')"
-        @keyup.enter.native="$emit('search')" />
-      <el-button size="small" icon="el-icon-search" @click="$emit('search')">搜索</el-button>
+        @clear="$emit('search')" />
+      <el-button size="small" native-type="submit">搜索</el-button>
+    </form>
+    <div class="forum-actions">
       <el-button size="small" icon="el-icon-refresh" :loading="refreshing" @click="$emit('refresh')">刷新</el-button>
+      <el-button type="primary" size="small" icon="el-icon-edit" @click="$emit('publish')">发布帖子</el-button>
     </div>
-    <el-button class="publish-topic-button" type="primary" size="small" icon="el-icon-edit" @click="$emit('publish')">发布帖子</el-button>
   </section>
 </template>
 
@@ -46,27 +47,31 @@ export default {
 <style scoped>
 .forum-nav {
   min-height: 58px;
-  padding: 0 16px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 480px) minmax(0, 1fr);
+  min-width: 0;
+  padding: 6px 16px;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 8px 20px;
   border: 1px solid #ebeef5;
   border-radius: 8px;
   background: #fff;
 }
 .sort-tabs {
-  height: 58px;
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 0 16px;
 }
 .sort-tabs button {
   position: relative;
+  min-height: 44px;
   padding: 0;
   border: 0;
   background: transparent;
   color: #606266;
   font-size: 14px;
   cursor: pointer;
+  white-space: nowrap;
 }
 .sort-tabs button.active {
   color: #409eff;
@@ -82,58 +87,55 @@ export default {
   background: #409eff;
   content: '';
 }
-.forum-toolbar {
-  width: 100%;
+.forum-search,
+.forum-actions {
   display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.forum-toolbar .el-input {
   min-width: 0;
-  flex: 1;
+  align-items: center;
+  gap: 8px;
 }
-.publish-topic-button {
-  justify-self: end;
+.forum-search {
+  flex: 1 1 240px;
+  max-width: 480px;
+}
+.forum-search .el-input {
+  min-width: 0;
+  flex: 1 1 0;
+}
+.forum-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-inline-start: auto;
+}
+.forum-actions .el-button + .el-button {
+  margin: 0;
 }
 button:focus-visible {
   outline: 2px solid #409eff;
   outline-offset: 2px;
 }
-@media (max-width: 1180px) {
-  .forum-nav {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
-    padding: 10px 16px;
-  }
-  .forum-toolbar {
-    grid-row: 2;
-    grid-column: 1/-1;
-  }
-}
 @media (max-width: 760px) {
   .forum-nav {
     min-height: 0;
     padding: 8px 12px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
   }
   .sort-tabs {
     width: 100%;
-    height: 36px;
-    gap: 17px;
-    overflow-x: auto;
+    column-gap: 12px;
   }
   .sort-tabs button {
     min-width: 44px;
-    white-space: nowrap;
   }
-  .forum-toolbar {
-    width: 100%;
-    order: 3;
+  .forum-search {
+    flex-basis: 100%;
+    max-width: none;
   }
-  .publish-topic-button {
-    order: 2;
+  .forum-search ::v-deep .el-input__inner,
+  .forum-nav .el-button {
+    min-height: 44px;
+  }
+  .forum-search ::v-deep .el-input__inner {
+    font-size: 16px;
   }
 }
 </style>

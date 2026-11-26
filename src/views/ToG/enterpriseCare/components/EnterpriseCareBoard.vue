@@ -14,14 +14,17 @@
 
     <section class="surface service-list-surface">
       <div class="toolbar">
-        <el-input v-model="keyword" clearable prefix-icon="el-icon-search" placeholder="搜索服务编号、企业、联系人或服务内容" @clear="search" @keyup.enter.native="search" />
+        <el-input v-model="keyword" clearable prefix-icon="el-icon-search" label="搜索企业关怀服务" placeholder="搜索服务编号、企业、联系人或服务内容" @clear="search" @keyup.enter.native="search">
+          <el-button slot="append" @click="search">搜索</el-button>
+        </el-input>
         <el-select v-model="statusFilter" clearable placeholder="全部状态" @change="search">
           <el-option v-for="status in config.statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
         <el-button v-if="keyword || statusFilter" icon="el-icon-refresh-left" @click="resetFilters">重置</el-button>
-        <span class="toolbar-spacer"></span>
-        <el-button v-if="selectedIds.length" type="danger" plain icon="el-icon-delete" @click="bulkRemove">批量删除（{{ selectedIds.length }}）</el-button>
-        <el-button type="primary" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}申请</el-button>
+        <div class="toolbar-actions">
+          <el-button v-if="selectedIds.length" type="danger" plain icon="el-icon-delete" @click="bulkRemove">批量删除（{{ selectedIds.length }}）</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="openCreate">新建{{ config.title }}申请</el-button>
+        </div>
       </div>
 
       <div v-loading="loading" class="cards-stage">
@@ -490,9 +493,6 @@ function statusValue(record) {
 .toolbar .el-select {
   width: 165px;
 }
-.toolbar-spacer {
-  flex: 1;
-}
 .cards-stage {
   display: flex;
   flex: 1;
@@ -806,12 +806,6 @@ function statusValue(record) {
   .toolbar .el-select {
     width: calc(50% - 4px);
   }
-  .toolbar-spacer {
-    display: none;
-  }
-  .toolbar .el-button:last-child {
-    margin-left: auto;
-  }
   .cards-stage {
     min-height: 360px;
     padding: 10px;
@@ -865,13 +859,6 @@ function statusValue(record) {
     display: flex;
     min-height: 0;
     align-items: center;
-  }
-
-  .toolbar .el-button:last-child {
-    flex: 0 0 100%;
-    width: 100%;
-    min-height: 40px;
-    margin: 2px 0 0;
   }
 
   .cards-stage {
@@ -1104,14 +1091,6 @@ function statusValue(record) {
   }
   .enterprise-care-board .toolbar .el-select {
     width: calc(50% - 5px);
-  }
-  .enterprise-care-board .toolbar-spacer {
-    display: none;
-  }
-  .enterprise-care-board .toolbar > .el-button {
-    flex: 1 1 calc(50% - 5px);
-    min-height: 38px;
-    margin: 0;
   }
   .enterprise-care-board .cards-stage {
     padding: 2px 12px 14px;

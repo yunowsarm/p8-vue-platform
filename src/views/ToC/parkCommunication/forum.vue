@@ -1,6 +1,6 @@
 <!-- 园区话题页面：维护板块浏览、帖子发布、详情互动及当前板块的发布默认值。 -->
 <template>
-  <main v-fit-page class="park-forum">
+  <main v-fit-page class="park-forum viewport-business-page">
     <forum-navigation
       :active-sort="activeSort"
       :keyword.sync="keyword"
@@ -721,13 +721,11 @@ export default {
 
 <style scoped>
 .park-forum {
-  min-height: 100%;
-  padding: 12px;
-  box-sizing: border-box;
   background: #f6f8fb;
   color: #303133;
 }
 .forum-layout {
+  width: 100%;
   max-width: 1500px;
   margin: 12px auto 0;
   display: grid;
@@ -1060,10 +1058,7 @@ button:focus-visible {
     grid-template-columns: 190px minmax(0, 1fr);
   }
 }
-@media (max-width: 760px) {
-  .park-forum {
-    padding: 10px;
-  }
+@media (max-width: 768px) {
   .forum-layout {
     margin-top: 10px;
     display: block;

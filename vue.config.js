@@ -16,7 +16,6 @@ module.exports = defineConfig({
   // 取消接口报错后的webpack弹框
   devServer: {
     ...(parkAgentEnvFile && {
-      host: '127.0.0.1',
       setupMiddlewares(middlewares) {
         const createParkAgentDevProxy = require('./server/parkAgentDevProxy')
         const identityUrl = process.env.PARK_AGENT_P8_USER_INFO_URL

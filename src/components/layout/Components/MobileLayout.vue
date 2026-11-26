@@ -95,10 +95,11 @@ export default {
 <style scoped lang="scss">
 .mobile-layout {
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   .mobile-header {
+    flex: 0 0 auto;
     position: relative;
     height: 70px;
     display: flex;
@@ -133,10 +134,11 @@ export default {
   }
 
   .app-main {
-    flex: 1;
-    //overflow: auto;
+    flex: 1 1 0;
+    min-height: 0;
   }
   .tab-bar {
+    flex: 0 0 auto;
     height: 55px;
     display: flex;
     justify-content: space-around;

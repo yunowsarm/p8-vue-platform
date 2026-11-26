@@ -1,14 +1,9 @@
 export function createSpeechPlayback(onError) {
   let context
-  let source
-  let generation = 0
-  let pending = Promise.resolve()
+  let stopCurrent
 
   function stop() {
-    generation++
-    pending = Promise.resolve()
-    if (source) source.stop()
-    source = null
+    stopCurrent?.()
   }
 
   return {
@@ -23,31 +18,61 @@ export function createSpeechPlayback(onError) {
         return false
       }
     },
-    play(base64) {
-      if (!context) return
-      const version = generation
-      pending = pending
-        .then(async () => {
-          if (version !== generation) return
+    play(base64, onProgress) {
+      stop()
+      if (!context) return Promise.resolve()
+
+      return new Promise((resolve) => {
+        let clip
+        let frame
+        let started = false
+
+        function finish() {
+          if (stopCurrent !== finish) return
+          stopCurrent = null
+          if (frame !== undefined) window.cancelAnimationFrame(frame)
+          if (clip) {
+            clip.onended = null
+            if (started) clip.stop()
+            clip.disconnect()
+          }
+          resolve()
+        }
+
+        stopCurrent = finish
+        const startPlayback = async () => {
           const bytes = Uint8Array.from(window.atob(base64), (character) => character.charCodeAt(0))
           const buffer = await context.decodeAudioData(bytes.buffer)
-          if (version !== generation) return
-          await new Promise((resolve) => {
-            const clip = context.createBufferSource()
-            clip.buffer = buffer
-            clip.connect(context.destination)
-            clip.onended = () => {
-              clip.disconnect()
-              if (source === clip) source = null
-              resolve()
-            }
-            clip.start()
-            source = clip
-          })
+          if (stopCurrent !== finish) return
+          if (context.state !== 'running' || !buffer.duration) throw new Error('audio-unavailable')
+
+          clip = context.createBufferSource()
+          clip.buffer = buffer
+          clip.connect(context.destination)
+          clip.onended = () => {
+            clip.disconnect()
+            clip = null
+            finish()
+          }
+          const startedAt = context.currentTime
+          clip.start()
+          started = true
+
+          const tick = () => {
+            const progress = Math.min(1, (context.currentTime - startedAt) / buffer.duration)
+            onProgress(progress)
+            if (progress < 1) frame = window.requestAnimationFrame(tick)
+          }
+          tick()
+        }
+
+        startPlayback().catch(() => {
+          if (stopCurrent === finish) {
+            finish()
+            onError()
+          }
         })
-        .catch(() => {
-          if (version === generation) onError()
-        })
+      })
     },
     stop,
     close() {

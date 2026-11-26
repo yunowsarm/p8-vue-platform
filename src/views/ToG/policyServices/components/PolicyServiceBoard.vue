@@ -14,7 +14,16 @@
 
     <section class="surface policy-list-surface">
       <div class="toolbar">
-        <el-input v-model="keyword" clearable prefix-icon="el-icon-search" :placeholder="`搜索${config.searchLabel || '编号、标题、联系人'}`" @clear="search" @keyup.enter.native="search" />
+        <el-input
+          v-model="keyword"
+          clearable
+          prefix-icon="el-icon-search"
+          label="搜索政策服务"
+          :placeholder="`搜索${config.searchLabel || '编号、标题、联系人'}`"
+          @clear="search"
+          @keyup.enter.native="search">
+          <el-button slot="append" @click="search">搜索</el-button>
+        </el-input>
         <el-select v-if="config.typeKey" v-model="typeFilter" clearable :placeholder="`全部${config.typeLabel || '类型'}`" @change="search">
           <el-option v-for="option in config.typeOptions" :key="option.value" :label="option.label" :value="option.value" />
         </el-select>
@@ -22,9 +31,10 @@
           <el-option v-for="status in config.statusOptions" :key="status" :label="status" :value="status" />
         </el-select>
         <el-button v-if="hasFilters" icon="el-icon-refresh-left" @click="resetFilters">重置</el-button>
-        <span class="toolbar-spacer"></span>
-        <el-button v-if="selectedIds.length" type="danger" plain icon="el-icon-delete" @click="bulkRemove">批量删除（{{ selectedIds.length }}）</el-button>
-        <el-button type="primary" icon="el-icon-plus" @click="openCreate">{{ config.createLabel || `新建${config.title}` }}</el-button>
+        <div class="toolbar-actions">
+          <el-button v-if="selectedIds.length" type="danger" plain icon="el-icon-delete" @click="bulkRemove">批量删除（{{ selectedIds.length }}）</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="openCreate">{{ config.createLabel || `新建${config.title}` }}</el-button>
+        </div>
       </div>
 
       <div v-loading="loading" class="cards-stage">
@@ -610,9 +620,6 @@ export default {
 .toolbar .el-select {
   width: 165px;
 }
-.toolbar-spacer {
-  flex: 1;
-}
 .cards-stage {
   flex: 1;
   padding: 16px;
@@ -905,15 +912,6 @@ export default {
   .toolbar .el-select {
     width: 100%;
   }
-  .toolbar-spacer {
-    display: none;
-  }
-  .toolbar .el-button:last-child {
-    width: 100%;
-    min-height: 42px;
-    margin-left: 0;
-    grid-column: 1 / -1;
-  }
   .cards-stage {
     min-height: 360px;
     padding: 10px;
@@ -1129,14 +1127,6 @@ export default {
   }
   .policy-service-board .toolbar .el-select {
     width: calc(50% - 5px);
-  }
-  .policy-service-board .toolbar-spacer {
-    display: none;
-  }
-  .policy-service-board .toolbar > .el-button {
-    flex: 1 1 calc(50% - 5px);
-    min-height: 38px;
-    margin: 0;
   }
   .policy-service-board .cards-stage {
     padding: 2px 12px 14px;
