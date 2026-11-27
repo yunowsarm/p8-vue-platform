@@ -1,6 +1,6 @@
 <!-- 线索管理普通端入口：仅查询当前用户负责的线索。 -->
 <template>
-  <div>
+  <div class="intention-inquiry-user">
     <lead-management-page
       class="intention-inquiry-page"
       mode="user"
@@ -63,6 +63,25 @@ export default {
 </script>
 
 <style lang="scss">
+.intention-inquiry-user {
+  height: 100%;
+  min-height: 0;
+
+  > .intention-inquiry-page > .record-feature-surface {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 0;
+  }
+
+  @media (max-width: 720px) {
+    > .intention-inquiry-page .record-feature-toolbar > .el-input {
+      flex: 0 0 auto;
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+}
+
 .invalid-lead-progress-dialog.el-dialog {
   margin: 0;
   overflow: hidden;

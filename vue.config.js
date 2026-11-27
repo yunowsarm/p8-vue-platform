@@ -9,6 +9,33 @@ version = 'V' + version
 const TerserPlugin = require('terser-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const parkAgentEnvFile = process.env.NODE_ENV === 'development' && process.env.PARK_AGENT_LOCAL_ENV_FILE
+const parkAgentTlsKey = parkAgentEnvFile && process.env.PARK_AGENT_P8_TLS_KEY_FILE
+const parkAgentTlsCert = parkAgentEnvFile && process.env.PARK_AGENT_P8_TLS_CERT_FILE
+if (Boolean(parkAgentTlsKey) !== Boolean(parkAgentTlsCert)) {
+  throw new Error('请同时配置 PARK_AGENT_P8_TLS_KEY_FILE 与 PARK_AGENT_P8_TLS_CERT_FILE')
+}
+
+function startParkAgentAdminServer(devServer) {
+  const fs = require('node:fs')
+  const https = require('node:https')
+  const createParkAgentDevProxy = require('./server/parkAgentDevProxy')
+  const port = Number(process.env.PARK_AGENT_ADMIN_HTTPS_PORT || 3443)
+  const proxy = createParkAgentDevProxy(parkAgentEnvFile, undefined, { adminOnly: true })
+  try {
+    const server = https.createServer({ key: fs.readFileSync(parkAgentTlsKey), cert: fs.readFileSync(parkAgentTlsCert) }, (req, res) => {
+      proxy(req, res, () => {
+        res.writeHead(404)
+        res.end()
+      })
+    })
+    server.on('error', (error) => console.error('智能体远程管理 HTTPS 监听失败', error.code))
+    server.listen(port, '0.0.0.0')
+    devServer.server.once('close', () => server.close())
+  } catch (error) {
+    console.error('智能体远程管理 HTTPS 启动失败，请检查证书和端口配置', error.code)
+  }
+}
+
 module.exports = defineConfig({
   runtimeCompiler: true,
   lintOnSave: false,
@@ -16,6 +43,7 @@ module.exports = defineConfig({
   // 取消接口报错后的webpack弹框
   devServer: {
     ...(parkAgentEnvFile && {
+      ...(parkAgentTlsKey && { onListening: startParkAgentAdminServer }),
       setupMiddlewares(middlewares) {
         const createParkAgentDevProxy = require('./server/parkAgentDevProxy')
         const identityUrl = process.env.PARK_AGENT_P8_USER_INFO_URL

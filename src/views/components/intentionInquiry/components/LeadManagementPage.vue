@@ -747,9 +747,11 @@ export default {
       const toolbarMargin = Number.parseFloat(window.getComputedStyle(toolbar).marginBottom)
       const availableHeight = surface.clientHeight - verticalPadding - toolbar.offsetHeight - toolbarMargin - footer.offsetHeight
       const headerHeight = 48
+      const minimumRowHeight = 40
+      const minimumVisibleRows = this.isUser ? 1 : this.pageSize
 
-      this.leadTableHeight = Math.max(headerHeight + this.pageSize * 40, Math.floor(availableHeight))
-      this.leadTableRowHeight = Math.max(40, Math.floor((this.leadTableHeight - headerHeight) / this.pageSize))
+      this.leadTableHeight = Math.max(headerHeight + minimumVisibleRows * minimumRowHeight, Math.floor(availableHeight))
+      this.leadTableRowHeight = Math.max(minimumRowHeight, Math.floor((this.leadTableHeight - headerHeight) / this.pageSize))
     },
     bindLeadTableScrollbar() {
       const table = this.$refs.leadTable

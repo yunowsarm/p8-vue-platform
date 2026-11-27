@@ -9,66 +9,83 @@ const PREFIX = '/api/park-agent'
 const SESSION_PATH = /^\/v1\/sessions(?:\/([\da-f-]{36})(?:\/(turns|voice-turns|finish|forward))?)?$/i
 const CARE_MESSAGES = /^\/v1\/care\/messages(?:\/[\da-f-]{36}\/(open|dismiss))?$/i
 const CARE_PAUSE = /^\/v1\/care\/plans\/[\da-f-]{36}\/pause$/i
+const ADMIN_ROUTES = {
+  GET: /^\/(?:admin|v1\/admin\/(?:providers|knowledge|email|care\/(?:plans|followups)|network-access))$/,
+  POST: /^\/v1\/admin\/(?:providers\/(?:llm|asr|tts|embedding)\/test|knowledge\/import|email\/test|care\/plans(?:\/[\da-f-]{36}\/send)?)$/,
+  PUT: /^\/v1\/admin\/(?:providers\/(?:llm|asr|tts|embedding)|care\/(?:plans|followups)\/[\da-f-]{36}|network-access)$/,
+  DELETE: /^\/v1\/admin\/knowledge$/
+}
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1'])
 const P8_USER_ID = /^[A-Za-z0-9_.:-]{1,120}$/
+const ACCESS_URL = new URL('http://127.0.0.1:8000/v1/integrations/p8/network-access')
+const DEFAULT_PARK_ID = 'local-dev-park'
 
-function isLocalSameOrigin(req, verifyIdentity) {
-  const host = req.headers.host || ''
-  const origin = req.headers.origin
-  if (origin && origin !== `http://${host}`) return false
-
-  const { remoteAddress, localAddress } = req.socket
-  if (LOOPBACK.has(remoteAddress) && /^(127\.0\.0\.1|localhost)(:\d+)?$/i.test(host)) return true
-
-  // 支持本机浏览器通过自己的局域网地址联调，连接的两端必须是同一个本机地址。
-  const localIp = (localAddress || '').replace(/^::ffff:/, '')
-  const peerIp = (remoteAddress || '').replace(/^::ffff:/, '')
-  const hostIp = host.replace(/:\d+$/, '')
-  return Boolean(verifyIdentity && isIPv4(localIp) && peerIp === localIp && hostIp === localIp)
+function ipv4(address = '') {
+  const value = address.replace(/^::ffff:/, '')
+  return isIPv4(value) ? value : ''
 }
 
-async function p8UserInfo(url, authorization) {
+function requestJson(url, options, body, timeoutMs) {
   const transport = url.protocol === 'https:' ? https : http
-  const body = await new Promise((resolve, reject) => {
-    const request = transport.request(url, { method: 'POST', headers: { Authorization: authorization, Version: version, 'Content-Type': 'application/json', 'Content-Length': 2 } }, (response) => {
-      if ([401, 403].includes(response.statusCode)) {
-        response.resume()
-        resolve(null)
-        return
-      }
+  return new Promise((resolve, reject) => {
+    const request = transport.request(url, options, (response) => {
       if (response.statusCode !== 200) {
         response.resume()
-        reject(new Error('P8 user info unavailable'))
+        resolve({ status: response.statusCode })
         return
       }
       const chunks = []
       let size = 0
       response.on('data', (chunk) => {
         size += chunk.length
-        if (size > 1024 * 1024) request.destroy(new Error('P8 user info too large'))
+        if (size > 1024 * 1024) request.destroy(new Error('JSON response too large'))
         else chunks.push(chunk)
       })
       response.on('error', reject)
       response.on('end', () => {
         try {
-          resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')))
+          resolve({ status: response.statusCode, data: JSON.parse(Buffer.concat(chunks).toString('utf8')) })
         } catch (error) {
           reject(error)
         }
       })
     })
-    const timeout = setTimeout(() => request.destroy(new Error('P8 user info timed out')), 6000)
+    const timeout = setTimeout(() => request.destroy(new Error('JSON request timed out')), timeoutMs)
     request.on('close', () => clearTimeout(timeout))
     request.on('error', reject)
-    request.end('{}')
+    request.end(body)
   })
+}
+
+async function p8UserInfo(url, authorization) {
+  const result = await requestJson(url, { method: 'POST', headers: { Authorization: authorization, Version: version, 'Content-Type': 'application/json', 'Content-Length': 2 } }, '{}', 6000)
+  if ([401, 403].includes(result.status)) return null
+  if (result.status !== 200) throw new Error('P8 user info unavailable')
+  const body = result.data
   if (body?.head && body.head.success !== 'true') return null
   const user = body?.head ? body.data : body
   if (typeof user?.id !== 'string' || !P8_USER_ID.test(user.id) || user.id === 'local-dev-user' || String(user.isActivated) === '0') return null
   return user.id
 }
 
-function createParkAgentDevProxy(envFile, p8UserInfoUrl) {
+async function loadNetworkAccess(token) {
+  const { status, data } = await requestJson(ACCESS_URL, { method: 'GET', headers: { Authorization: `Bearer ${token}` } }, undefined, 3000)
+  if (status === 404) return { park_id: DEFAULT_PARK_ID, p8_lan_enabled: false, admin_remote_enabled: false }
+  if (
+    status !== 200 ||
+    typeof data?.park_id !== 'string' ||
+    !P8_USER_ID.test(data.park_id) ||
+    typeof data.p8_lan_enabled !== 'boolean' ||
+    typeof data.admin_remote_enabled !== 'boolean' ||
+    !Array.isArray(data.p8_client_ips) ||
+    !Array.isArray(data.admin_client_ips)
+  ) {
+    throw new Error('Agent network access unavailable')
+  }
+  return data
+}
+
+function createParkAgentDevProxy(envFile, p8UserInfoUrl, { adminOnly = false } = {}) {
   const config = dotenv.parse(fs.readFileSync(envFile))
   const token = config.AGENT_SERVICE_TOKEN
   if (!token) throw new Error('智能体 .env 缺少 AGENT_SERVICE_TOKEN')
@@ -86,10 +103,6 @@ function createParkAgentDevProxy(envFile, p8UserInfoUrl) {
       res.end(JSON.stringify({ detail }))
     }
 
-    if (!isLocalSameOrigin(req, identityUrl)) {
-      return reject(403, '此联调入口仅限本机同源访问')
-    }
-
     const path = req.url.slice(PREFIX.length)
     const pathname = path.split('?')[0]
     const match = SESSION_PATH.exec(pathname)
@@ -97,12 +110,41 @@ function createParkAgentDevProxy(envFile, p8UserInfoUrl) {
     const sessionRoute = match && (listing || req.method === (match[1] && !match[2] ? 'GET' : 'POST'))
     const care = CARE_MESSAGES.exec(pathname)
     const careRoute = (care && req.method === (care[1] ? 'POST' : 'GET')) || (CARE_PAUSE.test(pathname) && req.method === 'POST')
-    if (!sessionRoute && !careRoute) {
+    const adminRoute = Boolean(ADMIN_ROUTES[req.method]?.test(pathname))
+    if (!adminRoute && (adminOnly || (!sessionRoute && !careRoute))) {
       return reject(404, '未开放此智能体接口')
     }
 
+    const host = req.headers.host || ''
+    const scheme = req.socket.encrypted === true ? 'https' : 'http'
+    const localIp = ipv4(req.socket.localAddress)
+    const peerIp = ipv4(req.socket.remoteAddress)
+    const matchesInterface = Boolean(localIp && host.replace(/:\d+$/, '') === localIp)
+    const fromLoopback = LOOPBACK.has(req.socket.remoteAddress) && /^(127\.0\.0\.1|localhost)(:\d+)?$/i.test(host)
+    const fromThisComputer = fromLoopback || Boolean(identityUrl && matchesInterface && peerIp === localIp)
+    if ((req.headers.origin && req.headers.origin !== `${scheme}://${host}`) || (!fromThisComputer && (!matchesInterface || !peerIp))) {
+      return reject(403, '此入口要求从本机或已配置的内网地址同源访问')
+    }
+
+    if (adminRoute && scheme !== 'https') return reject(403, '远程管理后台需要 HTTPS')
+    if (!adminRoute && !fromThisComputer && !identityUrl) return reject(403, '内网助手需要 P8 登录身份核验')
+    if (!adminRoute && fromThisComputer && identityUrl && !req.headers.authorization) return reject(401, '请先登录 P8')
+
+    let access
+    try {
+      access = await loadNetworkAccess(token)
+    } catch {
+      return reject(502, '无法读取智能体网络访问配置')
+    }
+    if (adminRoute) {
+      if (!access.admin_remote_enabled || !access.admin_client_ips?.includes(peerIp)) return reject(403, '当前设备未获准访问管理后台')
+      if (pathname !== '/admin' && !req.headers.authorization) return reject(401, '请登录智能体管理后台')
+    } else if (!fromThisComputer && (!access.p8_lan_enabled || !access.p8_client_ips?.includes(peerIp))) {
+      return reject(403, '当前设备未获准访问园区助手')
+    }
+
     let userId = 'local-dev-user'
-    if (identityUrl) {
+    if (!adminRoute && identityUrl) {
       if (!req.headers.authorization) return reject(401, '请先登录 P8')
       try {
         userId = await p8UserInfo(identityUrl, req.headers.authorization)
@@ -115,19 +157,18 @@ function createParkAgentDevProxy(envFile, p8UserInfoUrl) {
     }
     if (res.destroyed) return
 
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'X-Park-Id': 'local-dev-park',
-      'X-Enterprise-Id': 'local-dev-enterprise',
-      'X-User-Id': userId
-    }
+    const headers = adminRoute
+      ? req.headers.authorization
+        ? { Authorization: req.headers.authorization }
+        : {}
+      : { Authorization: `Bearer ${token}`, 'X-Park-Id': access.park_id, 'X-Enterprise-Id': 'local-dev-enterprise', 'X-User-Id': userId }
     for (const name of ['accept', 'content-type', 'content-length', 'x-park-reply-audio']) {
       if (req.headers[name]) headers[name] = req.headers[name]
     }
 
     const upstream = http.request({ hostname: '127.0.0.1', port: 8000, path, method: req.method, headers, timeout: 120000 }, (response) => {
       const responseHeaders = { 'Content-Type': response.headers['content-type'] || 'application/json' }
-      for (const name of ['cache-control', 'x-accel-buffering']) {
+      for (const name of ['cache-control', 'x-accel-buffering', 'content-security-policy', 'x-content-type-options']) {
         if (response.headers[name]) responseHeaders[name] = response.headers[name]
       }
       res.writeHead(response.statusCode, responseHeaders)

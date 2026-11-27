@@ -21,7 +21,6 @@ export const nextApproveUserBeforehand = {
     }
   },
   initDataSource: function (processDefinitionKey, vueInstance) {
-
     return new Promise((resolve, reject) => {
       if (!vueInstance) {
         console.error('vueInstance:' + vueInstance)
