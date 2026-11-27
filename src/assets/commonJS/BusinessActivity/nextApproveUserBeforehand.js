@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 export const nextApproveUserBeforehand = {
   sourceTemplate: {
     approveNodeUsers: {
@@ -48,14 +49,14 @@ export const nextApproveUserBeforehand = {
         .then((res) => {
           if (res && res.result && res.beforehand && res.userTasks && res.userTasks.length > 0) {
             vueInstance.selectUserBeforehandDataSource = []
-            let template = Object.assign({}, this.sourceTemplate)
-            let otherParams = res.taskOtherParams
+            const template = Object.assign({}, this.sourceTemplate)
+            const otherParams = res.taskOtherParams
             res.userTasks.forEach((instance) => {
               let expressionText
               if (otherParams && otherParams[instance.key] && otherParams[instance.key].isMultiInstance === true) {
                 expressionText = otherParams[instance.key].collectionExpressionText.trim().replace('$', '').replace('{', '').replace('}', '')
                 template.approveNodeUsers.fieldConfig = { multiple: true, disabled: false }
-                let values = []
+                const values = []
                 if (res.candidateUserMap[expressionText] && res.candidateUserMap[expressionText].length) {
                   res.candidateUserMap[expressionText].map((item) => {
                     values.push(item.value)

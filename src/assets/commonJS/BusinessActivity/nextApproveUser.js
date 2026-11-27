@@ -57,7 +57,7 @@ export const nextApproveUser = {
           let hasUserTask = false
           if (res && res.length > 0) {
             vueInstance.selectUserDataSource = []
-            let template = Object.assign({}, this.sourceTemplate)
+            const template = Object.assign({}, this.sourceTemplate)
             res.forEach((instance) => {
               let i = 1
               template.processInstanceEl.fieldName = instance.businessKey
